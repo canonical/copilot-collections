@@ -1,0 +1,71 @@
+name: Auto-Update Copilot Collections
+on:
+  workflow_call:
+    inputs:
+      config_file:
+        description: "Path to configuration file"
+        default: ".collections-config.yaml"
+        type: string
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout Consumer Repo
+        uses: actions/checkout@v6
+
+      - name: Get Target Version
+        id: config
+        uses: mikefarah/yq@v4
+        with:
+          cmd: echo "CURRENT_VERSION=$(yq '.copilot.version' ${{ inputs.config_file }})" >> $GITHUB_OUTPUT
+
+      - name: Check Latest Toolkit Release
+        id: upstream
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          LATEST=$(gh release view --repo canonical/copilot-collections --json tagName --jq .tagName)
+          
+          # Compare LATEST vs CURRENT
+          if [ "$LATEST" == "${{ steps.config.outputs.CURRENT_VERSION }}" ]; then
+            echo "UPDATE_NEEDED=false" >> $GITHUB_OUTPUT
+          else
+            echo "UPDATE_NEEDED=true" >> $GITHUB_OUTPUT
+            echo "LATEST_VERSION=$LATEST" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Checkout Toolkit
+        if: steps.upstream.outputs.UPDATE_NEEDED == 'true'
+        uses: actions/checkout@v6
+        with:
+          repository: canonical/copilot-collections
+          ref: ${{ steps.upstream.outputs.LATEST_VERSION }}
+          path: toolkit-temp
+
+      - name: Run Update Script
+        if: steps.upstream.outputs.UPDATE_NEEDED == 'true'
+        run: |
+          yq -i ".copilot.version = \"${{ steps.upstream.outputs.LATEST_VERSION }}\"" ${{ inputs.config_file }}
+
+          chmod +x toolkit-temp/scripts/install_collections.sh
+          ./toolkit-temp/scripts/install_collections.sh \
+            "${{ inputs.config_file }}" \
+            "toolkit-temp"
+
+          rm -rf toolkit-temp
+
+      - name: Create Pull Request
+        if: steps.upstream.outputs.UPDATE_NEEDED == 'true'
+        uses: canonical/create-pull-request@main
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: update Copilot collections to ${{ steps.upstream.outputs.LATEST_VERSION }}"
+          branch-name: "chore/auto-copilot-collections"
+          title: "chore: update Copilot collections to ${{ steps.upstream.outputs.LATEST_VERSION }}"
+          body: "Update to version `${{ steps.upstream.outputs.LATEST_VERSION }}`."
+          upsert: true
+          ignore-no-changes: true
