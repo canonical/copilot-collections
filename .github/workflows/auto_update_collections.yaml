@@ -62,7 +62,7 @@ jobs:
         if: steps.upstream.outputs.UPDATE_NEEDED == 'true'
         uses: canonical/create-pull-request@main
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "chore: update Copilot collections to ${{ steps.upstream.outputs.LATEST_VERSION }}"
           branch-name: "chore/auto-copilot-collections"
           title: "chore: update Copilot collections to ${{ steps.upstream.outputs.LATEST_VERSION }}"
