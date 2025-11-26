@@ -40,7 +40,7 @@ copilot:
 You can sync the instructions immediately to your local machine to verify them.
 
 ```bash
-curl -sL [https://raw.githubusercontent.com/canonical/copilot-collections/main/scripts/local_sync.sh](https://raw.githubusercontent.com/canonical/copilot-collections/main/scripts/local_sync.sh) | bash
+curl -sL https://raw.githubusercontent.com/canonical/copilot-collections/main/scripts/local_sync.sh | bash
 ```
 
 **Note:** This will generate files in .github/instructions/ and .github/prompts/. Do not edit these files manually; they will be overwritten.
