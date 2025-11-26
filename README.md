@@ -67,6 +67,12 @@ jobs:
     secrets: inherit
 ```
 
+## **Inspiration & Credits**
+
+Some prompts and instruction patterns in this collection were inspired by the [Awesome GitHub Copilot](https://github.com/github/awesome-copilot) repository.
+
+We highly encourage you to explore it for further inspiration, including advanced chat modes, persona definitions, and framework-specific prompts that you might want to adapt for your specific projects.
+
 ## **Maintaining**
 
 ### **Directory Structure**
