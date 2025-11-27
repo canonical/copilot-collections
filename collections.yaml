@@ -27,8 +27,8 @@ charm-python:
     - core
     - common-python
   items:
-    - src: assets/instructions/charms/libraries.instructions.md
-      dest: .github/instructions/charm-libraries.instructions.md
+    - src: assets/instructions/charms/lib-updates.instructions.md
+      dest: .github/instructions/charms-lib-updates.instructions.md
 
 # ==========================================
 # 3. Group Specifics 
