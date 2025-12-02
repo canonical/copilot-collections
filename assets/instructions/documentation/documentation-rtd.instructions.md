@@ -120,3 +120,5 @@ Run the docs linters via the docs-level Makefile targets:
 ## Changelog guidance 
 
 If you modify a procedure (commands, required versions, prerequisites), add a short note in `docs/changelog.md` summarizing the user-facing change.
+
+If you add a new file into `docs`, add a short note in `docs/changelog.md` summarizing the user-facing change.
