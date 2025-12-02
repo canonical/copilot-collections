@@ -24,7 +24,11 @@ This section outlines the absolute order of operations. These rules have the hig
 
 ## General Structure 
 
-The documentation follows the Diataxis framework consisting of four categories of documentation:
+In this repository, the documentation is placed in a dedicated `docs` directory. The purpose of the files in this directory is to provide information, instructions, and conceptual understanding of the code for users. 
+
+The top-level `docs` directory should contain an overview or home page called `index.md`. This file should provide a brief description of the project, what needs it serves, and who the primary user base is.
+
+The rest of the documentation follows the Diataxis framework consisting of four categories of documentation:
 
 1. **Tutorials**: A practice lesson that walks a user through a learning experience. Tutorials should be placed in the `docs/tutorial` directory, but sometimes they're placed in the `docs` direcotry.
 2. **How-to guides**: Addresses real-world goals or problems by providing practical directions. How-to guides should be placed in the `docs/how-to` directory.
