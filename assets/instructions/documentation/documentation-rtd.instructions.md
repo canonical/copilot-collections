@@ -64,7 +64,7 @@ The tutorial should contain the following pieces:
   the model name throughout the tutorial.
 - **Deploy the charm + its dependencies**. If the charm requires any other
   charms to successfully deploy, either include in a single section or split into
-  multiple sections. Use this pat of the tutorial to enable any required configurations.
+  multiple sections. Use this part of the tutorial to enable any required configurations.
   Make sure to briefly explain what the configurations or additional charms are
   and why the steps are necessary. Split up important commands into separate
   command blocks, and provide explanations between each command.
