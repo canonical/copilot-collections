@@ -7,15 +7,28 @@ applyTo: 'lib/charms/**/*.py'
 
 ## Purpose
 
-Files in `lib/charms/` are **vendored external dependencies** that are auto-updated via `.github/workflows/auto_update_libs.yaml`. These libraries are pulled from external charmhub packages and cannot be modified directly.
+Files in `lib/charms/` are usually **vendored external dependencies** that are auto-updated via `.github/workflows/auto_update_libs.yaml`. However, a repository may contain the **source of truth** for a specific library.
 
 ## Critical Understanding
 
-**DO NOT treat charm library files as part of our codebase.** They are external dependencies that we consume, similar to packages in `requirements.txt`.
+**First, determine if the library is vendored or owned.**
+
+1. **Check the Charm Name**: Look for `name` in `metadata.yaml` or `charmcraft.yaml` in the repository root.
+2. **Check the Library Path**: `lib/charms/[library_owner]/[version]/[lib_name].py`
+3. **Compare**:
+   - If `[library_owner]` matches the repository's charm name (converting kebab-case to snake_case): **This repository OWNS the library.** Treat it as internal code.
+   - If they do not match: **The library is VENDORED.** Treat it as an external dependency.
+
+**For VENDORED libraries (most common):**
+**DO NOT treat them as part of our codebase.** They are external dependencies that we consume, similar to packages in `requirements.txt`.
 
 ## When Reviewing PRs that Update Charm Libraries
 
-### What NOT to Do
+### What NOT to Do (For VENDORED Libraries)
+
+> **Note**: If the repository **owns** the library (see Critical Understanding above), standard code review practices apply. You SHOULD critique style, logic, and structure.
+
+For **vendored** libraries:
 
 - **DO NOT** comment on the library code itself (we cannot modify external code)
 - **DO NOT** suggest changes to library files
