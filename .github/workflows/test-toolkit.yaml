@@ -1,0 +1,54 @@
+name: Test Toolkit
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test-structure:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6.0.1
+
+      - name: Install Tools
+        run: sudo snap install yq
+
+      - name: Lint Manifest
+        run: |
+          # Verify collections.yaml is valid YAML
+          yq eval . collections.yaml > /dev/null
+
+      - name: Shellcheck Scripts
+        run: |
+          sudo apt-get install -y shellcheck
+          shellcheck scripts/*.sh
+
+      - name: Integration Test (Install Logic)
+        run: |
+          # 1. Create a dummy consumer config
+          cat <<EOF > test-config.yaml
+          copilot:
+            version: "local-test"
+            collections:
+              - core
+              - charm-python
+          EOF
+
+          # 2. Run the install script against THIS repo
+          chmod +x scripts/install_collections.sh
+          ./scripts/install_collections.sh test-config.yaml .
+
+          # 3. Verify files were created
+          if [ ! -f ".github/instructions/instructions.instructions.md" ]; then
+            echo "❌ Failed to generate core instructions"
+            exit 1
+          fi
+          
+          if [ ! -f ".github/instructions/charms-lib-updates.instructions.md" ]; then
+            echo "❌ Failed to generate charm instructions"
+            exit 1
+          fi
+
+          echo "✅ Integration test passed: Files generated successfully."

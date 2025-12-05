@@ -1,0 +1,24 @@
+name: License Check
+
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+jobs:
+  license-headers-check:
+    name: Check license headers
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6.0.1
+      - name: Check .licenserc.yaml exists
+        id: licenserc-yaml
+        run: echo "exists=$([ -f .licenserc.yaml ] && echo "true" || echo "false")" >> $GITHUB_OUTPUT
+      - name: Get default license configuration
+        if: steps.licenserc-yaml.outputs.exists == 'false'
+        run: |
+          curl -fLsSo .licenserc.yaml https://raw.githubusercontent.com/canonical/operator-workflows/main/.github/files/.licenserc.yaml
+      - name: Check license headers
+        uses: apache/skywalking-eyes/header@v0.8.0
+        with:
+          config: .licenserc.yaml

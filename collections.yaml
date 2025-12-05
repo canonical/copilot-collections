@@ -1,0 +1,44 @@
+# Copyright 2025 Canonical Ltd.
+# See LICENSE file for licensing details.
+
+# ==========================================
+# 1. Base Definitions
+# ==========================================
+core:
+  description: "Core assets comment to all"
+  items:
+    - src: assets/instructions/common/instructions.instructions.md
+      dest: .github/instructions/instructions.instructions.md
+    - src: assets/instructions/common/core-directive.instructions.md
+      dest: .github/instructions/core-directive.instructions.md
+    - src: assets/prompts/repo-bootstrap.prompt.md
+      dest: .github/prompts/repo-bootstrap.prompt.md
+
+common-python:
+  description: "Standard Python guidelines"
+  items:
+    - src: assets/instructions/python/code-commenting.instructions.md
+      dest: .github/instructions/python-code-commenting.instructions.md
+
+# ==========================================
+# 2. Framework Specifics 
+# ==========================================
+charm-python:
+  description: "Full Python Charm Development Kit"
+  # Inherits generic python rules automatically
+  includes: 
+    - core
+    - common-python
+  items:
+    - src: assets/instructions/charms/lib-updates.instructions.md
+      dest: .github/instructions/charms-lib-updates.instructions.md
+
+# ==========================================
+# 3. Group Specifics 
+# ==========================================
+
+pfe-charms:
+  description: "Platform Engineering Charm Development Collection"
+  includes:
+    - charm-python
+  items: []
