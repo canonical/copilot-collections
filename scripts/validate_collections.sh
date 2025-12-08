@@ -1,4 +1,8 @@
 #!/bin/bash
+
+# Copyright 2025 Canonical Ltd.
+# See LICENSE file for licensing details.
+
 # scripts/validate_collections.sh
 # Validates integrity of collection definitions:
 # 1. No duplicate collection names.
