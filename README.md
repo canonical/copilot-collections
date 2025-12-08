@@ -82,21 +82,35 @@ We highly encourage you to explore it for further inspiration, including advance
 
 ### **Directory Structure**
 
-* assets/: Raw markdown files.  
-  * instructions/: .md files for Copilot Custom Instructions.  
-  * prompts/: .prompt.md files for specific tasks.  
-* collections.yaml: The manifest defining groups and inheritance.  
-* scripts/: Logic for syncing files.  
+* assets/: Raw markdown files (Core assets).
+* collections.yaml: Core definitions.
+* groups/: Team specific collections.
+  * <team-name>/: Folder for team assets.
+    * collections.yaml: Team specific definitions.
+* scripts/: Logic for syncing files.
 * .github/workflows/: Reusable workflows.
 
 ### **How to add a new Instruction**
 
-1. **Add the file:** Create `assets/instructions/my-topic/my-new-instructions.md`.  
-2. **Update Manifest:** Edit `collections.yaml`.  
-   * Add it to an existing collection items list.  
-   * OR create a new collection key if it represents a new logical group.  
-3. **Release:**  
+1. **Add the file:** Create `assets/instructions/my-topic/my-new-instructions.md` (for core) or `groups/<team>/instructions/...` (for teams).
+2. **Update Manifest:** Edit `collections.yaml` (core) or `groups/<team>/collections.yaml`.
+   * Add it to an existing collection items list.
+   * OR create a new collection key if it represents a new logical group.
+3. **Release:**
    * Open PR.
-   * Merge changes to main.  
-   * Create a new GitHub Release (e.g., v1.1.0).  
+   * Merge changes to main.
+   * Create a new GitHub Release (e.g., v1.1.0).
    * *Consumer repos will pick this up automatically on their next scheduled run.*
+
+### **Group Collections**
+
+Teams can manage their own collections in `groups/<team-name>/`.
+
+**Naming Convention:**
+Collection names are global. To avoid collisions, **prefix your collection names with your group name**.
+*   ✅ `pfe-charms`
+*   ❌ `charms` (Too generic)
+
+**Path Resolution:**
+*   **Relative Paths**: `src: instructions/guide.md` -> Resolves to `groups/<team>/instructions/guide.md`.
+*   **Root Paths**: `src: /assets/common/logo.png` -> Resolves to `assets/common/logo.png` (Repository Root).

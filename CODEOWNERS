@@ -1,1 +1,5 @@
-*       @canonical/platform-engineering
+# Default owners for the repository (Core team)
+*                                   @canonical/platform-engineering
+
+# Platform Engineering specific collection
+/groups/platform-engineering/       @canonical/platform-engineering

@@ -25,30 +25,18 @@ jobs:
           sudo apt-get install -y shellcheck
           shellcheck scripts/*.sh
 
+      - name: Validate Collections Integrity
+        run: |
+          chmod +x scripts/validate_collections.sh
+          ./scripts/validate_collections.sh .
+
+      - name: Test Validation Script
+        run: |
+          chmod +x tests/test_validate.sh
+          ./tests/test_validate.sh
+
       - name: Integration Test (Install Logic)
         run: |
-          # 1. Create a dummy consumer config
-          cat <<EOF > test-config.yaml
-          copilot:
-            version: "local-test"
-            collections:
-              - core
-              - charm-python
-          EOF
-
-          # 2. Run the install script against THIS repo
           chmod +x scripts/install_collections.sh
-          ./scripts/install_collections.sh test-config.yaml .
-
-          # 3. Verify files were created
-          if [ ! -f ".github/instructions/instructions.instructions.md" ]; then
-            echo "❌ Failed to generate core instructions"
-            exit 1
-          fi
-          
-          if [ ! -f ".github/instructions/charms-lib-updates.instructions.md" ]; then
-            echo "❌ Failed to generate charm instructions"
-            exit 1
-          fi
-
-          echo "✅ Integration test passed: Files generated successfully."
+          chmod +x tests/test_install.sh
+          ./tests/test_install.sh

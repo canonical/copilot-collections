@@ -1,0 +1,8 @@
+pfe-charms:
+  description: "Platform Engineering Charm Development Collection"
+  includes:
+    - charm-python
+  items:
+    # Path is relative to groups/platform-engineering/
+    - src: instructions/lib-updates.instructions.md
+      dest: .github/instructions/charms-lib-updates.instructions.md

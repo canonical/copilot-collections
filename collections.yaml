@@ -25,20 +25,7 @@ common-python:
 # ==========================================
 charm-python:
   description: "Full Python Charm Development Kit"
-  # Inherits generic python rules automatically
   includes: 
     - core
     - common-python
-  items:
-    - src: assets/instructions/charms/lib-updates.instructions.md
-      dest: .github/instructions/charms-lib-updates.instructions.md
-
-# ==========================================
-# 3. Group Specifics 
-# ==========================================
-
-pfe-charms:
-  description: "Platform Engineering Charm Development Collection"
-  includes:
-    - charm-python
   items: []
