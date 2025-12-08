@@ -45,9 +45,6 @@ echo -e "${BLUE} Target Version:${NC} $VERSION"
 echo -e "${BLUE}⬇  Fetching toolkit...${NC}"
 git clone --quiet --depth 1 --branch "$VERSION" "$TOOLKIT_REPO" "$TEMP_DIR"
 
-# Debug step
-ls -la "$TEMP_DIR"
-
 # 4. Run the Installer
 chmod +x "$TEMP_DIR/scripts/install_collections.sh"
 
