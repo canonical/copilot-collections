@@ -7,7 +7,7 @@ applyTo: 'docs/**/*.md'
 
 ## Purpose
 
-This file provides specific guidance for reviewing documentation.
+This file provides general guidance for reviewing documentation.
 
 ## Core Directives
 

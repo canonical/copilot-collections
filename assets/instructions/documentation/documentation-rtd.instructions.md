@@ -7,7 +7,7 @@ applyTo: 'docs/**/*.md, docs/**/*.rst'
 
 ## Purpose
 
-This file provides specific guidance for reviewing documentation in Read the Docs projects.
+This file provides specific guidance for testing and reviewing documentation in Read the Docs projects.
 
 ## Tests & CI
 

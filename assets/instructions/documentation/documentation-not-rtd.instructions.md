@@ -5,6 +5,10 @@ applyTo: 'docs/**/*.md'
 
 # Documentation instructions
 
+## Purpose
+
+This file provides specific guidance for testing and reviewing documentation.
+
 ## Tests & CI
 
 The CI expects documentation to pass `vale` and `lychee`; address reported issues rather than silencing the tools.
