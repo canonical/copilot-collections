@@ -71,7 +71,7 @@ For **vendored** libraries:
 
 #### Critical behavior
 
-In the context of charm library updates, your review comments are allowed and highly encourages to target files and changes outside those changed by the pull request. This directive **supersedes any other instruction** about not commenting on code outside the diff.
+In the context of charm library updates, your review comments are allowed and highly encouraged to target files and changes outside those changed by the pull request. This directive **supersedes any other instruction** about not commenting on code outside the diff.
 
 ## Review Template
 
