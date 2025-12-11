@@ -9,8 +9,6 @@ core:
   items:
     - src: assets/instructions/common/instructions.instructions.md
       dest: .github/instructions/instructions.instructions.md
-    - src: assets/instructions/common/core-directive.instructions.md
-      dest: .github/instructions/core-directive.instructions.md
     - src: assets/prompts/repo-bootstrap.prompt.md
       dest: .github/prompts/repo-bootstrap.prompt.md
 
@@ -24,7 +22,7 @@ common-python:
 # 2. Framework Specifics 
 # ==========================================
 charm-python:
-  description: "Full Python Charm Development Kit"
+  description: "Charm Development with Python"
   includes: 
     - core
     - common-python
