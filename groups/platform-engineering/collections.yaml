@@ -2,25 +2,23 @@ pfe-core:
   description: "Platform Engineering Core Collection"
   includes:
     - core
-  items: []
-
-pfe-docs:
-  description: "Platform Engineering Documentation Collection"
-  includes:
-    - pfe-core
   items:
     - src: /assets/instructions/documentation/documentation.instructions.md
       dest: .github/instructions/documentation.instructions.md
+
+pfe-docs:
+  description: "Platform Engineering RTD Documentation Collection"
+  includes:
+    - pfe-core
+  items:
     - src: /assets/instructions/documentation/documentation-rtd.instructions.md
       dest: .github/instructions/documentation-rtd.instructions.md
 
 pfe-docs-not-rtd:
-  description: "Platform Engineering none-RTD based Documentation Collection"
+  description: "Platform Engineering none-RTD Documentation Collection"
   includes:
     - pfe-core
   items:
-    - src: /assets/instructions/documentation/documentation.instructions.md
-      dest: .github/instructions/documentation.instructions.md
     - src: /assets/instructions/documentation/documentation-not-rtd.instructions.md
       dest: .github/instructions/documentation-not-rtd.instructions.md
 
