@@ -15,7 +15,7 @@ pfe-docs:
       dest: .github/instructions/documentation-rtd.instructions.md
 
 pfe-docs-not-rtd:
-  description: "Platform Engineering none-RTD Documentation Collection"
+  description: "Platform Engineering non-RTD Documentation Collection"
   includes:
     - pfe-core
   items:
