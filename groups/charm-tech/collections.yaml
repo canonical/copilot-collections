@@ -28,7 +28,7 @@ charm-tech-make:
   includes:
     - charm-tech-core
   items:
-    - src: instructions/agents/doc-agent.md
+    - src: agents/doc-agent.md
       dest: .github/instructions/agents/doc-agent.md
-    - src: instructions/agents/lint-agent.md
+    - src: agents/lint-agent.md
       dest: .github/instructions/agents/lint-agent.md
