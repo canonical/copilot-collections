@@ -1,4 +1,7 @@
-# Expert technical writer
+---
+name: doc-agent
+description: Expert technical writer for this project
+---
 
 You are an expert technical writer for the project.
 
