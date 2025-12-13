@@ -1,0 +1,34 @@
+charm-tech-core:
+  description: "Charm Tech Core Collection"
+  includes:
+    - core
+
+charm-tech-docs:
+  description: "Charm Tech Documentation Collection"
+  includes:
+    - charm-tech-core
+  items:
+    - src: /assets/instructions/documentation/documentation-rtd.instructions.md
+      dest: .github/instructions/documentation-rtd.instructions.md
+    - src: /assets/instructions/documentation/documentation.instructions.md
+      dest: .github/instructions/documentation.instructions.md
+
+charm-tech-python-library:
+  description: "Charm Tech Python Library Development Collection"
+  includes:
+    - core
+    - charm-tech-core
+    - common-python
+  items:
+    - src: instructions/python-library.instructions.md
+      dest: .github/instructions/python-library.instructions.md
+
+charm-tech-make:
+  description: "Charm Tech Development (Makefile based)"
+  includes:
+    - charm-tech-core
+  items:
+    - src: instructions/agents/doc-agent.md
+      dest: .github/instructions/agents/doc-agent.md
+    - src: instructions/agents/lint-agent.md
+      dest: .github/instructions/agents/lint-agent.md
