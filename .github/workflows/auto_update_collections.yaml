@@ -7,6 +7,8 @@ on:
         default: ".copilot-collections.yaml"
         type: string
 
+permissions: {}
+
 jobs:
   update:
     runs-on: ubuntu-latest
@@ -16,22 +18,31 @@ jobs:
     steps:
       - name: Checkout Consumer Repo
         uses: actions/checkout@v6.0.1
+        with:
+          persist-credentials: false
 
       - name: Get Target Version
         id: config
-        uses: mikefarah/yq@v4.49.2
-        with:
-          cmd: echo "CURRENT_VERSION=$(yq '.copilot.version' ${{ inputs.config_file }})" >> $GITHUB_OUTPUT
+        env:
+          CONFIG_FILE: ${{ inputs.config_file }}
+        run: |
+          # Install yq if not available
+          if ! command -v yq &> /dev/null; then
+            sudo snap install yq
+          fi
+          CURRENT_VERSION=$(yq '.copilot.version' "$CONFIG_FILE")
+          echo "CURRENT_VERSION=$CURRENT_VERSION" >> $GITHUB_OUTPUT
 
       - name: Check Latest Toolkit Release
         id: upstream
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CURRENT_VERSION: ${{ steps.config.outputs.CURRENT_VERSION }}
         run: |
           LATEST=$(gh release view --repo canonical/copilot-collections --json tagName --jq .tagName)
           
           # Compare LATEST vs CURRENT
-          if [ "$LATEST" == "${{ steps.config.outputs.CURRENT_VERSION }}" ]; then
+          if [ "$LATEST" == "$CURRENT_VERSION" ]; then
             echo "UPDATE_NEEDED=false" >> $GITHUB_OUTPUT
           else
             echo "UPDATE_NEEDED=true" >> $GITHUB_OUTPUT
@@ -45,22 +56,26 @@ jobs:
           repository: canonical/copilot-collections
           ref: ${{ steps.upstream.outputs.LATEST_VERSION }}
           path: toolkit-temp
+          persist-credentials: false
 
       - name: Run Update Script
         if: steps.upstream.outputs.UPDATE_NEEDED == 'true'
+        env:
+          LATEST_VERSION: ${{ steps.upstream.outputs.LATEST_VERSION }}
+          CONFIG_FILE: ${{ inputs.config_file }}
         run: |
-          yq -i ".copilot.version = \"${{ steps.upstream.outputs.LATEST_VERSION }}\"" ${{ inputs.config_file }}
+          yq -i ".copilot.version = \"$LATEST_VERSION\"" "$CONFIG_FILE"
 
           chmod +x toolkit-temp/scripts/install_collections.sh
           ./toolkit-temp/scripts/install_collections.sh \
-            "${{ inputs.config_file }}" \
+            "$CONFIG_FILE" \
             "toolkit-temp"
 
           rm -rf toolkit-temp
 
       - name: Create Pull Request
         if: steps.upstream.outputs.UPDATE_NEEDED == 'true'
-        uses: canonical/create-pull-request@main
+        uses: canonical/create-pull-request@6b53f317c9556693d19beaa5651cb8c8843809e5 # v1.0.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "chore: update Copilot collections to ${{ steps.upstream.outputs.LATEST_VERSION }}"
