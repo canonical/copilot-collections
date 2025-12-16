@@ -1,3 +1,7 @@
+---
+applyTo: "**/*"
+---
+
 # Agent instructions for Charm Tech Python library development
 
 ## Project Overview
