@@ -3,3 +3,6 @@
 
 # Platform Engineering specific collection
 /groups/platform-engineering/       @canonical/platform-engineering
+
+# Charm Tech specific collection
+/groups/charm-tech/                 @canonical/charm-tech
