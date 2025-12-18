@@ -1,6 +1,6 @@
 ---
 description: 'Core guidelines for automated release notes process.'
-applyTo: 'docs/**/*.md'
+applyTo: 'docs/release-notes/artifacts/**'
 ---
 
 # Release notes instructions for GitHub Copilot
@@ -47,6 +47,8 @@ The final Markdown documentation is generated automatically when the release def
 
 ## Change artifacts
 
+The change artifact filename should be formatted like `CYCLE_SLUG.yaml`, where `CYCLE` represents the cycle in which the change occurred (e.g. `2604`), and `SLUG` represents a unique identifier that briefly summarizes the change. For example, a change artifact summarizing a new feature in the `2604` cycle should be named `2604_new_feature.yaml`.
+
 The `changes` key contains the following values:
 
 * `title`: This value is typically be used to define headers for the change. For bug fixes, this value is be used as the description of the entry. 
@@ -56,6 +58,8 @@ The `changes` key contains the following values:
 * `urls`: Relevant URLs for the change. `urls.pr` is an array containing one or more links to the associated PR(s), `urls.related_doc` is an optional link to relevant documentation, and `urls.related_issue` is an optional link to a relevant GitHub issue.
 * `visibility`: This value determines whether the change is public or internal. Accepted values (that the tool will recognize) are `public` (default), `internal`, and `hidden`.
 * `highlight`: This boolean determines whether the change is mentioned in the Introduction of the release notes.
+
+Feature development split over multiple PRs should be described in a single change artifact, with links to all associated PRs added into the artifact under the key `urls.pr`.
 
 ### Style considerations
 
