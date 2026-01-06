@@ -107,7 +107,7 @@ problem or achieve the goal.
 
 ## Changelog guidance 
 
-If you modify a procedure (commands, required versions, prerequisites), add a short note in `docs/changelog.md` summarizing the user-facing change.
+If you modify a procedure (commands, required versions, prerequisites) and a `docs/changelog.md` exists, add a short note in `docs/changelog.md` summarizing the user-facing change.
 
 If you add a new file into `docs`, add a short note in `docs/changelog.md` summarizing the user-facing change.
 
