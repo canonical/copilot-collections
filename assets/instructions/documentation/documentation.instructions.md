@@ -13,12 +13,12 @@ This file provides general guidance for reviewing documentation.
 
 This section outlines the absolute order of operations. These rules have the highest priority and must not be violated.
 
-1. **Provide suggestions, not solutions**: Whenever possible, do not generate the documentation on behalf of the user. Focus on asking questions, providing suggestions, and reviewing pre-existing files.
+1. **Provide suggestions, not solutions**: Whenever possible, do not generate the documentation on behalf of the user. Focus on asking questions, providing suggestions, and reviewing pre-existing files. If you want to make changes, ask for validation before proceeding with any changes.
 2. **Adherence to Philosophy**: In the absence of a direct user directive or the need for factual verification, all other rules below regarding interaction and modification must be followed.
 
 ## General Interaction & Philosophy
 
-- **Text on Request Only**: Your default response should be a clear, natural language explanation. Do NOT provide new files or content unless directly requested.
+- **Text on Request Only**: Your default response should be a clear, natural language explanation. Do NOT provide new files or content unless directly requested, and ask for validation before making any changes to the code base.
 - **Direct and Concise**: Answers must be precise, to the point, and free from unnecessary filler or verbose explanations. Get straight to the solution without "beating around the bush".
 - **Explain the "Why"**: Don't just provide an answer; briefly explain the reasoning behind it. Why is this suggestion clearer, more concise, or easier to understand?
 
@@ -94,17 +94,23 @@ problem or achieve the goal.
 ## Style guide pointers
 
 - **Spelling**: Use US English for spelling suggestions.
-- **Headings**: Use sentence case for headings. Avoid punctuation in headings. Do not skip levels in heading hierarchy.
+- **Headings**: Use sentence case for headings. Avoid punctuation in headings. Do not skip levels in heading hierarchy. Do not use consecutive headings without intervening text, and suggest removing headings that don't enhance the understanding. Don't overuse `code` styling in headings.
 - **Code examples**: Do not use prompt marks (for example, `$` or `#`) in code examples. Do not use comments in code examples; instead, put any comments directly into the text. Whenever possible, split up multiple commands into separate code blocks and provide explanations in between the code blocks. Use Git-flavoured Markdown with fenced code blocks (```) and command examples as shell blocks.
+- **Lists**: Only use numbered lists when there is an inherent order to the items.
+- **Latin words and phrases**: We can't assume the reader is familiar with Latin words and phrases. Words such as "etc.", "i.e.", "e.g.", "per", "versus", and "via" should be avoided. 
 
 ## Small-edit rules for AI agents
 
 - Avoid describing tasks as "easy" or "simple".
 - Preserve existing link targets and code samples formatting. If you change any heading filename or path, update all relative links in `docs/` accordingly.
+- Demonstrative pronouns ("this", "these", "those", and "that") should be accompanied by the target noun when there's a risk of ambiguity in the paragraph. An isolated demonstrative pronoun can be used if there's no chance of ambiguity. In cases where a paragraph describes multiple ideas, avoid isolated demonstrative pronouns and be as specific as possible.
 
 ## Changelog guidance 
 
-If you modify a procedure (commands, required versions, prerequisites), add a short note in `docs/changelog.md` summarizing the user-facing change.
+If you modify a procedure (commands, required versions, prerequisites) and a `docs/changelog.md` exists, add a short note in `docs/changelog.md` summarizing the user-facing change.
 
 If you add a new file into `docs`, add a short note in `docs/changelog.md` summarizing the user-facing change.
+
+If there are no user-relevant changes, then the changelog does not need to be updated.
+
 

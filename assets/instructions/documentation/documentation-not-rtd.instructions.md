@@ -15,7 +15,7 @@ The CI expects documentation to pass `vale` and `lychee`; address reported issue
 
 ### Linting & checks (how to run)
 
-Run the docs linters via the top-level Makefile targets: `make docs-check` (this runs `vale` and `lychee`).
+Run the docs linters using the top-level Makefile targets: `make docs-check` (this runs `vale` and `lychee`).
 
 ## Small-edit rules for AI agents
 
