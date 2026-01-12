@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright 2025 Canonical Ltd.
+# Copyright 6 Canonical Ltd.
 # See LICENSE file for licensing details.
 
 set -e
