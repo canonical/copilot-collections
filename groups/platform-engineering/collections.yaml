@@ -13,6 +13,8 @@ pfe-docs:
   items:
     - src: /assets/instructions/documentation/documentation-rtd.instructions.md
       dest: .github/instructions/documentation-rtd.instructions.md
+    - src: /assets/skills/documentation-reviewer
+      dest: .github/skills/documentation-reviewer/
 
 pfe-docs-not-rtd:
   description: "Platform Engineering non-RTD Documentation Collection"
