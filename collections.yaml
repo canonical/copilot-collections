@@ -4,6 +4,9 @@
 # ==========================================
 # 1. Base Definitions
 # ==========================================
+# NOTE: Skills are directories containing SKILL.md and must use directory-to-directory mapping.
+#       Destination should be .github/skills/<skill-name>/ to follow conventions.
+
 core:
   description: "Core assets comment to all"
   items:
@@ -17,6 +20,14 @@ common-python:
   items:
     - src: assets/instructions/python/code-commenting.instructions.md
       dest: .github/instructions/python-code-commenting.instructions.md
+
+common-documentation:
+  description: "Documentation standards and review skill"
+  items:
+    - src: assets/instructions/documentation/documentation.instructions.md
+      dest: .github/instructions/documentation.instructions.md
+    - src: assets/skills/documentation-reviewer
+      dest: .github/skills/documentation-reviewer/
 
 # ==========================================
 # 2. Framework Specifics 

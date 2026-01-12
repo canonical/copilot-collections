@@ -7,17 +7,18 @@
 
 **Centralized context management for GitHub Copilot across the Canonical ecosystem.**
 
-This repository acts as a "Toolkit" to distribute standardized Copilot Custom Instructions, Prompts, and Agent definitions. It allows individual repositories to "subscribe" to specific sets of instructions (e.g., Python standards, Juju/Ops Framework patterns) and keep them synchronized automatically.
+This repository acts as a "Toolkit" to distribute standardized Copilot Custom Instructions, Prompts, Agents and Skills. It allows individual repositories to "subscribe" to specific sets of assets (e.g., Python standards, Juju/Ops Framework patterns) and keep them synchronized automatically.
 
 ## **What are Collections?**
 
-A **Collection** is a logical group of markdown files (instructions, prompts) defined in `collections.yaml.`
+A **Collection** is a logical group of markdown files (instructions, prompts, agents, and skills) defined in `collections.yaml.`
 
 Instead of copying specific instructions into 50 different repositories manually, the consuming repository defines a configuration file listing the collections it needs.
 
 **Available Collections (Examples):**
 
 * common-python: Standard Python coding style.  
+* common-documentation: Documentation standards with review skill.
 * charm-python: Includes common-python + Juju Ops Framework specifics.  
 * pfe-charms: Platform Engineering specific collection.
 
@@ -48,7 +49,7 @@ You can sync the instructions immediately to your local machine to verify them.
 curl -sL https://raw.githubusercontent.com/canonical/copilot-collections/main/scripts/local_sync.sh | bash
 ```
 
-**Note:** This will generate files in .github/instructions/ and .github/prompts/. Do not edit these files manually; they will be overwritten.
+**Note:** This will generate files in .github/instructions/, .github/prompts/, and .github/skills/. Do not edit these files manually; they will be overwritten.
 
 ### **3. Configure Auto-Updates (CI)**
 
@@ -83,6 +84,10 @@ We highly encourage you to explore it for further inspiration, including advance
 ### **Directory Structure**
 
 * assets/: Raw markdown files (Core assets).
+  * instructions/: Custom instruction files.
+  * prompts/: Prompt files.
+  * agents/: Agent files.
+  * skills/: Agent skill directories (each containing SKILL.md).
 * collections.yaml: Core definitions.
 * groups/: Team specific collections.
   * <team-name>/: Folder for team assets.
@@ -101,6 +106,26 @@ We highly encourage you to explore it for further inspiration, including advance
    * Merge changes to main.
    * Create a new GitHub Release (e.g., v1.1.0).
    * *Consumer repos will pick this up automatically on their next scheduled run.*
+
+### **How to add a new Agent Skill**
+
+1. **Create the directory:** Create `assets/skills/<skill-name>/` (for core) or `groups/<team>/skills/<skill-name>/` (for teams).
+2. **Add SKILL.md:** Create the skill definition file with required YAML frontmatter:
+   ```markdown
+   ---
+   name: skill-name
+   description: What the skill does
+   ---
+   # Skill content here
+   ```
+3. **Update Manifest:** Edit `collections.yaml` and add to a collection's items:
+   ```yaml
+   - src: assets/skills/<skill-name>
+     dest: .github/skills/<skill-name>/
+   ```
+   **Important:** Skills are directories, so `dest` must end with `/`.
+4. **Validate:** Run `./scripts/validate_collections.sh .`
+5. **Release:** Follow the same release process as instructions.
 
 ### **Group Collections**
 

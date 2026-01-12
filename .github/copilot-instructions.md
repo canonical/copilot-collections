@@ -7,6 +7,7 @@ This repository is the "Toolkit" for centralized context management for GitHub C
 - **Type**: Utility/Toolkit.
 - **Languages**: Bash (logic), YAML (configuration), Markdown (content).
 - **Core Function**: Individual repositories define a `.copilot-collections.yaml` file listing "Collections" they need. This toolkit's scripts (`install_collections.sh`) parse that config and sync the corresponding Markdown files from `assets/` or `groups/<team>/` into the consumer's `.github/` directory.
+- **Supported Artifacts**: Custom Instructions, Prompts, and Agent Skills.
 - **Key Tools**: `yq` (YAML processing), `shellcheck` (Script linting).
 
 ## Project Layout
@@ -14,6 +15,10 @@ This repository is the "Toolkit" for centralized context management for GitHub C
 ### Directories
 - **`collections.yaml`**: The ROOT configuration file defining "Core" collections.
 - **`assets/`**: Contains the source Markdown files for core collections.
+    - `instructions/`: Custom instruction files organized by category.
+    - `prompts/`: Prompt template files.
+    - `agents/`: Agent definition files.
+    - `skills/`: Agent skill directories (each containing SKILL.md with YAML frontmatter).
 - **`groups/`**: Contains team-specific collections.
     - Each subfolder (e.g., `groups/charm-tech/`) acts as a mini-repo with its own `collections.yaml` and asset folder.
 - **`scripts/`**: Contains the logic binaries.
@@ -91,6 +96,25 @@ yq eval . collections.yaml > /dev/null
 2.  Add `groups/<team-name>/collections.yaml` following the schema.
 3.  Add assets in that folder.
 4.  Run validation.
+
+### Adding an Agent Skill
+1.  **Create Directory**: Create `assets/skills/<skill-name>/` (or `groups/<team>/skills/<skill-name>/` for team skills).
+2.  **Create SKILL.md**: Add the skill definition with required YAML frontmatter:
+    ```markdown
+    ---
+    name: skill-name
+    description: Brief description of what the skill does
+    ---
+    # Skill Instructions
+    Detailed content here...
+    ```
+3.  **Update Manifest**: Edit `collections.yaml` and add to a collection's `items`:
+    ```yaml
+    - src: assets/skills/<skill-name>
+      dest: .github/skills/<skill-name>/
+    ```
+    **Critical**: Since skills are directories, `dest` MUST end with `/` or validation will fail.
+4.  **Validate**: Run `./scripts/validate_collections.sh .`.
 
 ## CI/CD 
 The `Test Toolkit` workflow (`.github/workflows/test-toolkit.yaml`) runs automatically on PRs. It executes the linting, validation, and test steps listed above. If your local `./scripts/validate_collections.sh .` passes, CI should pass.
