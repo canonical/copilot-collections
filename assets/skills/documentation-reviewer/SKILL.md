@@ -36,6 +36,7 @@ Perform the following checks based on the identified category:
     *   [ ] Check that it is prescriptive (steps) rather than descriptive (theory).
 *   **For All Files**:
     *   [ ] Check that content is not mixed (e.g., explanation buried in a valid how-to).
+    *   [ ] Check that content is referenced in the appropriate table of contents (e.g., in the `Contents` section of `docs/index.md` or in the relevant `toctree` directive).
 
 ### 3. Style & Syntax Scan
 Scan the text for these specific violations:
