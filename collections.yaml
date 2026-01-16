@@ -14,6 +14,14 @@ core:
       dest: .github/instructions/instructions.instructions.md
     - src: assets/prompts/repo-bootstrap.prompt.md
       dest: .github/prompts/repo-bootstrap.prompt.md
+    - src: assets/agents/doc-reviewer.agent.md
+      dest: .github/agents/doc-reviewer.agent.md
+    - src: assets/agents/doc-style-guide.md
+      dest: .github/agents/doc-style-guide.md
+    - src: assets/agents/go-reviewer.agent.md
+      dest: .github/agents/go-reviewer.agent.md
+    - src: assets/agents/go-style-guide.md
+      dest: .github/agents/go-style-guide.md
 
 common-python:
   description: "Standard Python guidelines"
