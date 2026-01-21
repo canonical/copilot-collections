@@ -26,6 +26,8 @@ Instead of copying specific instructions into 50 different repositories manually
 
 To add Copilot collections to your repository, follow these three steps.
 
+**Note:** These steps assume that if the `yq` tool is already installed, it was installed via snap not via apt. The install scripts rely on behavior from the snap version of `yq`. The apt offering of `yq` doesn't have the behavior the scripts expect, and will fail. If `yq` is not installed, the script will automatically install it via snap.
+
 ### **1. Create the Configuration**
 
 Create a file named `.copilot-collections.yaml` in the root of your repository.
