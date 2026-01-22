@@ -52,4 +52,4 @@ Adhere to the following conventions:
 - Do not change `docs/index.md` structure without updating the `toctree` directive — keep the order and paths in sync with files under `docs/`.
 - When adding a new page in one of the folders of `docs`, add a short entry in the landing page if there's a landing page in the folder (e.g., if adding a new how-to guide, update the landing page `docs/how-to/landing-page.md`). 
 - When adding new page, update the `toctree` directive in the relevant index page (`docs/index.md` for a top-level page, and `docs/*/index.md` for a new page in a specific folder).
-
+- When moving or removing a page, you MUST add a redirect in `docs/conf.py` to prevent broken links and CI errors. Update the `redirects` dictionary mapping the old path (relative to `docs/` and without extension) to the new path.
