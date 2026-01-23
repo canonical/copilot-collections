@@ -11,7 +11,8 @@ BLUE='\033[0;34m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
-CONFIG_FILE=".copilot-collections.yaml"
+# Default locations to search (in order of preference)
+CONFIG_LOCATIONS=(".github/.copilot-collections.yaml" ".copilot-collections.yaml")
 TOOLKIT_REPO="https://github.com/canonical/copilot-collections.git"
 TEMP_DIR="$(pwd)/copilot-toolkit-temp"
 
@@ -28,11 +29,32 @@ if ! command -v yq &> /dev/null; then
     exit 1
 fi
 
-if [ ! -f "$CONFIG_FILE" ]; then
-    echo -e "${RED}❌ Error: Configuration file '$CONFIG_FILE' not found in current directory.${NC}"
-    echo "   Are you in the root of your project?"
+# Allow override via environment variable or command-line argument
+if [ -n "$1" ]; then
+    CONFIG_FILE="$1"
+elif [ -n "$COPILOT_CONFIG_FILE" ]; then
+    CONFIG_FILE="$COPILOT_CONFIG_FILE"
+else
+    # Search through default locations
+    CONFIG_FILE=""
+    for loc in "${CONFIG_LOCATIONS[@]}"; do
+        if [ -f "$loc" ]; then
+            CONFIG_FILE="$loc"
+            break
+        fi
+    done
+fi
+
+if [ -z "$CONFIG_FILE" ] || [ ! -f "$CONFIG_FILE" ]; then
+    echo -e "${RED}❌ Error: Configuration file not found.${NC}"
+    echo "   Searched in: ${CONFIG_LOCATIONS[*]}"
+    echo "   You can also specify a custom location via:"
+    echo "     - Command-line argument: $0 <path-to-config>"
+    echo "     - Environment variable: COPILOT_CONFIG_FILE=<path>"
     exit 1
 fi
+
+echo -e "${BLUE}📄 Using config:${NC} $CONFIG_FILE"
 
 VERSION=$(yq '.copilot.version' "$CONFIG_FILE")
 if [ "$VERSION" == "null" ] || [ -z "$VERSION" ]; then
