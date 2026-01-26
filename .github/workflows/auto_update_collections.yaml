@@ -3,8 +3,8 @@ on:
   workflow_call:
     inputs:
       config_file:
-        description: "Path to configuration file"
-        default: ".copilot-collections.yaml"
+        description: "Path to configuration file (searches .github/ then root if not specified)"
+        default: ""
         type: string
 
 permissions: {}
@@ -21,10 +21,44 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Find Config File
+        id: find-config
+        env:
+          INPUT_CONFIG_FILE: ${{ inputs.config_file }}
+        run: |
+          # Default locations to search (in order of preference)
+          CONFIG_LOCATIONS=(".github/.copilot-collections.yaml" ".copilot-collections.yaml")
+
+          if [ -n "$INPUT_CONFIG_FILE" ]; then
+            # User provided explicit path
+            if [ ! -f "$INPUT_CONFIG_FILE" ]; then
+              echo "::error::Configuration file not found: $INPUT_CONFIG_FILE"
+              exit 1
+            fi
+            CONFIG_FILE="$INPUT_CONFIG_FILE"
+          else
+            # Search through default locations
+            CONFIG_FILE=""
+            for loc in "${CONFIG_LOCATIONS[@]}"; do
+              if [ -f "$loc" ]; then
+                CONFIG_FILE="$loc"
+                break
+              fi
+            done
+
+            if [ -z "$CONFIG_FILE" ]; then
+              echo "::error::Configuration file not found. Searched in: ${CONFIG_LOCATIONS[*]}"
+              exit 1
+            fi
+          fi
+
+          echo "Using config file: $CONFIG_FILE"
+          echo "CONFIG_FILE=$CONFIG_FILE" >> $GITHUB_OUTPUT
+
       - name: Get Target Version
         id: config
         env:
-          CONFIG_FILE: ${{ inputs.config_file }}
+          CONFIG_FILE: ${{ steps.find-config.outputs.CONFIG_FILE }}
         run: |
           # Install yq if not available
           if ! command -v yq &> /dev/null; then
@@ -62,7 +96,7 @@ jobs:
         if: steps.upstream.outputs.UPDATE_NEEDED == 'true'
         env:
           LATEST_VERSION: ${{ steps.upstream.outputs.LATEST_VERSION }}
-          CONFIG_FILE: ${{ inputs.config_file }}
+          CONFIG_FILE: ${{ steps.find-config.outputs.CONFIG_FILE }}
         run: |
           yq -i ".copilot.version = \"$LATEST_VERSION\"" "$CONFIG_FILE"
 

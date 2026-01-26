@@ -30,18 +30,24 @@ To add Copilot collections to your repository, follow these three steps.
 
 ### **1. Create the Configuration**
 
-Create a file named `.copilot-collections.yaml` in the root of your repository.
+Create a file named `.copilot-collections.yaml` in the `.github` folder of your repository (recommended) or in the repository root.
 
 ```yaml
-copilot:  
-  # The version of the toolkit to use (matches a Release Tag in this repo)  
-  version: "v1.0.0"  
-    
-  # The collections you want to install  
-  collections:  
-    - charm-python  
+copilot:
+  # The version of the toolkit to use (matches a Release Tag in this repo)
+  version: "v1.0.0"
+
+  # The collections you want to install
+  collections:
+    - charm-python
     - pfe-charms
 ```
+
+**Location Preference:** The workflow and sync script will search for the config file in this order:
+1. `.github/.copilot-collections.yaml` (recommended)
+2. `.copilot-collections.yaml` (root, for backwards compatibility)
+
+You can also specify a custom location - see below for details.
 
 ### **2. Run the Initial Sync (Local)**
 
@@ -49,6 +55,15 @@ You can sync the instructions immediately to your local machine to verify them.
 
 ```bash
 curl -sL https://raw.githubusercontent.com/canonical/copilot-collections/main/scripts/local_sync.sh | bash
+```
+
+To specify a custom config file location:
+```bash
+# Via command-line argument
+curl -sL https://raw.githubusercontent.com/canonical/copilot-collections/main/scripts/local_sync.sh | bash -s -- custom/path/.copilot-collections.yaml
+
+# Via environment variable
+COPILOT_CONFIG_FILE="custom/path/.copilot-collections.yaml" curl -sL https://raw.githubusercontent.com/canonical/copilot-collections/main/scripts/local_sync.sh | bash
 ```
 
 **Note:** This will generate files in .github/instructions/, .github/prompts/, and .github/skills/. Do not edit these files manually; they will be overwritten.
@@ -60,19 +75,20 @@ To ensure your repo stays up to date when the Toolkit releases new versions, add
 **File:** `.github/workflows/copilot-collections-update.yml`
 
 ```yaml
-name: Auto-Update Copilot Instructions  
-on:  
-  schedule:  
-    - cron: '0 9 * * 1' # Run every Monday at 09:00 UTC  
+name: Auto-Update Copilot Instructions
+on:
+  schedule:
+    - cron: '0 9 * * 1' # Run every Monday at 09:00 UTC
   workflow_dispatch:
 
-jobs:  
-  check-update:  
-    # Always pin to @main to get the latest logic, but the content version is controlled by your .yaml file  
-    uses: canonical/copilot-collections/.github/workflows/auto_update_collections.yaml@main  
-    with:  
-      config_file: ".copilot-collections.yaml"  
+jobs:
+  check-update:
+    # Always pin to @main to get the latest logic, but the content version is controlled by your .yaml file
+    uses: canonical/copilot-collections/.github/workflows/auto_update_collections.yaml@main
     secrets: inherit
+    # Optionally specify a custom config file location:
+    # with:
+    #   config_file: "custom/path/.copilot-collections.yaml"
 ```
 
 ## **Inspiration & Credits**
