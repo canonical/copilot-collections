@@ -17,9 +17,11 @@ Instead of copying specific instructions into 50 different repositories manually
 
 **Available Collections (Examples):**
 
+* core: Core assets common to all repositories.
 * common-python: Standard Python coding style.  
 * common-documentation: Documentation standards with review skill.
 * charm-python: Includes common-python + Juju Ops Framework specifics.  
+* copilot-toolkit: Meta-tools for generating and managing Copilot assets (agents, skills, prompts, instructions).
 * pfe-charms: Platform Engineering specific collection.
 
 ## **Usage: Adding to a Repository**
