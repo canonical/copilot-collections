@@ -8,16 +8,16 @@
 #       Destination should be .github/skills/<skill-name>/ to follow conventions.
 
 core:
-  description: "Core assets comment to all"
+  description: "Core assets common to all repositories"
   items:
     - src: assets/instructions/common/instructions.instructions.md
       dest: .github/instructions/instructions.instructions.md
-    - src: assets/prompts/repo-bootstrap.prompt.md
-      dest: .github/prompts/repo-bootstrap.prompt.md
-    - src: assets/agents/doc-reviewer.agent.md
-      dest: .github/agents/doc-reviewer.agent.md
-    - src: assets/agents/doc-style-guide.md
-      dest: .github/agents/doc-style-guide.md
+    - src: assets/instructions/common/core-directive.instructions.md
+      dest: .github/instructions/core-directive.instructions.md
+
+common-go:
+  description: "Go development standards and reviewer agent"
+  items:
     - src: assets/agents/go-reviewer.agent.md
       dest: .github/agents/go-reviewer.agent.md
     - src: assets/agents/go-style-guide.md
