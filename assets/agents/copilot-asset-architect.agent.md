@@ -48,10 +48,65 @@ Before generating any asset, you must perform a Chain-of-Thought analysis to det
 1.  **Pre-Flight Check (MANDATORY):**
     *   Verify the specific generator skill for this asset type exists (e.g., `.github/skills/generate-agent/SKILL.md` for agents, `.github/skills/generate-instruction/SKILL.md` for instructions).
     *   If the specific generator skill does not exist, you must STOP.
-2.  **Skill Invocation:** Execute the identified Agent Skill. Do not proceed until you have successfully triggered the skill's workflow and created the needed files.
-3.  **Populate:** Populate the generated files with the appropriate content.
-    *   **CRITICAL:** Strictly adhere to the "Separation of Concerns" defined by the Skill. (e.g., templates go in `references/`, scripts in `scripts/`, logic in `SKILL.md`). Do not consolidate complex logic into a single file.
-4.  **Validate:** Ensure all validation checks are passed for the given asset type.
+
+2.  **Skill Workflow Discovery (MANDATORY):**
+    *   **READ** the generator skill's `SKILL.md` file completely before proceeding.
+    *   **IDENTIFY** if the skill provides scaffolding scripts (e.g., `scripts/scaffold_*.py`).
+    *   **IDENTIFY** if the skill provides reference templates (in `references/`).
+    *   **UNDERSTAND** the skill's defined workflow steps (numbered or phased process).
+    
+    **⚠️ CRITICAL RULE:** If scaffolding scripts exist, you MUST use them. Manual file creation is PROHIBITED when automation exists.
+
+3.  **Execute Skill Workflow (MANDATORY):**
+    Follow the skill's defined process exactly as documented in its SKILL.md:
+    
+    a. **If scaffolding scripts exist:**
+       *   **RUN** the scaffolding script with appropriate parameters (e.g., `python3 scripts/scaffold_skill.py --name <name>`).
+       *   **VERIFY** the script succeeded by checking for expected output files.
+       *   **STOP** if scaffolding fails. Do NOT manually create files as a fallback.
+    
+    b. **If templates exist in `references/`:**
+       *   **USE** these templates as the foundation for content generation.
+       *   **CONSULT** template guidance docs (e.g., `TEMPLATES.md`, `BEST_PRACTICES.md`) before writing content.
+       *   **DO NOT** create content from scratch when templates are provided.
+    
+    c. **Follow step-by-step instructions:**
+       *   If the skill defines "Step 1, Step 2, Step 3..." → execute in order.
+       *   If the skill defines checkpoints or verification steps → perform them.
+
+
+4.  **Content Population:**
+    *   Populate the generated (or scaffolded) files with actual content.
+    *   **CRITICAL:** Strictly adhere to the "Separation of Concerns" defined by the Skill:
+        *   Templates → `references/` or `assets/`
+        *   Scripts → `scripts/`
+        *   Core logic → `SKILL.md` or `.agent.md` or `.md` (depending on asset type)
+    *   **DO NOT** consolidate complex logic into a single file when the skill structure separates it.
+    *   **DELETE** example/placeholder files that were scaffolded but not needed.
+
+5.  **Validation (MANDATORY):**
+    a. **If validation scripts exist:**
+       *   **RUN** the skill's validation script (e.g., `python3 scripts/validate_skill.py --path <path>`).
+       *   **READ** validation output carefully.
+       *   **FIX** any critical errors before proceeding.
+       *   **REPORT** validation results to the user.
+    
+    b. **Manual validation checklist:**
+       *   ✅ YAML frontmatter is valid and includes all required fields
+       *   ✅ File naming follows conventions (from skill's SPECIFICATION.md if available)
+       *   ✅ Directory structure matches skill requirements
+       *   ✅ No example/placeholder content remains
+       *   ✅ All referenced files (scripts, templates) actually exist
+
+6.  **Workflow Compliance Verification:**
+    Before reporting completion, confirm:
+    *   ✅ You READ the skill's SKILL.md
+    *   ✅ You USED scaffolding scripts (if they existed)
+    *   ✅ You USED templates/references (if they existed)
+    *   ✅ You RAN validation scripts (if they existed)
+    *   ✅ You FOLLOWED the skill's documented workflow
+    
+    **If you manually created files when scripts existed, you have FAILED compliance.**
 </triage_and_generation>
 
 <security_guardrails>

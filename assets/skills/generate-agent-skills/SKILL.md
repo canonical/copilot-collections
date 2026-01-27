@@ -12,6 +12,28 @@ metadata:
 
 This skill guides you through creating high-quality Agent Skills following a proven 6-step process.
 
+---
+
+## 🚨 **CRITICAL WORKFLOW REQUIREMENTS** 🚨
+
+**Before you begin, understand these NON-NEGOTIABLE rules:**
+
+1. **You MUST run `scripts/scaffold_skill.py` in Step 3.**  
+   Manual file creation is PROHIBITED. The scaffolding script ensures consistency.
+
+2. **You MUST use the generated templates.**  
+   After scaffolding, templates exist in `references/`. Use them as your foundation.
+
+3. **You MUST run `scripts/validate_skill.py` in Step 5.**  
+   Validation catches errors before they propagate.
+
+4. **You MUST follow all 6 steps in order.**  
+   Skipping steps leads to non-compliant or broken skills.
+
+**If you bypass scaffolding scripts, you have FAILED this workflow.**
+
+---
+
 ## Step 1: Understanding the Skill
 
 **Before scaffolding**, clearly understand how the skill will be used through concrete examples.
@@ -97,7 +119,9 @@ Analyze the concrete examples from Step 1 to identify what **reusable resources*
 
 ## Step 3: Skill Scaffolding
 
-Execute the scaffolding script to create the skill structure.
+**⚠️ MANDATORY STEP - DO NOT SKIP ⚠️**
+
+You MUST execute the scaffolding script. Manual file creation is PROHIBITED.
 
 ### Command:
 ```bash
@@ -115,6 +139,26 @@ python3 scripts/scaffold_skill.py --name <skill-name>
 - ✅ Create example files to demonstrate resource organization
 
 **Note:** The script auto-detects `.github/skills` from git root. Naming must match regex: `^[a-z0-9][a-z0-9-]*[a-z0-9]$`
+
+---
+
+### ✅ **Verification Checkpoint**
+
+After running the scaffolding script, confirm these files exist:
+```bash
+ls -la .github/skills/<skill-name>/
+```
+
+**Expected output:**
+- `SKILL.md` (with "Structuring This Skill" guidance section)
+- `scripts/example.py` (placeholder script)
+- `references/example_reference.md` (placeholder reference)
+- `assets/README.md` (if using default mode)
+
+**🛑 STOP CONDITIONS:**
+- If `SKILL.md` does NOT exist → Scaffolding failed, do NOT proceed
+- If you created files manually → You have violated the workflow, DELETE and re-run script
+- If the script reported errors → Fix errors before proceeding to Step 4
 
 ---
 
@@ -187,11 +231,18 @@ Follow the structuring guidance embedded in the generated SKILL.md template.
 
 ## Step 5: Validation
 
+**⚠️ MANDATORY STEP - DO NOT SKIP ⚠️**
+
 Run the validation script to ensure specification compliance.
 
 ### Command:
 ```bash
 python3 scripts/validate_skill.py --path <path-to-skill-root>
+```
+
+**Example:**
+```bash
+python3 scripts/validate_skill.py --path .github/skills/diagnose-ci-failure
 ```
 
 ### What it checks:
@@ -207,6 +258,29 @@ python3 scripts/validate_skill.py --path <path-to-skill-root>
 - Warnings are informational (acceptable for simple skills)
 
 **When valid:** Proceed to testing!
+
+---
+
+### ✅ **Post-Validation Checklist**
+
+Before proceeding to Step 6, confirm:
+
+**Workflow Compliance:**
+- [ ] I RAN `scripts/scaffold_skill.py` (Step 3)
+- [ ] I USED the generated templates from scaffolding
+- [ ] I CONSULTED `references/TEMPLATES.md` and `references/BEST_PRACTICES.md` (Step 4)
+- [ ] I RAN `scripts/validate_skill.py` (Step 5)
+- [ ] Validation script reported SUCCESS (no critical errors)
+
+**Content Quality:**
+- [ ] YAML frontmatter includes `name` and `description`
+- [ ] Description is high-entropy and keyword-rich
+- [ ] No "Structuring This Skill" guidance section remains in SKILL.md
+- [ ] Example files (`example.py`, `example_reference.md`) are deleted or replaced
+- [ ] Scripts are in `scripts/`, references in `references/`, templates in `assets/`
+
+**🛑 STOP CONDITION:**
+If you did NOT run the scaffolding script or manually created files, STOP and re-do from Step 3.
 
 ---
 
