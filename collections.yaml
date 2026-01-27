@@ -8,7 +8,7 @@
 #       Destination should be .github/skills/<skill-name>/ to follow conventions.
 
 core:
-  description: "Core assets comment to all"
+  description: "Core assets common to all"
   items:
     - src: assets/instructions/common/instructions.instructions.md
       dest: .github/instructions/instructions.instructions.md
@@ -36,6 +36,22 @@ common-documentation:
       dest: .github/instructions/documentation.instructions.md
     - src: assets/skills/documentation-reviewer
       dest: .github/skills/documentation-reviewer/
+
+copilot-toolkit:
+  description: "Meta-tools for generating and managing Copilot assets (agents, skills, prompts, instructions)"
+  items:
+    - src: assets/agents/copilot-asset-architect.agent.md
+      dest: .github/agents/copilot-asset-architect.agent.md
+    - src: assets/skills/generate-agent
+      dest: .github/skills/generate-agent/
+    - src: assets/skills/generate-agent-skills
+      dest: .github/skills/generate-agent-skills/
+    - src: assets/skills/generate-path-instructions
+      dest: .github/skills/generate-path-instructions/
+    - src: assets/skills/generate-prompt
+      dest: .github/skills/generate-prompt/
+    - src: assets/skills/generate-repo-instructions
+      dest: .github/skills/generate-repo-instructions/
 
 # ==========================================
 # 2. Framework Specifics 
