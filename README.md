@@ -160,7 +160,7 @@ Collection names are global. To avoid collisions, **prefix your collection names
 
 ### **Linting Markdown Files**
 
-The repository includes a markdown linter to ensure consistent formatting across all instruction, prompt, agent, and skill files.
+The repository includes a Markdown linter to ensure consistent formatting across all instruction, prompt, agent, and skill files.
 
 **Run the linter:**
 

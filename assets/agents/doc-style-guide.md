@@ -226,11 +226,25 @@ In practice, simpler paragraphs may use just Topic-Example or Topic-Development,
 
 **Words and phrases to avoid**
 
-Avoid clichés, violent metaphors, and jargon:
+Avoid clichés, violent metaphors, and jargon. Replace them with simpler alternatives:
 
-- Clichés: `allow`, `the ability to` → `can`, `is able to` → `can`, `in order to` → `to`, `going forward`, `not only...but also`
-- Violent metaphors: `eliminate`, `execute`, `terminate`, `kill` → `stop`, `remove`, `destroy`
-- Jargon: `leverage`, `ecosystem`, `form factor`, `use case`, `end user` → `user`, `next level`, `harness`
+- **Clichés**
+  - `the ability to`, `is able to` → `can`
+  - `in order to` → `to`
+  - Avoid: `allow`, `going forward`, `not only...but also`
+
+- **Violent metaphors**
+  - `kill`, `terminate` → `stop`
+  - `execute` → `run`
+  - `eliminate` → `remove`
+
+- **Jargon**
+  - `leverage` → `use`
+  - `end user` → `user`
+  - `use case` → `example` or `scenario`
+  - Avoid: `ecosystem`, `form factor`, `harness`, `next level`
+
+This is not an exhaustive list; use your best judgment.
 
 **Latin words and phrases**
 
@@ -246,6 +260,8 @@ Replace Latin phrases with English equivalents:
 - `vice versa` → `the reverse`, `the other way around`
 - `circa` → `around`, `near`
 - `cf.` → `refer to`
+
+This is not an exhaustive list; use your best judgment.
 
 **Demonstrative pronouns**
 
@@ -270,6 +286,7 @@ Common technology terms:
 - `backup` (noun), `back up` (verb)
 - `login` (noun), `log in` (verb)
 - `space-separated`, `comma-delimited`
+- `open source` (noun), `open-source` (adjective)
 
 Examples:
 - Good: `color`, `center`, `analyze`, `behavior`
