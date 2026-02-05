@@ -1,4 +1,5 @@
 {
+    "_comment": "Copyright 2026 Canonical Ltd. See LICENSE file for licensing details.",
     "plugins": {
         "selectively_enable_rules": true,
         "heading-style": {
