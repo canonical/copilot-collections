@@ -22,15 +22,11 @@ venv:
 		echo "Creating virtual environment with uv..."; \
 		uv venv $(VENVDIR); \
 		echo "Virtual environment created at $(VENVDIR)"; \
-	else \
-		echo "Virtual environment already exists at $(VENVDIR)"; \
 	fi
 
 # Install pymarkdownlnt
 pymarkdownlnt-install: venv
-	@echo "Installing pymarkdownlnt..."
-	@uv pip install --python $(VENVDIR) pymarkdownlnt
-	@echo "pymarkdownlnt installed"
+	@uv pip install --python $(VENVDIR) pymarkdownlnt --quiet 2>&1 | grep -v "Audited" || true
 
 # Run markdown linter
 lint-md: pymarkdownlnt-install

@@ -157,3 +157,22 @@ Collection names are global. To avoid collisions, **prefix your collection names
 **Path Resolution:**
 *   **Relative Paths**: `src: instructions/guide.md` -> Resolves to `groups/<team>/instructions/guide.md`.
 *   **Root Paths**: `src: /assets/common/logo.png` -> Resolves to `assets/common/logo.png` (Repository Root).
+
+### **Linting Markdown Files**
+
+The repository includes a markdown linter to ensure consistent formatting across all instruction, prompt, agent, and skill files.
+
+**Run the linter:**
+
+```bash
+# Lint all files
+make lint-md
+
+# Lint specific directory
+make lint-md SOURCEDIR=assets/agents
+make lint-md SOURCEDIR=assets/instructions
+```
+
+**Requirements:** The linter uses `uv` and `pymarkdownlnt`. The Makefile automatically sets up a virtual environment and installs dependencies on first run.
+
+**Configuration:** Linting rules are defined in `.pymarkdown.json` at the repository root.
