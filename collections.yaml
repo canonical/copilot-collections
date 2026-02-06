@@ -76,3 +76,21 @@ charm-python:
     - core
     - common-python
   items: []
+
+documentation-generic:
+  description: "Generic Documentation standards"
+  includes:
+    - core
+    - common-documentation
+  items:
+    - src: assets/instructions/documentation/documentation.instructions.md
+      dest: .github/instructions/documentation.instructions.md
+
+documentation-rtd:
+  description: "Read the Docs Specific Documentation"
+  includes:
+    - core
+    - common-documentation
+  items:
+    - src: assets/instructions/documentation/documentation-rtd.instructions.md
+      dest: .github/instructions/documentation-rtd.instructions.md
