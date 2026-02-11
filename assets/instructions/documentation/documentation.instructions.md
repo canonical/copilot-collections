@@ -30,7 +30,7 @@ The top-level `docs` directory should contain an overview or home page called `i
 
 The rest of the documentation follows the Diataxis framework consisting of four categories of documentation:
 
-1. **Tutorials**: A practice lesson that walks a user through a learning experience. Tutorials should be placed in the `docs/tutorial` directory, but sometimes they're placed in the top-level `docs` direcotry.
+1. **Tutorials**: A practice lesson that walks a user through a learning experience. Tutorials should be placed in the `docs/tutorial` directory, but sometimes they're placed in the top-level `docs` directory.
 2. **How-to guides**: Addresses real-world goals or problems by providing practical directions. How-to guides should be placed in the `docs/how-to` directory.
 3. **Reference**: Contains technical descriptions of theoretical knowledge. Reference documents should be placed in the `docs/reference` directory.
 4. **Explanation**: Provides context and background on topics for the user to understand the bigger picture. Explanation documents should be placed in the `docs/explanation` directory.
@@ -58,7 +58,7 @@ The tutorial should contain the following pieces:
   provide information on the supported architecture(s) like AMD64 or ARM64.
   Also include additional information if the
   tutorial will require significant resources (CPU, RAM, or disk space). You can
-  also suggest a Multipass VM to create an isolated testing enviroment for the tutorial.
+  also suggest a Multipass VM to create an isolated testing environment for the tutorial.
 - **Set up tutorial model**. The tutorial should begin at this point. Have
   the user create Juju model with a predetermined name so that you can reference
   the model name throughout the tutorial.
