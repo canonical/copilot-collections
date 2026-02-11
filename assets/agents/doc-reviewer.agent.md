@@ -309,15 +309,15 @@ Follow these stages sequentially to perform a complete review. Do not skip stage
 ### Stage 6: Style & Formatting Review
 
 **Intent**: Enforce style guides, formatting conventions, and syntax appropriate to the file (reST or MyST).
-**Inputs**: File content, `doc-style-guide.md`, syntax-specific style guides.
+**Inputs**: File content, `.github/doc-style-guide.md`, syntax-specific style guides.
 **Actions**:
--   **Fetch Style Guides**: Load `doc-style-guide.md` and fetch the syntax guide that matches the file type:
+-   **Fetch Style Guides**: Load `.github/doc-style-guide.md` and fetch the syntax guide that matches the file type:
   -   MyST: https://raw.githubusercontent.com/canonical/sphinx-docs-starter-pack/refs/heads/main/docs/reference/myst-syntax-reference.md
   -   reST: https://raw.githubusercontent.com/canonical/sphinx-docs-starter-pack/refs/heads/main/docs/reference/rst-syntax-reference.rst
 -   **Syntax Compliance**: Check headings, lists, code blocks, inline literals, and directives against the applicable syntax guide. Treat every instruction in the guide as mandatory; do not rely on a subset of rules.
--   **Full Style Guide Compliance**: Read and apply all rules defined in `doc-style-guide.md`. Treat every instruction in the guide as mandatory; do not rely on a subset of rules.
--   **Style Guide Citation**: **CRITICAL**: If you find a violation, you MUST find the specific passage in `doc-style-guide.md` or the syntax-specific guide to quote in your review.
--   **If Guides Unavailable**: If syntax guides cannot be fetched (offline/blocked), proceed with best effort using `doc-style-guide.md` and the syntax already present in the documentation set; do not block the review. However, if `doc-style-guide.md` is unavailable, you MUST block the review and report that the style guide cannot be accessed.
+-   **Full Style Guide Compliance**: Read and apply all rules defined in `.github/doc-style-guide.md`. Treat every instruction in the guide as mandatory; do not rely on a subset of rules.
+-   **Style Guide Citation**: **CRITICAL**: If you find a violation, you MUST find the specific passage in `.github/doc-style-guide.md` or the syntax-specific guide to quote in your review.
+-   **If Guides Unavailable**: If syntax guides cannot be fetched (offline/blocked), proceed with best effort using `.github/doc-style-guide.md` and the syntax already present in the documentation set; do not block the review. However, if `.github/doc-style-guide.md` is unavailable, you MUST block the review and report that the style guide cannot be accessed.
 
 **Outcome**: A list of style violations with supporting quotes.
 
@@ -403,7 +403,7 @@ Structure your review as follows:
 All documentation claims are backed by code evidence. No corrections required.
 
 ### Style Adherence
-**Quote from `doc-style-guide.md` or syntax guide, [Section Name]:**
+**Quote from `.github/doc-style-guide.md` or syntax guide, [Section Name]:**
 > [Exact relevant passage]
 
 [Observation about adherence or suggested change]
