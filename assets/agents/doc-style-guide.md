@@ -418,7 +418,7 @@ Apply the policies below for project-specific conventions.
 
 **Inline markup**
 
-Semantic markup preference: Use semantic markup roles (for example, sample values, environment variables, file paths, commands, and programs) instead of generic emphasis. Choose the most specific role that suits the purpose and use it consistently.
+Semantic markup preference: Use semantic markup roles (for example, sample values, environment variables, file paths, commands, GUI labels, and programs) instead of generic emphasis. Choose the most specific role that suits the purpose and use it consistently.
 
 Use italics sparingly to introduce new terms and for emphasis. Leave bold for product names and commands.
 
