@@ -186,6 +186,20 @@ def detect_tech_stack():
 * **Allowlisting:** Use the `allowed-tools` metadata field to restrict binary access. A text processing skill does not need `curl` access.
 * **Read-Only References:** Treat `references/` as read-only to prevent prompt injection attacks where a file overrides system instructions.
 
-## 9. Deeper drive (if needed)
+## 9. Technical Constraints & Validation
 
-For more information, guide the user to: https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices#skill-structure
+### YAML Frontmatter
+* **Name:** Max 64 chars, lowercase/numbers/hyphens only. No reserved words (`anthropic`, `claude`).
+* **Description:** Max 1024 chars. Must be specific.
+
+### Token Budgets
+* **Instruction Limit:** Keep `SKILL.md` under 500 lines.
+* **Separation:** If > 500 lines, split into `references/` files.
+* **Efficiency:** Reference files are only loaded when explicitly read by the agent.
+
+### Quality Checklist
+* [ ] **Description:** Uses third-person ("Extracts data...") and includes triggers ("Use when...").
+* [ ] **Testing:** Tested with multiple model classes (Haiku/Sonnet/Opus).
+* [ ] **Paths:** Uses Unix-style forward slashes (`/`), never Windows backslashes (`\`).
+* [ ] **Dependencies:** Explicitly lists required tools/packages; does not assume pre-installation.
+* [ ] **Safety:** Scripts handle errors explicitly instead of failing silently.
