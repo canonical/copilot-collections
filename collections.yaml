@@ -36,6 +36,10 @@ common-documentation:
       dest: .github/instructions/documentation.instructions.md
     - src: assets/skills/documentation-reviewer
       dest: .github/skills/documentation-reviewer/
+    - src: assets/agents/doc-reviewer.agent.md
+      dest: .github/agents/doc-reviewer.agent.md
+    - src: assets/agents/doc-style-guide.md
+      dest: .github/agents/doc-style-guide.md
 
 copilot-toolkit:
   description: "Meta-tools for generating and managing Copilot assets (agents, skills, prompts, instructions)"
