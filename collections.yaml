@@ -30,16 +30,22 @@ common-python:
       dest: .github/instructions/python-code-commenting.instructions.md
 
 common-documentation:
-  description: "Documentation standards and review skill"
+  description: "Documentation standards and review skills"
   items:
     - src: assets/instructions/documentation/documentation.instructions.md
       dest: .github/instructions/documentation.instructions.md
-    - src: assets/skills/documentation-reviewer
-      dest: .github/skills/documentation-reviewer/
-    - src: assets/agents/doc-reviewer.agent.md
-      dest: .github/agents/doc-reviewer.agent.md
-    - src: assets/agents/doc-style-guide.md
-      dest: .github/doc-style-guide.md
+    - src: assets/skills/documentation-style
+      dest: .github/skills/documentation-style/
+    - src: assets/skills/documentation-structure
+      dest: .github/skills/documentation-structure/
+    - src: assets/skills/documentation-diataxis
+      dest: .github/skills/documentation-diataxis/
+    - src: assets/skills/documentation-verify
+      dest: .github/skills/documentation-verify/
+    - src: assets/skills/documentation-build
+      dest: .github/skills/documentation-build/
+    - src: assets/skills/documentation-review
+      dest: .github/skills/documentation-review/
 
 copilot-toolkit:
   description: "Meta-tools for generating and managing Copilot assets (agents, skills, prompts, instructions)"
