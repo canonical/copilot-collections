@@ -3,21 +3,15 @@ charm-tech-core:
   includes:
     - core
     - common-go
-  items:
-    - src: /assets/agents/doc-reviewer.agent.md
-      dest: .github/agents/doc-reviewer.agent.md
-    - src: /assets/agents/doc-style-guide.md
-      dest: .github/agents/doc-style-guide.md
 
 charm-tech-docs:
   description: "Charm Tech Documentation Collection"
   includes:
     - charm-tech-core
+    - common-documentation
   items:
     - src: /assets/instructions/documentation/documentation-rtd.instructions.md
       dest: .github/instructions/documentation-rtd.instructions.md
-    - src: /assets/instructions/documentation/documentation.instructions.md
-      dest: .github/instructions/documentation.instructions.md
 
 charm-tech-python-library:
   description: "Charm Tech Python Library Development Collection"
