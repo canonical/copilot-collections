@@ -74,9 +74,7 @@ Prioritise findings in this order:
 
 ## Constraints
 
-- Do not rewrite content.
-  Offer criticism and suggestions,
-  but do not rewrite unless it is a trivial fix such as a typo.
+- Provide criticism and suggestions rather than direct bulk rewrites.
 - Do not modify source code to fix documentation
   without explicit request.
 - Before restructuring large documentation sections
