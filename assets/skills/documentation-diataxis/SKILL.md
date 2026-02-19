@@ -69,6 +69,7 @@ it does not enforce compliance or apply pass/fail criteria.
      - Context, background, relationships
      - Illuminates understanding, not action
      - May include history, design decisions, alternatives
+     - May contain subjective opinions and personal perspectives
 
 3. **Check user need alignment**:
 
