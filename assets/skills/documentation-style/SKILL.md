@@ -1,6 +1,6 @@
 ---
 name: documentation-style
-description: "Evaluates documentation against the project style guide for tone, voice, terminology, and formatting conventions."
+description: "Enforces project documentation style guide compliance for tone, voice, terminology, punctuation, and formatting. Use when checking documentation style or validating MyST/reST syntax. Cites specific style guide violations."
 ---
 
 # Documentation Style Review
