@@ -1,6 +1,6 @@
 ---
 name: documentation-diataxis
-description: "Classifies documentation pages by Diataxis content type and flags structural mismatches between intent and form."
+description: "Analyzes documentation against Diataxis framework (Tutorial, How-to, Reference, Explanation). Use when reviewing documentation structure or classifying content type. Identifies misalignments between declared category and actual content."
 ---
 
 # Diataxis Classification Review
