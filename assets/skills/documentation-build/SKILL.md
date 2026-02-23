@@ -41,16 +41,26 @@ and categorise by severity.
    make html
    ```
 
-   Run additional checks if targets exist:
+   Run additional checks for targets that exist.
+   Check each target before running to avoid false failures:
 
    ```bash
-   make spelling linkcheck woke lint-md
+   # Check and run each target if available
+   for target in spelling linkcheck woke lint-md; do
+     if make -n $target 2>/dev/null; then
+       make $target
+     fi
+   done
    ```
 
-4. **Capture output**: If any command fails, capture the output
-   and report build issues. Attempt recovery once or twice,
-   but do not proceed to content analysis until the documentation
-   builds successfully without errors.
+4. **Capture output and handle failures**: If any command fails:
+
+   1. Capture the full error output from stderr and stdout
+   2. Run `make clean` to reset build state
+   3. Retry the failed build command once
+   4. If retry fails, STOP and report all captured errors
+   5. Do not proceed to content analysis until build succeeds
+
    Warnings must be collected and reported, but are not blocking
    unless the repository explicitly treats warnings as errors.
 
@@ -60,6 +70,17 @@ and categorise by severity.
    - **Warnings**: Deprecation notices, missing references,
      formatting issues.
    - **Info**: Suggestions, minor notices.
+
+6. **Verify completion**: Confirm the validation completed:
+
+   - Build targets were executed (or determined not applicable)
+   - Output was captured (errors and warnings)
+   - Findings were categorized by severity
+
+   State the completion status:
+   - `✓ Build validation complete: [N] errors, [M] warnings found`
+   - OR `✓ Build validation complete: No issues found`
+   - OR `✓ Build validation: Not applicable - RTD artifacts not detected`
 
 ## Constraints
 
