@@ -1,6 +1,6 @@
 ---
 name: documentation-structure
-description: "Audits documentation structure: heading levels, section completeness, and logical ordering of content."
+description: "Validates documentation structural integrity including heading hierarchy, metadata, file naming, navigation, and cross-references. Use when checking documentation organization or validating toctree structure."
 ---
 
 # Documentation Structure Audit
