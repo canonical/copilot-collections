@@ -1,6 +1,6 @@
 ---
 name: documentation-build
-description: "Runs documentation build targets and reports all errors and warnings from the Sphinx/RTD build pipeline."
+description: "Validates documentation builds successfully. Use when checking Sphinx/RTD build integrity or diagnosing build failures. Reports errors, warnings, and build configuration issues."
 ---
 
 # Documentation Build Validation
