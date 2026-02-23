@@ -21,9 +21,7 @@ it does not enforce compliance or apply pass/fail criteria.
 ## Inputs
 
 - Documentation file(s) under review.
-- Diataxis framework principles: https://diataxis.fr/
-- Diataxis foundations on user needs and craft axes:
-  https://diataxis.fr/foundations/
+- Diataxis framework principles (embedded in classification criteria below).
 
 ## Actions
 
@@ -121,6 +119,17 @@ it does not enforce compliance or apply pass/fail criteria.
    - Nature of the problem
    - Impact on user experience
    - Concrete suggestion for improvement
+
+7. **Verify completion**: Confirm the analysis completed:
+
+   - Category classification completed (declared vs inferred)
+   - User need alignment analyzed
+   - Quality assessment performed (functional and deep quality)
+   - Misalignments documented with recommendations
+
+   State the completion status:
+   - `✓ Diataxis analysis complete: [declared category] → [inferred category], [N] issues found`
+   - OR `✓ Diataxis analysis complete: Content aligns well with [category]`
 
 ## Constraints
 
