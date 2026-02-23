@@ -1,6 +1,6 @@
 ---
 name: documentation-verify
-description: "Verifies documentation accuracy by cross-referencing claims and commands against source code in the repository."
+description: "Verifies documentation accuracy by cross-referencing claims, CLI commands, API signatures, and configuration against source code. Use when validating documentation correctness or checking code-docs consistency. Flags unsupported or outdated claims."
 ---
 
 # Documentation Accuracy Verification
