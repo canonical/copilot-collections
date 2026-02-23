@@ -1,6 +1,6 @@
 ---
 name: documentation-review
-description: "Orchestrates a full documentation review by sequencing atomic review skills and producing a consolidated findings report."
+description: "Performs comprehensive documentation review including build validation, Diataxis analysis, structure audit, accuracy verification, and style compliance. Use when reviewing documentation changes or auditing documentation quality."
 ---
 
 # Documentation Review
