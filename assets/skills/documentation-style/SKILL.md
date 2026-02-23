@@ -41,12 +41,25 @@ and formatting conventions.
    that supports the finding.
 
 5. **Fallback behaviour**: If syntax guides cannot be fetched
-   (offline or blocked), proceed with best effort
+   (offline or network blocked), continue the review
    using `references/doc-style-guide.md`
-   and the syntax already present in the documentation set;
-   do not block the review.
+   and the syntax patterns already present in the documentation set.
+   
    If `references/doc-style-guide.md` is unavailable,
-   block the review and report that the style guide cannot be accessed.
+   STOP the review and report that the style guide cannot be accessed.
+
+6. **Verification**:
+
+   Confirm the style review completed:
+
+   - Style guides loaded (doc-style-guide.md and syntax-specific guide if available)
+   - Syntax compliance checked against applicable guide
+   - Style guide compliance checked against all rules in doc-style-guide.md
+   - All violations cited with quoted passages from style guides
+
+   State the completion status:
+   - `✓ Style review complete: [N] violations found`
+   - OR `✓ Style review complete: No violations found`
 
 ## Constraints
 
