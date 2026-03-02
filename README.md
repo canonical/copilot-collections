@@ -103,17 +103,17 @@ We highly encourage you to explore it for further inspiration, including advance
 
 ### **Directory Structure**
 
-* assets/: Raw markdown files (Core assets).
-  * instructions/: Custom instruction files.
-  * prompts/: Prompt files.
-  * agents/: Agent files.
-  * skills/: Agent skill directories (each containing SKILL.md).
-* collections.yaml: Core definitions.
-* groups/: Team specific collections.
-  * <team-name>/: Folder for team assets.
-    * collections.yaml: Team specific definitions.
-* scripts/: Logic for syncing files.
-* .github/workflows/: Reusable workflows.
+* `assets/`: Raw markdown files (Core assets).
+  * `instructions/`: Custom instruction files.
+  * `prompts/`: Prompt files.
+  * `agents/`: Agent files.
+  * `skills/`: Agent skill directories (each containing SKILL.md).
+* `collections.yaml`: Core definitions.
+* `groups/`: Team specific collections.
+  * `<team-name>/`: Folder for team assets.
+    * `collections.yaml`: Team specific definitions.
+* `scripts/`: Logic for syncing files.
+* `.github/workflows/`: Reusable workflows.
 
 ### **How to add a new Instruction**
 
