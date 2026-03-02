@@ -19,4 +19,5 @@ header:
     - 'trivy.yaml'
     - 'assets/**'
     - 'groups/**'
+    - 'renovate.json'
   comment: on-failure
