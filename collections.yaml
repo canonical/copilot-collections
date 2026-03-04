@@ -66,11 +66,11 @@ copilot-toolkit:
       dest: .github/skills/migrate-harness-tests-to-state-transition-test/
 
 # ==========================================
-# 2. Framework Specifics 
+# 2. Framework Specifics
 # ==========================================
 charm-python:
   description: "Charm Development with Python"
-  includes: 
+  includes:
     - core
     - common-python
   items: []
