@@ -1,0 +1,67 @@
+# General
+.DS_Store
+*.log
+*.tmp
+.env
+.env.local
+
+# Editor directories and files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# Temporary files
+tmp/
+temp/
+*.bak
+
+# Build outputs
+dist/
+build/
+out/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Language-specific
+# Python
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+venv/
+env/
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# Java
+*.class
+*.jar
+*.war
+target/
+
+# Go
+*.test
+*.out
+
+# Rust
+target/
+Cargo.lock
+
+# C/C++
+*.o
+*.obj
+*.out
