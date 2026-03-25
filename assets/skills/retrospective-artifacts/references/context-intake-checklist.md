@@ -43,6 +43,7 @@ For each external source:
 - [ ] Ensure markdown context files include a high-signal `## Summary` section
 - [ ] Ensure `retro-summary.md` references context files by relative path
 - [ ] Include `Discovered From` trace for recursively gathered sources
+- [ ] Artifact assets `context, logs, code-snippets` must be numerically sorted to be easier to follow for humans
 
 ## Downstream Signal Heuristics
 Set `okb_worthy: true` when at least one applies:

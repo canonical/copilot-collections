@@ -56,6 +56,6 @@ downstream_signals:
   - [child-url] (discovered from: [source-url-1])
 
 ## Completion Rules
-- Keep statements evidence-backed.
-- Do not cite files that do not exist.
-- Keep language concise and operational.
+- Keep statements evidence-backed
+- Do not cite files that do not exist
+- Keep language concise and operational
