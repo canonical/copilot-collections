@@ -64,6 +64,8 @@ copilot-toolkit:
       dest: .github/skills/generate-repo-instructions/
     - src: skills/migrate-harness-tests-to-state-transition-test
       dest: .github/skills/migrate-harness-tests-to-state-transition-test/
+    - src: skills/retrospective-artifacts
+      dest: .github/skills/retrospective-artifacts/
 
 # ==========================================
 # 2. Framework Specifics
