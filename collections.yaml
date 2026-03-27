@@ -34,17 +34,17 @@ common-documentation:
   items:
     - src: assets/instructions/documentation/documentation.instructions.md
       dest: .github/instructions/documentation.instructions.md
-    - src: assets/skills/documentation-style
+    - src: skills/documentation-style
       dest: .github/skills/documentation-style/
-    - src: assets/skills/documentation-structure
+    - src: skills/documentation-structure
       dest: .github/skills/documentation-structure/
-    - src: assets/skills/documentation-diataxis
+    - src: skills/documentation-diataxis
       dest: .github/skills/documentation-diataxis/
-    - src: assets/skills/documentation-verify
+    - src: skills/documentation-verify
       dest: .github/skills/documentation-verify/
-    - src: assets/skills/documentation-build
+    - src: skills/documentation-build
       dest: .github/skills/documentation-build/
-    - src: assets/skills/documentation-review
+    - src: skills/documentation-review
       dest: .github/skills/documentation-review/
 
 copilot-toolkit:
@@ -52,17 +52,17 @@ copilot-toolkit:
   items:
     - src: assets/agents/copilot-asset-architect.agent.md
       dest: .github/agents/copilot-asset-architect.agent.md
-    - src: assets/skills/generate-agent
+    - src: skills/generate-agent
       dest: .github/skills/generate-agent/
-    - src: assets/skills/generate-agent-skills
+    - src: skills/generate-agent-skills
       dest: .github/skills/generate-agent-skills/
-    - src: assets/skills/generate-path-instructions
+    - src: skills/generate-path-instructions
       dest: .github/skills/generate-path-instructions/
-    - src: assets/skills/generate-prompt
+    - src: skills/generate-prompt
       dest: .github/skills/generate-prompt/
-    - src: assets/skills/generate-repo-instructions
+    - src: skills/generate-repo-instructions
       dest: .github/skills/generate-repo-instructions/
-    - src: assets/skills/migrate-harness-tests-to-state-transition-test
+    - src: skills/migrate-harness-tests-to-state-transition-test
       dest: .github/skills/migrate-harness-tests-to-state-transition-test/
 
 # ==========================================

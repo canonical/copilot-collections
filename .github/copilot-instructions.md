@@ -14,11 +14,11 @@ This repository is the "Toolkit" for centralized context management for GitHub C
 
 ### Directories
 - **`collections.yaml`**: The ROOT configuration file defining "Core" collections.
-- **`assets/`**: Contains the source Markdown files for core collections.
+- **`assets/`**: Contains source Markdown files for core instructions, prompts, and agents.
     - `instructions/`: Custom instruction files organized by category.
     - `prompts/`: Prompt template files.
     - `agents/`: Agent definition files.
-    - `skills/`: Agent skill directories (each containing SKILL.md with YAML frontmatter).
+- **`skills/`**: Contains core agent skill directories (each containing SKILL.md with YAML frontmatter).
 - **`groups/`**: Contains team-specific collections.
     - Each subfolder (e.g., `groups/charm-tech/`) acts as a mini-repo with its own `collections.yaml` and asset folder.
 - **`scripts/`**: Contains the logic binaries.
@@ -98,7 +98,7 @@ yq eval . collections.yaml > /dev/null
 4.  Run validation.
 
 ### Adding an Agent Skill
-1.  **Create Directory**: Create `assets/skills/<skill-name>/` (or `groups/<team>/skills/<skill-name>/` for team skills).
+1.  **Create Directory**: Create `skills/<skill-name>/` (or `groups/<team>/skills/<skill-name>/` for team skills).
 2.  **Create SKILL.md**: Add the skill definition with required YAML frontmatter:
     ```markdown
     ---
@@ -110,7 +110,7 @@ yq eval . collections.yaml > /dev/null
     ```
 3.  **Update Manifest**: Edit `collections.yaml` and add to a collection's `items`:
     ```yaml
-    - src: assets/skills/<skill-name>
+    - src: skills/<skill-name>
       dest: .github/skills/<skill-name>/
     ```
     **Critical**: Since skills are directories, `dest` MUST end with `/` or validation will fail.

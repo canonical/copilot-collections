@@ -70,6 +70,20 @@ COPILOT_CONFIG_FILE="custom/path/.copilot-collections.yaml" curl -sL https://raw
 
 **Note:** This will generate files in .github/instructions/, .github/prompts/, and .github/skills/. Do not edit these files manually; they will be overwritten.
 
+### **Install Skills Directly with skills CLI**
+
+For discoverable core skills in this repository, you can install directly with `skills`:
+
+```bash
+# List discoverable skills
+npx skills add canonical/copilot-collections --list
+
+# Install one skill globally (use skill name, not path)
+npx skills add canonical/copilot-collections --skill generate-agent -g
+```
+
+**Note:** Group-scoped skill discoverability is handled separately.
+
 ### **3. Configure Auto-Updates (CI)**
 
 To ensure your repo stays up to date when the Toolkit releases new versions, add this workflow.
@@ -103,11 +117,11 @@ We highly encourage you to explore it for further inspiration, including advance
 
 ### **Directory Structure**
 
-* `assets/`: Raw markdown files (Core assets).
+* `assets/`: Raw markdown files for core instructions, prompts, and agents.
   * `instructions/`: Custom instruction files.
   * `prompts/`: Prompt files.
   * `agents/`: Agent files.
-  * `skills/`: Agent skill directories (each containing SKILL.md).
+* `skills/`: Core agent skill directories (each containing `SKILL.md`).
 * `collections.yaml`: Core definitions.
 * `groups/`: Team specific collections.
   * `<team-name>/`: Folder for team assets.
@@ -129,7 +143,7 @@ We highly encourage you to explore it for further inspiration, including advance
 
 ### **How to add a new Agent Skill**
 
-1. **Create the directory:** Create `assets/skills/<skill-name>/` (for core) or `groups/<team>/skills/<skill-name>/` (for teams).
+1. **Create the directory:** Create `skills/<skill-name>/` (for core) or `groups/<team>/skills/<skill-name>/` (for teams).
 2. **Add SKILL.md:** Create the skill definition file with required YAML frontmatter:
    ```markdown
    ---
@@ -140,7 +154,7 @@ We highly encourage you to explore it for further inspiration, including advance
    ```
 3. **Update Manifest:** Edit `collections.yaml` and add to a collection's items:
    ```yaml
-   - src: assets/skills/<skill-name>
+   - src: skills/<skill-name>
      dest: .github/skills/<skill-name>/
    ```
    **Important:** Skills are directories, so `dest` must end with `/`.
