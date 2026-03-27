@@ -18,6 +18,7 @@ header:
     - 'LICENSE'
     - 'trivy.yaml'
     - 'assets/**'
+    - 'skills/**'
     - 'groups/**'
     - 'renovate.json'
   comment: on-failure
