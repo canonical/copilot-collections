@@ -9,3 +9,6 @@
 
 # Charm Tech specific collection
 /groups/charm-tech/                 @canonical/charm-tech
+
+# Starcraft specific collection
+/groups/starcraft/                  @canonical/starcraft

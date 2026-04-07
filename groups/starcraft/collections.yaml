@@ -1,0 +1,29 @@
+# Copyright 2026 Canonical Ltd.
+# See LICENSE file for licensing details.
+
+starcraft-core:
+  description: "Starcraft Core Collection"
+  includes:
+    - core
+    # common-python only has code comment guidance and applies to any language
+    - common-python
+
+starcraft-go:
+  description: "Starcraft Go Collection"
+  includes:
+    - starcraft-core
+    - common-go
+
+starcraft-docs:
+  description: "Starcraft Documentation Collection"
+  includes:
+    - starcraft-core
+    - common-documentation
+  items:
+    - src: /assets/instructions/documentation/documentation-rtd.instructions.md
+      dest: .github/instructions/documentation-rtd.instructions.md
+    # paths are relative to groups/starcraft/
+    - src: instructions/documentation/starcraft-docs-style.instructions.md
+      dest: .github/instructions/starcraft-docs-style.instructions.md
+    - src: instructions/documentation/starcraft-docs-meta.instructions.md
+      dest: .github/instructions/starcraft-docs-meta.instructions.md
