@@ -49,7 +49,7 @@ def strip_html_blocks(text: str) -> str:
 
 def fetch_url(url: str) -> str:
     try:
-        with urllib.request.urlopen(url) as response:
+        with urllib.request.urlopen(url, timeout=15) as response:
             return response.read().decode()
     except urllib.error.HTTPError as e:
         sys.exit(f"Error fetching {url}: HTTP {e.code} {e.reason}")
@@ -66,6 +66,7 @@ def rst_to_markdown(rst_content: str) -> str:
             capture_output=True,
             text=True,
             check=True,
+            timeout=15,
         )
     except subprocess.CalledProcessError as e:
         sys.exit(f"Error: pandoc exited with code {e.returncode}\n{e.stderr}")
