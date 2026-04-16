@@ -1,24 +1,43 @@
 ---
 name: landscape-jira
-description: Creates well-formed Jira stories in the LNDENG project (warthogs.atlassian.net) with correct field mappings, sprint assignment, and acceptance criteria.
+description: Creates well-formed Jira issues in the LNDENG project (warthogs.atlassian.net) — stories, epics, objectives, tasks, spikes, bugs, and more — with correct field mappings, sprint assignment, and acceptance criteria.
 ---
 
 ## Cloud ID
 
 Always pass `warthogs.atlassian.net` as `cloudId` to every Atlassian MCP tool call.
 
-## Key Field IDs (LNDENG Stories)
+## Issue Type IDs (LNDENG)
+
+| Type | ID | Hierarchy level | Notes |
+|------|----|-----------------|-------|
+| Theme | `10386` | 3 | Strategic, 1–3 year horizon |
+| Objective | `10390` | 2 | OKR-level |
+| Epic | `10000` | 1 | Must be broken into stories |
+| Project-Risk | `12391` | 1 | Risk tracking |
+| Project-Issue | `12392` | 1 | Materialized risks / blockers |
+| Story | `10002` | 0 | Default work item |
+| Task | `10013` | 0 | Small, distinct piece of work |
+| Spike | `10037` | 0 | Research / investigation / prototyping |
+| Bug | `10015` | 0 | Problem or error |
+| Sub-task | `10014` | -1 | Part of a parent task |
+
+Pass as: `"issuetype": {"id": "<id>"}`.
+
+Typical hierarchy: Theme → Objective → Epic → Story/Task/Spike/Bug → Sub-task
+
+## Key Fields
 
 | Field | Field ID | Notes |
-|-------|----------|---------|
+|-------|----------|-------|
 | Summary | `summary` | Required |
 | Description | `description` | ADF format for API v3 |
-| Acceptance Criteria | `customfield_10614` | **ADF format** — NOT a plain string. See format below. |
+| Acceptance Criteria | `customfield_10614` | **ADF format** — NOT a plain string. Required for Epics/Objectives, recommended for Stories. See format below. |
 | Story Points | `customfield_10024` | Number. Do NOT use `customfield_10016` (legacy read-only) |
-| Sprint | `customfield_10020` | Numeric sprint ID — plain integer, not an object |
+| Sprint | `customfield_10020` | Numeric sprint ID — plain integer, not an object. Not applicable to Epics/Objectives/Themes. |
 | Assignee | `assignee` | `{"accountId": "..."}` |
-| Parent (Epic or Objective) | `parent` | `{"key": "LNDENG-XXXX"}` — can be any parent issue type |
-| Issue Type | `issuetype` | `{"id": "10002"}` for Story |
+| Parent | `parent` | `{"key": "LNDENG-XXXX"}` — any parent issue type |
+| Issue Type | `issuetype` | `{"id": "<id>"}` — see table above |
 | Labels | `labels` | Array of strings |
 
 ## Finding the Current Sprint ID
@@ -38,7 +57,6 @@ For the next/upcoming sprint use `sprint in futureSprints()` instead.
 `customfield_10614` requires Atlassian Document Format (ADF), **not a plain string**. A plain string will error: `"Operation value must be an Atlassian Document"`.
 
 Bullet list template:
-
 ```json
 {
   "type": "doc",
@@ -66,7 +84,6 @@ Each bullet is a separate `listItem`. Do not use `\n` in text nodes — use mult
 ## Sprint Field Format
 
 Sprint must be a **plain integer**, not an object:
-
 ```json
 "customfield_10020": 30952
 ```
@@ -80,19 +97,16 @@ Plain strings work via the MCP wrapper. For multi-paragraph content, use ADF —
 ## Useful JQL Patterns
 
 Find open stories assigned to you in the current sprint:
-
 ```
 project = LNDENG AND sprint in openSprints() AND assignee = currentUser() AND resolution = Unresolved
 ```
 
 Find child stories under a parent:
-
 ```
 project = LNDENG AND parent = LNDENG-XXXX ORDER BY created ASC
 ```
 
 Find stories created by you recently:
-
 ```
 project = LNDENG AND reporter = currentUser() AND created >= -7d ORDER BY created DESC
 ```
@@ -120,7 +134,7 @@ AC are required for Epics and Objectives, recommended for Stories.
 
 - Not a description of the UI or solution — describe what the user can *do*, not how it's built.
 - Not a DoD checklist (unit tests, docs, CI passing) — those belong in the PR template or DoD.
-- Not an exhaustive list — if you're writing many ACs for one story, break the story up.
+- Not a exhaustive list — if you're writing many ACs for one story, break the story up.
 
 ### Format tips
 
