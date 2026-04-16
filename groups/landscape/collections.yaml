@@ -1,7 +1,7 @@
 # Copyright 2026 Canonical Ltd.
 # See LICENSE file for licensing details.
 landscape-core:
-  description: "Landscape Engineering core collection"
+  description: "Landscape core collection"
   includes:
     - core
   items:
