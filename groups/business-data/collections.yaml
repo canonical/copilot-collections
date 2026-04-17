@@ -1,0 +1,7 @@
+dbt-project:
+  description: "Business Data dbt Project Collection"
+  includes:
+    - core
+  items:
+    - src: instructions/dbt-project.instructions.md
+      dest: .github/instructions/dbt-project.instructions.md

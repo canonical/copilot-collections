@@ -12,3 +12,9 @@
 
 # Starcraft specific collection
 /groups/starcraft/                  @canonical/starcraft
+
+# Business Data specific collection
+/groups/business-data/              @canonical/commercial-systems-data
+
+# Landscape specific collection
+/groups/landscape/                  @canonical/landscape

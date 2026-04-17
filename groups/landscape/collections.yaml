@@ -1,0 +1,9 @@
+# Copyright 2026 Canonical Ltd.
+# See LICENSE file for licensing details.
+landscape-core:
+  description: "Landscape core collection"
+  includes:
+    - core
+  items:
+    - src: skills/landscape-jira
+      dest: .github/skills/landscape-jira/
