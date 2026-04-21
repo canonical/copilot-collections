@@ -46,6 +46,8 @@ common-documentation:
       dest: .github/skills/documentation-build/
     - src: skills/documentation-review
       dest: .github/skills/documentation-review/
+    - src: skills/diataxis-landing-page-helper
+      dest: .github/skills/diataxis-landing-page-helper/
 
 copilot-toolkit:
   description: "Meta-tools for generating and managing Copilot assets (agents, skills, prompts, instructions)"
