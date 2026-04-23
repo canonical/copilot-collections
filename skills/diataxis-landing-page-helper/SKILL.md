@@ -59,19 +59,18 @@ When the Rule of Two cannot be met through logical merging, use these specific f
 
 To ensure the page is both informative and future-proof, follow this distribution of detail:
 
-1.  **Initial Quadrant Description (Generic/Future-Proof):** Write a high-level overview of the category’s domain value. 
-    * **Constraint:** Describe the category’s relationship to the product's functional domain as if the category were already fully populated. 
-    * **Prohibited:** Do not refer to the specific number of current files or use their titles. Do not use meta-phrases like "These guides cover..."
-    * *Example:* "Manage the operational lifecycle of your deployment, from initial provisioning to high-availability scaling and maintenance."
+1.  **Quadrant Introduction (1-2 sentences):** Establish the quadrant's purpose by connecting its Domain Style (see Content Mapping Reference Table) to the product's functional domain. Ground the description with a few representative examples drawn from the section themes, rather than exhaustively summarizing every section.
+    * **Constraint:** Describe the category as if it were already fully populated. Do not refer to the specific number of current files or use their titles. Do not use meta-phrases like "These guides cover..."
+    * **Flat Layout note:** In a Flat layout without section narratives, the journey summary may be slightly more specific about individual outcomes since the introduction is the only descriptive text on the page.
+    * *Example (Reference):* "Technical specifications and descriptions for the Discourse charm's configuration surfaces, integration interfaces, and runtime behavior within a Juju-managed Kubernetes environment."
 
-2.  **User Value Assessment (Specific/Immediate):** Provide a brief (1–2 sentence) summary of the technical outcomes or insights the user will gain from the *current* set of files. This is the primary home for specific details in a Flat Layout.
-    * *Example:* "You will learn to configure secure network gateways and establish encrypted communication between nodes."
-
-3.  **Section Narratives (Structured Layout Only - Use-Case Focused):** Write 1–2 sentences of technical context for every domain header.
+2.  **Section Narratives (Structured Layout Only - Use-Case Focused):** Write 1-2 sentences of technical context for every domain header.
     * **Focus:** Describe the architectural importance or the specific use case (e.g., "Maintaining system health requires a proactive diagnostic strategy to identify resource bottlenecks before they impact performance").
+    * **Optionality:** When a section groups pages that address independent or situational needs (e.g., configuring different optional integrations), the narrative must frame them as available options rather than a mandatory sequence. Use language that acknowledges the user may only need a subset (e.g., "depending on your infrastructure requirements" or "as your deployment requires").
+    * **Contextual coherence:** Section narratives should stay grounded in the product context established by the Quadrant Introduction. If the introduction frames the product as a component within a specific platform or ecosystem, narratives should reference that platform where the section's content naturally relates to it, rather than substituting generic technical abstractions (e.g., prefer "Juju relation interfaces" over "service mesh" when documenting a Juju charm).
     * **Prohibited phrases:** "This section includes," "Learn how to," or "Links to."
 
-4.  **Strategic Guidance:** If a section contains multiple competing options (e.g., two different deployment methods), add a sentence advising the user on how to choose between them based on their requirements.
+3.  **Strategic Guidance:** If a section contains multiple competing options (e.g., two different deployment methods), add a sentence advising the user on how to choose between them based on their requirements.
 
 ---
 
