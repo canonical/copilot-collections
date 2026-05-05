@@ -5,3 +5,19 @@ dbt-project:
   items:
     - src: instructions/dbt-project.instructions.md
       dest: .github/instructions/dbt-project.instructions.md
+
+temporal-project-development:
+  description: "Business Data Temporal Project Collection"
+  includes:
+    - core
+  items:
+    - src: instructions/temporal-project-development.instructions.md
+      dest: .github/instructions/temporal-project-development.instructions.md
+
+temporal-project-review:
+  description: "Business Data Temporal Project Review Collection"
+  includes:
+    - core
+  items:
+    - src: instructions/temporal-project-review.instructions.md
+      dest: .github/instructions/temporal-project-review.instructions.md
