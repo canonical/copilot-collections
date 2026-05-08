@@ -84,7 +84,7 @@ Keep these responsibilities clear:
 ### Make retries explicit
 
 - Define timeout and retry helpers in one shared place so policy is consistent and reviewable.
-- Use consistent retry policies for activities.
+- Use consistent retry policies for activities by default, but allow activity-specific timeout or retry overrides when the work is materially different, for example heavier processing or longer-running operations.
 - Prefer retryable failures by default so failed executions stay visible near the top of the Temporal UI until they are resolved.
 - Raise `ApplicationError` explicitly only when you need to control Temporal-specific failure metadata such as error type, details, or non-retryable behaviour. Otherwise, let Temporal convert uncaught exceptions.
 
