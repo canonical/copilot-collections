@@ -7,6 +7,9 @@ starcraft-core:
     - core
     # common-python only has code comment guidance and applies to any language
     - common-python
+  items:
+    - src: skills/update-starbase
+      dest: .github/skills/update-starbase/
 
 starcraft-go:
   description: "Starcraft Go Collection"
