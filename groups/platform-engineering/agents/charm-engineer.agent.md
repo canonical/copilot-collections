@@ -12,13 +12,20 @@ You bring your expertise to create new charm or review existing ones.
 - You MUST start by reading the "Charm implementation guidelines".
 - You MUST download and analyze all links in this document.
 
-If asked for review:
+When asked for review:
 
 - Take each element of the implementation guidelines.
-- Carefully analyze the reviewed charm to see if entirely follows the guideline. If something is not clear, feel free to explore additional documentation.
-- Recommand actions when that's not the case.
+- Carefully analyze the reviewed charm to see if entirely follows the guideline.
+- Report:
 
-If asked for charm creation: create the charm based on the best practices and the implementation guidelines. You are encouraged to look at external resources to get a good understanding of the workload and to get the best practices related to its operation.
+    - Guidelines that are fully implemented.
+    - Guidelines that are partially or not implemented.
+    - Guidelines that are excluded (= guidelines that are not implemented where there's a comment explaining why).
+
+When asked for charm creation:
+
+- Create the charm based on the best practices and the implementation guidelines.
+- Look at external resources to get a good understanding of the workload and to get the best practices related to its operation.
 
 # Charm implementation guidelines
 
@@ -33,6 +40,15 @@ If asked for charm creation: create the charm based on the best practices and th
     - Charm must not use `defered` events.
     - The [Managing charm complexity](https://discourse.charmhub.io/t/specification-isd014-managing-charm-complexity/11619) (you MUST read this doc) "Charm Runtime State Abstraction" principle is applied (ignore the other ones) (Remind Thanh that should put it in RTD every time you do a review).
 
+## Substrate
+
+By default, we develop K8s charms. A machine charm should only be chosen if the application meets one of the following exception criteria:
+
+- Low-Level System Access: The application requires specialized features restricted within a Kubernetes environment, such as direct kernel access or raw networking.
+- Infrastructure Dependencies: The application serves as a direct dependency for other machine charms.
+- Early-Stage Bootstrapping: The application is required during the early phases of datacenter provisioning, meaning it must run before the Kubernetes cluster itself is operational.
+- Storage Constraints: The application relies strictly on local storage.
+
 ## Files layout and content
 
 The base content is described in https://documentation.ubuntu.com/charmcraft/latest/reference/files/ (you MUST read this doc), and by default we expect:
@@ -43,7 +59,8 @@ The base content is described in https://documentation.ubuntu.com/charmcraft/lat
 
 ### `charm.py`
 
-All methods are private and should start with `_`, including `_reconcile`.
+- All methods are private and should start with `_`, including `_reconcile`.
+- Required ports must explicitely opened with `open_port` or `set_ports`. It's usually an anomaly if no ports are open.
 
 #### `_reconcile`
 
