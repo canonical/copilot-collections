@@ -30,6 +30,8 @@ pfe-charms:
     - charm-python
   items:
     # Path is relative to groups/platform-engineering/
+    - src: agents/charm-engineer.agent.md
+      dest: .github/agents/charm-engineer.agent.md
     - src: instructions/lib-updates.instructions.md
       dest: .github/instructions/charms-lib-updates.instructions.md
     - src: /assets/instructions/common/core-directive.instructions.md
