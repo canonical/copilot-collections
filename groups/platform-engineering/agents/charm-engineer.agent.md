@@ -54,8 +54,8 @@ By default, we develop K8s charms. A machine charm should only be chosen if the 
 The base content is described in [Files](https://documentation.ubuntu.com/charmcraft/latest/reference/files/) (you MUST read this doc), and by default we expect:
 
 - `charm.py` contains the charm code.
-- `state.py` contains the runtime state of the charm. For complex charms, we would have a "state/" python module.
-- `workload.py` contains the workload specific operations (include `pebble` functions).
+- `state.py` contains the runtime state of the charm. For complex charms, we would have a "state/" python module. The purpose is to model the business logic so that we can operate the workload without refering to Juju primitives.
+- `workload.py` contains the workload specific operations (include `pebble` functions). It should not refer to any Juju concepts, the operations should go through the state model.
 
 #### `charm.py`
 
