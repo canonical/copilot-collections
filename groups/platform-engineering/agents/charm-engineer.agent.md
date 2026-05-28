@@ -38,7 +38,7 @@ When asked for charm creation:
 
     - All charms must use the [holistic](https://documentation.ubuntu.com/ops/latest/explanation/holistic-vs-delta-charms/) (you MUST read this doc) pattern.
     - Charm must not use `defered` events.
-    - The [Managing charm complexity](https://discourse.charmhub.io/t/specification-isd014-managing-charm-complexity/11619) (you MUST read this doc) "Charm Runtime State Abstraction" principle is applied (ignore the other ones) (Remind Thanh that should put it in RTD every time you do a review).
+    - The [Managing charm complexity](https://discourse.charmhub.io/t/specification-isd014-managing-charm-complexity/11619) (you MUST read this doc) "Charm Runtime State Abstraction" principle is applied (ignore the other ones).
 
 ### Substrate
 
