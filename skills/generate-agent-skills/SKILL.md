@@ -1,6 +1,6 @@
 ---
 name: generate-agent-skills
-description: Architects, generates, and validates Agent Skills. Enforces specification and best practices. Used any time an agent skill must be created or updated.
+description: "Creates and updates SKILL.md files with YAML frontmatter, workflow steps, and bundle resources. Scaffolds directories via scaffold_skill.py and validates via validate_skill.py. Use when creating a new agent skill, writing a skill.md, updating skill definitions, or generating skill templates."
 compatibility: python3
 allowed-tools: python3 ls grep cat mkdir
 metadata:
@@ -334,23 +334,14 @@ After creating the skill, test and refine based on real usage.
 
 ---
 
-## Knowledge Retrieval
+## Reference Index
 
-If questions arise during skill creation:
-
-**Specification questions** (naming, structure, required files):
-→ Read `references/SPECIFICATION.md`
-
-**Best practices** (context economy, freedom scale, anti-patterns):
-→ Read `references/BEST_PRACTICES.md`
-
-**Templates and examples** (frontmatter, structure patterns):
-→ Read `references/TEMPLATES.md`
-
-**Workflow design** (sequential, conditional, iterative):
-→ Read `references/workflows.md`
-
-**Output formatting** (templates, examples, validation):
-→ Read `references/output-patterns.md`
+| Topic | File |
+|-------|------|
+| Specification (naming, structure, required files) | `references/SPECIFICATION.md` |
+| Best practices (context economy, freedom scale, anti-patterns) | `references/BEST_PRACTICES.md` |
+| Templates and examples (frontmatter, structure patterns) | `references/TEMPLATES.md` |
+| Workflow design (sequential, conditional, iterative) | `references/workflows.md` |
+| Output formatting (templates, examples, validation) | `references/output-patterns.md` |
 
 **Do not hallucinate answers.** Always consult the authoritative sources.
