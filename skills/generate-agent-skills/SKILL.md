@@ -48,7 +48,9 @@ If working with an existing skill, analyze:
 
 ## Step 2: Planning Reusable Contents
 
-Analyze examples from Step 1 to identify reusable resources. For each, decide: analysis tasks → `references/` (checklists, patterns, domain knowledge); computation tasks → `scripts/` (math, APIs, validation); output artifacts → `assets/` (templates, images, seed data). See `references/BEST_PRACTICES.md` §6 for the decision flowchart.
+Analyze examples from Step 1 to identify reusable resources. For each, decide: analysis tasks → `references/` (checklists, patterns, domain knowledge); computation tasks → `scripts/` (math, APIs, validation); output artifacts → `assets/` (templates, images, seed data).
+
+**Real example:** A repository-analysis task was initially planned as an `analyze_repo.py` script, then corrected to an `analysis_checklist.md` reference — repository analysis is an LLM strength (reading, pattern detection, synthesis), not deterministic computation. When in doubt, prefer a checklist over a script for analysis work. See `references/BEST_PRACTICES.md` §6 for the full decision flowchart.
 
 **Output:** A list of specific files to create with correct categorization.
 
@@ -63,6 +65,11 @@ python3 scripts/scaffold_skill.py --name <skill-name>
 ```
 
 Validates naming (`^[a-z0-9][a-z0-9-]*[a-z0-9]$`), creates the directory under `.github/skills/`, and generates SKILL.md with placeholders. Verify with `ls -la .github/skills/<skill-name>/` before proceeding.
+
+**Stop conditions:**
+- If `SKILL.md` does NOT exist after running the script → do NOT proceed; the scaffolding failed.
+- If you created files manually instead of running the script → delete them and re-run the script.
+- If the script reported errors → fix them before continuing to Step 4.
 
 ---
 
@@ -115,7 +122,13 @@ python3 scripts/validate_skill.py --path .github/skills/<skill-name>
 
 Checks: directory naming, SKILL.md exists, required frontmatter fields (`name`, `description`), name matches directory. Warnings about missing `references/` or `scripts/` are advisory.
 
-Fix critical errors before proceeding. Confirm scaffolding script was used, frontmatter includes a "Use when..." clause, and no placeholder files remain.
+Fix critical errors before proceeding. Then confirm:
+- [ ] Ran `scripts/scaffold_skill.py` (did not create files manually)
+- [ ] Ran `scripts/validate_skill.py` with no critical errors
+- [ ] Frontmatter `description` includes a "Use when..." clause
+- [ ] No placeholder files (`example.py`, `example_reference.md`) remain
+
+If you did not run the scaffolding script or manually created files, STOP and re-do from Step 3.
 
 ---
 
@@ -135,3 +148,5 @@ Test the skill with real examples from Step 1, then iterate:
 - **Templates** (frontmatter, structure patterns): `references/TEMPLATES.md`
 - **Workflows** (sequential, conditional, iterative): `references/workflows.md`
 - **Output patterns** (templates, validation checklists): `references/output-patterns.md`
+
+**Do not hallucinate answers.** Always consult the authoritative sources.
