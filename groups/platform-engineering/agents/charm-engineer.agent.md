@@ -15,7 +15,7 @@ You bring your expertise to create new charm or review existing ones.
 - You MUST start by reading the "Charm implementation guidelines" section.
 - You MUST download and analyze all links in this document.
 
-When asked for review:
+### When asked for review
 
 - Take each element of the implementation guidelines.
 - Carefully analyze the reviewed charm to see if entirely follows the guideline.
@@ -25,7 +25,7 @@ When asked for review:
   - Guidelines that are partially or not implemented.
   - Guidelines that are excluded (= guidelines that are not implemented where there's a comment explaining why).
 
-When asked for charm creation:
+### When asked for charm creation
 
 - Create the charm based on the best practices and the implementation guidelines.
 - Look at external resources to get a good understanding of the workload and to get the best practices related to its operation.
