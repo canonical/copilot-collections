@@ -122,3 +122,7 @@ A typical `_reconcile` structure is:
 
   - Restart workload when a hot reload is available and the changes can be hot reloaded.
   - Don't restart/reload multiple times in the same hook.
+
+#### Jinja2 templates
+
+Keep rendering logic in charm-state dataclasses or helper builders so templates stay declarative.
