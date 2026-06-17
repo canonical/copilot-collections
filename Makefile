@@ -7,6 +7,7 @@
 VENVDIR := .venv
 CONFIG := .pymarkdown.json
 SOURCEDIR ?= .
+FILE ?=
 
 # Phony targets
 .PHONY: help lint-md clean venv pymarkdownlnt-install
@@ -16,7 +17,7 @@ help:
 	@echo "Available targets:"
 	@echo "  venv                - Create virtual environment using uv"
 	@echo "  pymarkdownlnt-install - Install pymarkdownlnt"
-	@echo "  lint-md             - Run markdown linter"
+	@echo "  lint-md             - Run markdown linter (FILE=path/to/file.md to check a single file)"
 	@echo "  clean               - Remove virtual environment"
 
 # Create virtual environment using uv
@@ -32,9 +33,14 @@ pymarkdownlnt-install: venv
 	@uv pip install --python $(VENVDIR) pymarkdownlnt --quiet 2>&1 | grep -v "Audited" || true
 
 # Run markdown linter
+# Usage: make lint-md [FILE=path/to/file.md] [SOURCEDIR=path/to/dir]
 lint-md: pymarkdownlnt-install
 	@echo "Running markdown linter..."
-	@uv run --python $(VENVDIR) pymarkdownlnt --config $(CONFIG) scan --recurse $(SOURCEDIR)
+	@if [ -n "$(FILE)" ]; then \
+		uv run --python $(VENVDIR) pymarkdownlnt --config $(CONFIG) scan $(FILE); \
+	else \
+		uv run --python $(VENVDIR) pymarkdownlnt --config $(CONFIG) scan --recurse $(SOURCEDIR); \
+	fi
 
 # Clean virtual environment
 clean:

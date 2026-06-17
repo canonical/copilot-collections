@@ -36,3 +36,5 @@ pfe-charms:
       dest: .github/instructions/charms-lib-updates.instructions.md
     - src: /assets/instructions/common/core-directive.instructions.md
       dest: .github/instructions/core-directive.instructions.md
+    - src: skills/pfe-create-pr
+      dest: .github/skills/landscape-jira/
