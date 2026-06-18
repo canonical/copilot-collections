@@ -36,13 +36,19 @@ and will be added in the next part.
    git fetch starbase --prune
    ```
 
-4. Merge from Starbase main into the current branch:
+4. Create a work branch before starting the merge:
+
+   ```bash
+   git switch -c work/<descriptive-branch-name>
+   ```
+
+5. Merge from Starbase main into the current branch:
 
    ```bash
    git merge --no-ff starbase/main
    ```
 
-5. Capture merge state:
+6. Capture merge state:
    - If merge succeeds, continue to project checks.
    - If merge conflicts, stop and report conflicted files:
 
@@ -116,36 +122,95 @@ Conflict resolution applied:
 Add conflict resolution playbooks for typical Starbase sync conflicts
 (`common.mk`, Makefile targets, and workflow template drift).
 
-## Conflict rule 1: Starbase source-of-truth marker
+## Conflict rule 1: File ownership map
 
-If a conflicted file contains a comment stating Starbase is the source of
-truth (for example: "Should only be edited in the `starbase` repository"),
-resolve the conflict by taking the full file content from `starbase/main`.
+Use the following ownership map when resolving Starbase sync conflicts:
 
-Do not perform line-by-line reconciliation for those files.
+### Always take `starbase/main`
 
-## Conflict rule 2: CODEOWNERS belongs to the child repository
+- Files marked in-tree as Starbase source-of-truth files (for example,
+  comments like "Should only be edited in the `starbase` repository").
+- `.editorconfig` for the shared baseline; the child repository may extend it
+  with additional sections, but the Starbase config is authoritative.
+- `common.mk` (explicitly marked as Starbase-owned in-tree).
+- `.github/workflows/check-renovate.yaml`.
+- `.github/workflows/policy.yaml`.
+- `.github/workflows/release-publish.yaml`.
+- `.gitignore` for the shared baseline; the child repository may append
+  repository-specific ignore entries at the bottom.
+- `.pre-commit-config.yaml` for the shared hook set; if the same hook appears
+  in both repos, keep the newer revision pin.
+- `.readthedocs.yaml`.
+- `README.md`.
+- Any other shared build or workflow file that is explicitly documented as
+  Starbase-managed in this skill or the repository docs.
 
-Always resolve `.github/CODEOWNERS` by taking the child repository version
-(`--ours` in the merge), not `starbase/main`.
+### Always take the child repository version
 
-## Conflict rule 3: qa workflow belongs to the child repository
+- `.github/CODEOWNERS`
+- `.github/workflows/qa.yaml`
+- `uv.lock`
 
-Always resolve `.github/workflows/qa.yaml` by taking the child repository
-version (`--ours` in the merge), not `starbase/main`.
+### Mixed ownership
 
-## Conflict rule 4: AGENTS templates in library repositories
+- `.github/.jira_sync_config.yaml`: keep `settings.components` and
+  `settings.jira_project_key` from the child repository; take the rest from
+  `starbase/main`.
+- `.github/PULL_REQUEST_TEMPLATE.md`: keep Starbase's template content and
+  replace only the contribution-guidelines link with the child repository's
+  `CONTRIBUTING.md` URL.
+- `SECURITY.md`: keep the Starbase comment under `Release cycle`, keep the
+  child repository's release-cycle wording, and keep the project-specific
+  reporting links from the child repository.
+- `docs/**/*.rst`: keep the repository's own documentation pages, including the
+  files inside the diataxis directories.
+- `docs/{how-to,explanation,reference,tutorials}`: the directory names are
+  Starbase-owned; if they move, move the whole docs tree accordingly.
+- For library repositories, delete `docs/release-notes/`.
+- `pyproject.toml`: keep the `[project]` metadata and `[project.scripts]`
+  section from the child repository; resolve the later sections separately.
+- `pyproject.toml`: keep the entire `[project]` block from the child
+  repository.
+- `pyproject.toml`: keep all `[dependency-groups]` entries from the child
+  repository.
+- `pyproject.toml`: merge `tool.uv.constraint-dependencies` by keeping the
+  higher version from each side, ordered alphabetically by package name.
+- `pyproject.toml`: keep `[build-system]` from the child repository.
+- `pyproject.toml`: keep `[tool.setuptools_scm]` from `starbase/main`.
+- `pyproject.toml`: treat `tool.pytest.ini_options.markers` as shared; update
+  the Starbase-defined markers and append any child-specific markers as needed.
+- `pyproject.toml`: keep `[tool.pyright]` from the child repository.
+- `pyproject.toml`: keep `[tool.mypy]` from the child repository.
+- `pyproject.toml`: any Starbase-side reference to the `starcraft` module is
+  child-owned; keep the child repository's module names instead.
+- `pyproject.toml`: keep `tool.ruff` from `starbase/main`, except for
+  `tool.ruff.src` and `tool.ruff.target-version`; the child repository may add
+  values to `tool.ruff.extend-exclude`, `tool.ruff.lint.select`,
+  `tool.ruff.lint.ignore`, and `tool.ruff.lint.per-file-ignores`.
+- `Makefile`: keep child-owned variables such as `PROJECT`, but include new
+  Starbase-added variables and take the Starbase version when it extends an
+  existing variable.
+- `docs/conf.py`: keep the Starbase docs scaffold, but keep project identity,
+  branding, repo URLs, and other child-specific documentation values from the
+  child repository.
+- Branch names for this workflow should start with `work/`.
+- `.editorconfig`: keep the Starbase baseline and only retain child-specific
+  extensions that do not override the shared defaults.
+- `tests/`: keep the child repository versions for everything under `tests/`
+  except `tests/integration/test_setuptools.py`, which comes from `starbase/main`.
+
+## Conflict rule 2: AGENTS templates
+
+For repository-specific AGENTS templates:
+- keep `AGENTS.md` as the authoritative file,
+- keep the template file for the repository type deleted after using it only as
+  a reference,
+- apply only relevant improvements from the template into `AGENTS.md`.
 
 For library repositories:
 - keep `AGENTS.app.md` deleted,
-- keep `AGENTS.lib.md` deleted after using it only as a template reference,
-- keep `AGENTS.md` as the authoritative file and apply only relevant
-  library-template improvements from `AGENTS.lib.md`.
-
-## Conflict rule 5: AGENTS templates in application repositories
+- keep `AGENTS.lib.md` deleted after using it only as a template reference.
 
 For application repositories:
 - keep `AGENTS.lib.md` deleted,
-- keep `AGENTS.app.md` deleted after using it only as a template reference,
-- keep `AGENTS.md` as the authoritative file and apply only relevant
-  application-template improvements from `AGENTS.app.md`.
+- keep `AGENTS.app.md` deleted after using it only as a template reference.
