@@ -82,6 +82,14 @@ Do not create the PR until these commands complete successfully.
 When opening the PR, apply the label:
 - `PR: Merge`
 
+## PR review and CI
+
+- Open the PR as a draft, request a Copilot review while it is still draft, and
+  keep iterating until the review is clean enough to mark ready.
+- Check the PR's CI status before handing it off.
+- If CI is still running or likely to fail, start a background agent to watch
+  the PR checks and report failures so they can be fixed promptly.
+
 ## Merge commit message format
 
 When finalizing the Starbase merge commit, include the merge date as an
@@ -139,6 +147,9 @@ Use the following ownership map when resolving Starbase sync conflicts:
 - `.github/workflows/check-renovate.yaml`.
 - `.github/workflows/policy.yaml`.
 - `.github/workflows/release-publish.yaml`.
+- `.github/workflows/tics.yaml`: keep the reusable workflow call, but set
+  `with.project` to the child repository name; do not leave the project
+  commented out in the shipped PR.
 - `.gitignore` for the shared baseline; the child repository may append
   repository-specific ignore entries at the bottom.
 - `.pre-commit-config.yaml` for the shared hook set; if the same hook appears
@@ -167,9 +178,20 @@ Use the following ownership map when resolving Starbase sync conflicts:
   reporting links from the child repository.
 - `docs/**/*.rst`: keep the repository's own documentation pages, including the
   files inside the diataxis directories.
+- `docs/**/*.rst`: update any copied Starbase text to the child repository's
+  name and purpose; if the landing page is being published, make sure it is not
+  excluded from the Sphinx build.
+- If the empty-diataxis landing pages are still placeholders, keep them excluded
+  from `docs/conf.py`; only un-exclude them when the content is ready to ship.
 - `docs/{how-to,explanation,reference,tutorials}`: the directory names are
   Starbase-owned; if they move, move the whole docs tree accordingly.
 - For library repositories, delete `docs/release-notes/`.
+- For library repositories, delete `.github/README.md`.
+- For library repositories, delete `AGENTS.app.md`, `AGENTS.lib.md`, and the
+  Starbase scaffold package `starcraft/__init__.py`.
+- For library repositories, replace any scaffolded `CONTRIBUTING.md` with a
+  short repository-specific guide that matches the actual project name, repo
+  URLs, and commands.
 - `pyproject.toml`: keep the `[project]` metadata and `[project.scripts]`
   section from the child repository; resolve the later sections separately.
 - `pyproject.toml`: keep the entire `[project]` block from the child
@@ -195,7 +217,12 @@ Use the following ownership map when resolving Starbase sync conflicts:
   existing variable.
 - `docs/conf.py`: keep the Starbase docs scaffold, but keep project identity,
   branding, repo URLs, and other child-specific documentation values from the
-  child repository.
+  child repository. If you publish the diataxis landing pages, remove them from
+  `exclude_patterns` so the docs actually build the new content; otherwise keep
+  the empty quadrant exclusions in place.
+- `.readthedocs.yaml`: keep the Read the Docs build using a separate docs
+  virtualenv instead of pointing both the docs venv and the uv project env at
+  the same path.
 - Branch names for this workflow should start with `work/`.
 - `.editorconfig`: keep the Starbase baseline and only retain child-specific
   extensions that do not override the shared defaults.
@@ -209,11 +236,17 @@ For repository-specific AGENTS templates:
 - keep the template file for the repository type deleted after using it only as
   a reference,
 - apply only relevant improvements from the template into `AGENTS.md`.
+- when the scaffold ships `AGENTS.md` from Starbase, replace it with the
+  repository-specific version derived from the matching template (`AGENTS.lib.md`
+  for libraries or `AGENTS.app.md` for applications), then delete both template
+  files.
 
 For library repositories:
+- use `AGENTS.lib.md` as the source template for `AGENTS.md`,
 - keep `AGENTS.app.md` deleted,
 - keep `AGENTS.lib.md` deleted after using it only as a template reference.
 
 For application repositories:
+- use `AGENTS.app.md` as the source template for `AGENTS.md`,
 - keep `AGENTS.lib.md` deleted,
 - keep `AGENTS.app.md` deleted after using it only as a template reference.
