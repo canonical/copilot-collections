@@ -56,6 +56,9 @@ and will be added in the next part.
    git --no-pager status --short
    ```
 
+7. If GitHub reports conflicts with `main`, fetch the latest `origin/main` and
+   redo the merge from that branch before continuing.
+
 ## Output
 
 Report one of:
