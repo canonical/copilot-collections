@@ -89,6 +89,14 @@ When opening the PR, apply the label:
 - Check the PR's CI status before handing it off.
 - If CI is still running or likely to fail, start a background agent to watch
   the PR checks and report failures so they can be fixed promptly.
+- You do not need to wait for the full matrix to finish before fixing failures
+  in jobs that are already failing or have enough signal to act on.
+- Once the PR is out of draft, make separate commits for follow-up fixes until
+  the PR is fully approved.
+- Once CI is running, squash any follow-up fixes back into the original merge
+  commit instead of layering new commits on top of the merge branch.
+- Right before merging, fold those follow-up commits back into a single merge
+  commit.
 
 ## Merge commit message format
 
