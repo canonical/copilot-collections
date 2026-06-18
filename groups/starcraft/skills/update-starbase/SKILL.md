@@ -56,10 +56,29 @@ Report one of:
 - `merge-clean`: Starbase merged with no conflicts.
 - `merge-conflicted`: merge stopped with conflicts, including the file list from `git status --short`.
 
+## Pre-PR validation (required)
+
+Before creating a PR, ensure repository checks pass:
+
+```bash
+make format
+make lint
+make test-fast
+```
+
+Do not create the PR until these commands complete successfully.
+
+## PR labeling (required)
+
+When opening the PR, apply the label:
+- `PR: Merge`
+
 ## Merge commit message format
 
-When finalizing the Starbase merge commit, include the merge date in ISO 8601
-format in the commit message.
+When finalizing the Starbase merge commit, include the merge date as an
+ISO 8601 date only (`YYYY-MM-DD`) in the commit message.
+
+Do not include time or timezone.
 
 Example:
 - `chore(merge): update starbase (2026-06-18)`
@@ -71,7 +90,7 @@ tooling changes, or dependency-management adjustments).
 Use this template:
 
 ```text
-chore(merge): update starbase (<ISO-8601-DATETIME>)
+chore(merge): update starbase (<ISO-8601-DATE: YYYY-MM-DD>)
 
 Merge `starbase/main` into this branch and sync Starbase-managed updates.
 
