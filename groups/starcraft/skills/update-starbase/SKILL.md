@@ -158,6 +158,8 @@ Use the following ownership map when resolving Starbase sync conflicts:
 - `.github/workflows/tics.yaml`: keep the reusable workflow call, but set
   `with.project` to the child repository name; do not leave the project
   commented out in the shipped PR.
+- `.github/workflows/security-scan.yaml`: keep the osv-scanner config pointing
+  at the root `osv-scanner.toml`, not a nested `source/` path.
 - `.gitignore` for the shared baseline; the child repository may append
   repository-specific ignore entries at the bottom.
 - `.pre-commit-config.yaml` for the shared hook set; if the same hook appears
@@ -222,7 +224,8 @@ Use the following ownership map when resolving Starbase sync conflicts:
   `tool.ruff.lint.ignore`, and `tool.ruff.lint.per-file-ignores`.
 - `Makefile`: keep child-owned variables such as `PROJECT`, but include new
   Starbase-added variables and take the Starbase version when it extends an
-  existing variable.
+  existing variable. Use it to set the child repo's docs venv default so docs
+  install into a separate environment from the main `uv` project venv.
 - `docs/conf.py`: keep the Starbase docs scaffold, but keep project identity,
   branding, repo URLs, and other child-specific documentation values from the
   child repository. If you publish the diataxis landing pages, remove them from
@@ -237,7 +240,19 @@ Use the following ownership map when resolving Starbase sync conflicts:
 - `tests/`: keep the child repository versions for everything under `tests/`
   except `tests/integration/test_setuptools.py`, which comes from `starbase/main`.
 
-## Conflict rule 2: AGENTS templates
+## Conflict rule 2: Type annotations
+
+After resolving conflicts, check for Python type annotation updates needed:
+- If Starbase imports change (e.g., removing `Tuple`, `Union` from typing imports),
+  update the child repository's code to use modern Python 3.10+ syntax:
+  - Replace `Tuple[X, Y]` with `tuple[X, Y]`
+  - Replace `Union[X, Y]` with `X | Y`
+  - Replace `Dict[K, V]` with `dict[K, V]`
+  - Replace `List[X]` with `list[X]`
+- These changes are safe for Python 3.9+ and improve code readability.
+- Run `ruff check --fix` and `ruff format` to auto-fix these issues.
+
+## Conflict rule 3: AGENTS templates
 
 For repository-specific AGENTS templates:
 - keep `AGENTS.md` as the authoritative file,
