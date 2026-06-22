@@ -54,7 +54,7 @@ Examples of requests that should trigger this behavior include:
 - "push the changes"
 - "commit the suggestion"
 - "apply the fix"
-- "push what you have"
+- "push what you suggested"
 - "land these changes"
 
 
@@ -69,4 +69,5 @@ Examples of requests that should trigger this behavior include:
 - "make this change and push"
 - "do X and land it"
 - "apply X and commit"
-- "just go ahead and make the change"
+- "patch this and commit"
+- "commit a fix for this"
