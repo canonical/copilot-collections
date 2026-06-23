@@ -45,11 +45,10 @@ while read -r manifest_path; do
         # Use yq to update items.src
         # 1. Prepend relative dir to everything
         # 2. Fix absolute paths to remain absolute
-        cp "$manifest_path" "${manifest_path}.tmp"
-        yq -i e "
+        cat "$manifest_path" | yq e "
             .[] .items[] .src |= \"$rel_dir\" + . |
             .[] .items[] .src |= sub(\"^$rel_dir/\", \"\")
-        " "${manifest_path}.tmp"
+        " | tee "${manifest_path}.tmp" > /dev/null
         cat "${manifest_path}.tmp" >> "$MERGED_MANIFEST"
         rm "${manifest_path}.tmp"
     fi
@@ -63,7 +62,7 @@ if [ ! -s "$MERGED_MANIFEST" ]; then
 fi
 
 # 3. Parse Collections from Config
-COLLECTIONS_LIST=$(yq '.copilot.collections[]' "$CONFIG_FILE" | tr '\n' ' ')
+COLLECTIONS_LIST=$(cat "$CONFIG_FILE" | yq '.copilot.collections[]' | tr '\n' ' ')
 
 if [ -z "$COLLECTIONS_LIST" ]; then
     echo "⚠️  No collections found in config file."
@@ -76,33 +75,33 @@ process_collection() {
     local col_name=$1
     echo "   📦 Processing Collection: $col_name"
 
-    if ! yq -e ".${col_name}" "$MERGED_MANIFEST" > /dev/null; then
+    if ! cat "$MERGED_MANIFEST" | yq -e ".${col_name}" > /dev/null; then
         echo "   ❌ Error: Collection '$col_name' not found in any manifest."
         exit 1
     fi
 
     # Handle Includes (Recursion)
     local includes
-    includes=$(yq ".${col_name}.includes[]" "$MERGED_MANIFEST" 2>/dev/null || true)
+    includes=$(cat "$MERGED_MANIFEST" | yq ".${col_name}.includes[]" 2>/dev/null || true)
     for included_col in $includes; do
         process_collection "$included_col"
     done
 
     # Handle Items
     local count
-    count=$(yq ".${col_name}.items | length" "$MERGED_MANIFEST")
+    count=$(cat "$MERGED_MANIFEST" | yq ".${col_name}.items | length")
 
     if [ "$count" -gt 0 ]; then
         for ((i=0; i<count; i++)); do
             local src dest
-            src=$(yq ".${col_name}.items[$i].src" "$MERGED_MANIFEST")
-            dest=$(yq ".${col_name}.items[$i].dest" "$MERGED_MANIFEST")
-            
+            src=$(cat "$MERGED_MANIFEST" | yq ".${col_name}.items[$i].src")
+            dest=$(cat "$MERGED_MANIFEST" | yq ".${col_name}.items[$i].dest")
+
             # Resolve full path for source
             local full_src="$TOOLKIT_DIR/$src"
 
             echo "      - Installing $src -> $dest"
-            
+
             if [ -d "$full_src" ]; then
                 # Folder Copy
                 mkdir -p "$dest"

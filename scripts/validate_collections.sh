@@ -32,7 +32,7 @@ FAILED=0
 while read -r manifest; do
     # Get keys (collection names)
     # We use -r to get raw output (no quotes)
-    keys=$(yq e 'keys | .[]' "$manifest" 2>/dev/null || true)
+    keys=$(cat "$manifest" | yq e 'keys | .[]' 2>/dev/null || true)
     
     for key in $keys; do
         if [[ -n "${ALL_COLLECTIONS[$key]}" ]]; then
@@ -56,11 +56,11 @@ echo "   - Checking referential integrity..."
 
 while read -r manifest; do
     manifest_dir=$(dirname "$manifest")
-    keys=$(yq e 'keys | .[]' "$manifest" 2>/dev/null || true)
+    keys=$(cat "$manifest" | yq e 'keys | .[]' 2>/dev/null || true)
 
     for col in $keys; do
         # Check Includes
-        includes=$(yq e ".[\"$col\"].includes[]" "$manifest" 2>/dev/null || true)
+        includes=$(cat "$manifest" | yq e ".[\"$col\"].includes[]" 2>/dev/null || true)
         for inc in $includes; do
             if [[ -z "${ALL_COLLECTIONS[$inc]}" ]]; then
                 echo -e "${RED}❌ Error: Collection '$col' (in $manifest) includes missing collection '$inc'${NC}"
@@ -69,10 +69,10 @@ while read -r manifest; do
         done
 
         # Check Assets
-        count=$(yq e ".[\"$col\"].items | length" "$manifest")
+        count=$(cat "$manifest" | yq e ".[\"$col\"].items | length")
         if [ "$count" -gt 0 ]; then
             for ((i=0; i<count; i++)); do
-                src=$(yq e ".[\"$col\"].items[$i].src" "$manifest")
+                src=$(cat "$manifest" | yq e ".[\"$col\"].items[$i].src")
                 
                 # Resolve Path
                 if [[ "$src" == /* ]]; then
@@ -93,7 +93,7 @@ while read -r manifest; do
                     FAILED=1
                 elif [ -d "$full_path" ]; then
                     # If src is a directory, dest MUST end with /
-                    dest=$(yq e ".[\"$col\"].items[$i].dest" "$manifest")
+                    dest=$(cat "$manifest" | yq e ".[\"$col\"].items[$i].dest")
                     if [[ "$dest" != */ ]]; then
                         echo -e "${RED}❌ Error: Collection '$col' item '$src' is a directory, so dest '$dest' must end with '/'${NC}"
                         FAILED=1
