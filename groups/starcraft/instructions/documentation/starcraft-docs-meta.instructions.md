@@ -43,18 +43,18 @@ Avoid qualities or claims about the product and its features, like *simple*, *ea
 
 ### Examples
 
-For the `tutorial-craft-a-snap` tutorial in Snapcraft:
+For _Tutorial_ > _Craft a snap_ in Snapcraft:
 
 > Learn the essentials of Snapcraft. In this tutorial, we package a small Python app into a snap.
 
-For the how-to guide `how-to-change-from-core24-to-core26` in Snapcraft:
+For _How to_ > _Change from core24 to core26_ in Snapcraft:
 
 > How to migrate a snap from core24 to core26.
 
-For the `reference-gnome-extension` reference in Snapcraft:
+For the _Reference_ > _GNOME extension_ in Snapcraft:
 
 > Reference documentation for the GNOME extension, which adds the components for desktop apps that require GTK 3, GNOME 42 and higher, and GLib.
 
-For the `explanation-parts-lifecycle` explanation in Snapcraft:
+For _Explanation_ > _Parts lifecycle_ in Snapcraft:
 
 > Explanation of the build process of a part in Snapcraft, with a breakdown of the individual steps and the effect each has on the snap filesystem.

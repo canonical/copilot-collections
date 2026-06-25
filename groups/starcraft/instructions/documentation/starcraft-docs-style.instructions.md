@@ -237,8 +237,7 @@ A link to a different section in the documentation:
 
 A link to another documentation set:
 
-> The `snap` command itself has many diagnostic features that can help with debugging runtime and configuration errors. `Debugging snaps
-> <how-to-starcraft-style-guide-examples-good-links>` in the SnapD documentation covers how and when to use them.
+> The `snap` command itself has many diagnostic features that can help with debugging runtime and configuration errors. [Debugging snaps](https://snapcraft.io/docs/debug-snaps) in the SnapD documentation covers how and when to use them.
 
 ## Reference labels
 
