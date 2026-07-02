@@ -7,6 +7,9 @@ starcraft-core:
     - core
     # common-python only has code comment guidance and applies to any language
     - common-python
+  items:
+    - src: instructions/cloud-agent.instructions.md
+      dest: .github/instructions/cloud-agent.instructions.md
 
 starcraft-go:
   description: "Starcraft Go Collection"
