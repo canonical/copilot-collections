@@ -121,7 +121,7 @@ We highly encourage you to explore it for further inspiration, including advance
   * `instructions/`: Custom instruction files.
   * `prompts/`: Prompt files.
   * `agents/`: Agent files.
-* `skills/`: Core agent skill directories (each containing `SKILL.md`).
+* `skills/`: Core agent skill directories (each containing `SKILL.md`, plus optional `scripts/` and `references/` subfolders).
 * `collections.yaml`: Core definitions.
 * `groups/`: Team specific collections.
   * `<team-name>/`: Folder for team assets.
@@ -160,6 +160,25 @@ We highly encourage you to explore it for further inspiration, including advance
    **Important:** Skills are directories, so `dest` must end with `/`.
 4. **Validate:** Run `./scripts/validate_collections.sh .`
 5. **Release:** Follow the same release process as instructions.
+
+#### **Skill Directory Layout (optional subfolders)**
+
+A skill is a directory whose only required file is `SKILL.md`. Because skills are
+synced as whole directories, any supporting files you place alongside `SKILL.md`
+are copied automatically — you do **not** register them individually in the manifest.
+
+Two optional subfolders are used by convention across existing skills:
+
+* `scripts/`: Executable helpers the skill invokes (e.g. Python utilities).
+  Referenced from `SKILL.md` by relative path (e.g. `python3 scripts/helper.py`).
+  Examples: `generate-agent-skills/scripts/`, `generate-path-instructions/scripts/`.
+* `references/`: Auxiliary Markdown the agent loads on demand (checklists,
+  templates, deep-dive docs) to keep `SKILL.md` lean.
+  Examples: `generate-agent/references/`, `generate-repo-instructions/references/`.
+
+Both are optional; add them only when the skill needs helper code or extra
+reference material. Note: files under `skills/**` are exempt from the license
+header check (see `.licenserc.yaml`).
 
 ### **Group Collections**
 
