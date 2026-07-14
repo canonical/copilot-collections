@@ -71,6 +71,7 @@ and will be added in the next part.
 9. Document change provenance on each file:
    For every file added, deleted, or modified by the merge, make review comments on the GitHub PR explaining the provenance of the changes. Additionally, post inline review comments pointing out specific custom changes (e.g., removing a duplicate directive or fixing a type ignore).
    Files that already existed in the child repository and merged cleanly without conflicts or custom changes do not need a comment.
+   **Provenance and rationale for manual changes belong exclusively in PR review comments, never as comments inside the source file.** If you catch yourself writing "why a bot changed this" as a `#`/`//` comment in code, stop and move it to a PR review comment instead.
    The comments must follow these guidelines:
    - **Prefix Template**: Each comment must begin with a robot emoji and a prefix in square brackets announcing that a bot wrote it, along with the model and harness. E.g. `🤖 [BEEP BOOP, A BOT WROTE THIS COMMENT - <model>, <harness>]`.
      Example: `🤖 [BEEP BOOP, A BOT WROTE THIS COMMENT - Gemini 3.5 Flash (High), antigravity]`
@@ -122,6 +123,17 @@ When opening the PR, apply the label:
   commit instead of layering new commits on top of the merge branch.
 - Right before merging, fold those follow-up commits back into a single merge
   commit.
+- **The provenance/documentation rules in "Document change provenance on each
+  file" apply for the entire life of the PR, not just the initial merge.**
+  Any manual code change made while fixing CI failures or responding to review
+  feedback — including one-line bugfixes — must be explained via a PR review
+  comment (inline on the changed line, using the same robot-prefix template),
+  never as a comment added to the source file itself. Do not add explanatory
+  `#`/`//` comments to files to document *why a bot made this change*; source
+  comments are only for genuinely non-obvious code, not for change provenance.
+- Post each of these follow-up-fix review comments (and remember the
+  robot-prefix template) in the same turn you push the corresponding fix —
+  don't defer it, and don't wait to be reminded.
 
 ## Merge commit message format
 
