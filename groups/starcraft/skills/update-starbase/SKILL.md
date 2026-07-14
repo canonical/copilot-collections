@@ -59,6 +59,31 @@ and will be added in the next part.
 7. If GitHub reports conflicts with `main`, fetch the latest `origin/main` and
    redo the merge from that branch before continuing.
 
+8. Clean up placeholder text in all merged files (both conflicted and cleanly merged):
+   Scan all files that were added or modified by the merge for any remaining "Starcraft" or "Starbase" placeholder text:
+
+   ```bash
+   git diff --name-only starbase/main...HEAD | xargs grep -i -E "starcraft|starbase"
+   ```
+
+   Update any matches found (except external docs/style guide URLs) to use the child repository's name and purpose.
+
+9. Document change provenance on each file:
+   For every file added, deleted, or modified by the merge, make review comments on the GitHub PR explaining the provenance of the changes. Additionally, post inline review comments pointing out specific custom changes (e.g., removing a duplicate directive or fixing a type ignore).
+   Files that already existed in the child repository and merged cleanly without conflicts or custom changes do not need a comment.
+   The comments must follow these guidelines:
+   - **Prefix Template**: Each comment must begin with a robot emoji and a prefix in square brackets announcing that a bot wrote it, along with the model and harness. E.g. `🤖 [BEEP BOOP, A BOT WROTE THIS COMMENT - <model>, <harness>]`.
+     Example: `🤖 [BEEP BOOP, A BOT WROTE THIS COMMENT - Gemini 3.5 Flash (High), antigravity]`
+   - **Provenance Descriptions**:
+     - For new files: `"new file from starbase"`
+     - For modified files: `"file updated from starbase"`
+     - For renamed or moved files: `"file moved in starbase"`
+     - For complex/mixed files (e.g. `uv.lock` or `pyproject.toml`): Provide specific intermediate/complex details (e.g. `"file updated from starbase (child-owned file, regenerated locally based on merged dependencies)"`).
+   - **Implementation via GitHub API**:
+     - Post file-level comments on the PR using the REST API (`POST /repos/{owner}/{repo}/pulls/{pull_number}/comments`) with the `"subject_type": "file"` parameter so that a specific line number is not required.
+     - Post inline line-level review comments for specific code changes (specifying `"line"` and `"side": "RIGHT"`) to highlight specific modifications made (such as resolving duplicate extensions or custom linter ignores).
+     - **Handling Rate Limits**: When posting a batch of comments, enforce a delay (e.g., 4-5 seconds) between calls to avoid GitHub's spam rate limiter (`was submitted too quickly`). Implement an automatic backoff/retry (e.g., sleeping 30 seconds upon hitting a rate limit) to guarantee all comments are registered.
+
 ## Output
 
 Report one of:
