@@ -117,12 +117,20 @@ When opening the PR, apply the label:
   the PR checks and report failures so they can be fixed promptly.
 - You do not need to wait for the full matrix to finish before fixing failures
   in jobs that are already failing or have enough signal to act on.
-- Once the PR is out of draft, make separate commits for follow-up fixes until
-  the PR is fully approved.
-- Once CI is running, squash any follow-up fixes back into the original merge
-  commit instead of layering new commits on top of the merge branch.
-- Right before merging, fold those follow-up commits back into a single merge
-  commit.
+- While the PR is still in draft (fixing initial CI failures and addressing
+  the first round of review comments), make separate commits for each
+  follow-up fix rather than amending; this keeps the history of what changed
+  and why easy to review incrementally.
+- Squash the follow-up-fix commits back into the single merge commit twice,
+  at two distinct points:
+  1. Once CI is green and the PR is ready to come out of draft: squash all
+     follow-up-fix commits made so far into the original merge commit before
+     marking the PR ready for review.
+  2. Right before the final merge into the base branch: squash any further
+     follow-up commits made during the ready-for-review round (e.g., fixes
+     from human reviewers) back into that same single merge commit.
+  Between these two squash points, follow-up fixes should again land as
+  separate commits, not be squashed continuously.
 - **The provenance/documentation rules in "Document change provenance on each
   file" apply for the entire life of the PR, not just the initial merge.**
   Any manual code change made while fixing CI failures or responding to review
