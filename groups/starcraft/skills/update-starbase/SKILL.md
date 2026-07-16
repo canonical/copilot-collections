@@ -71,7 +71,7 @@ and will be added in the next part.
 9. Document change provenance on each file:
    For every file added, deleted, or modified by the merge, make review comments on the GitHub PR explaining the provenance of the changes. Additionally, post inline review comments pointing out specific custom changes (e.g., removing a duplicate directive or fixing a type ignore).
    Files that already existed in the child repository and merged cleanly without conflicts or custom changes do not need a comment.
-   **Provenance and rationale for manual changes belong exclusively in PR review comments, never as comments inside the source file.** If you catch yourself writing "why a bot changed this" as a `#`/`//` comment in code, stop and move it to a PR review comment instead.
+   **Provenance and rationale for manual changes belong exclusively in PR review comments, never as comments inside the source file.** If you catch yourself writing "why a bot changed this" as a `#`/`//` comment in code, stop and move it to a PR review comment instead. This applies just as much to config files like `docs/conf.py`: e.g. explaining *why* only specific `sphinx_toolbox` submodules are loaded (instead of the top-level package) belongs in a PR file-level comment, not a multi-line `#` block above the `extensions` entries.
    The comments must follow these guidelines:
    - **Prefix Template**: Each comment must begin with a robot emoji and a prefix in square brackets announcing that a bot wrote it, along with the model and harness. E.g. `🤖 [BEEP BOOP, A BOT WROTE THIS COMMENT - <model>, <harness>]`.
      Example: `🤖 [BEEP BOOP, A BOT WROTE THIS COMMENT - Gemini 3.5 Flash (High), antigravity]`
@@ -84,6 +84,17 @@ and will be added in the next part.
      - Post file-level comments on the PR using the REST API (`POST /repos/{owner}/{repo}/pulls/{pull_number}/comments`) with the `"subject_type": "file"` parameter so that a specific line number is not required.
      - Post inline line-level review comments for specific code changes (specifying `"line"` and `"side": "RIGHT"`) to highlight specific modifications made (such as resolving duplicate extensions or custom linter ignores).
      - **Handling Rate Limits**: When posting a batch of comments, enforce a delay (e.g., 4-5 seconds) between calls to avoid GitHub's spam rate limiter (`was submitted too quickly`). Implement an automatic backoff/retry (e.g., sleeping 30 seconds upon hitting a rate limit) to guarantee all comments are registered.
+   - **Own-invention workarounds require a suggestion, not a direct push**: for
+     a change that is neither sourced from `starbase/main` nor an obvious
+     conflict resolution — for example, a hand-written workaround like adding
+     an `export SPHINX_OPTS := ... -j 1` override to fix a `--fail-on-warning`
+     failure caused by a Sphinx extension's parallel-read warning — do not
+     push the change directly into the merge commit. Instead, push the merge
+     without it, then leave an inline review comment at the relevant location
+     using the standard robot-prefix template that explains the problem and
+     proposes the fix as an actual GitHub suggestion (a fenced
+     ` ```suggestion ` block), so a human reviewer can review and apply it
+     explicitly rather than the bot self-approving its own invented fix.
 
 ## Output
 
@@ -142,6 +153,48 @@ When opening the PR, apply the label:
 - Post each of these follow-up-fix review comments (and remember the
   robot-prefix template) in the same turn you push the corresponding fix —
   don't defer it, and don't wait to be reminded.
+
+## Refreshing a stale merge PR (required when either main has moved on)
+
+If significant time has passed since the merge PR was opened and either
+`origin/main` or `starbase/main` has gained new commits, do not layer another
+merge commit on top of the existing one. Instead, rebuild the merge commit
+from the current heads of both branches while preserving every follow-up-fix
+commit already pushed to the PR:
+
+1. `git fetch origin --prune && git fetch starbase --prune` to get both
+   branches' latest state.
+2. Create a fresh branch from the current `origin/main` (do not reuse the old
+   merge base): `git checkout -b <new-branch> origin/main`.
+3. `git merge --no-ff --no-commit starbase/main` and resolve conflicts using
+   the same file-ownership map and decisions as the original merge. Diff the
+   new merge tree against the old merge commit
+   (`git diff <new-working-tree> <old-merge-commit> --stat`) to catch any
+   conflict-map resolutions, placeholder-text cleanups, or lint-rule fixes
+   that the new merge silently skipped (for example, because
+   `starbase/main` didn't touch a file that the old merge still needed to
+   modify, so git raises no conflict for it at all — reapply those changes
+   manually from the old merge commit).
+4. Commit the merge using the same commit message template as any other
+   Starbase merge (see "Merge commit message format"), updating the date.
+5. Cherry-pick every follow-up-fix commit from the old branch, in order, onto
+   the new merge commit: `git cherry-pick <fix-1> <fix-2> ...`. These commits
+   must be preserved, not redone from scratch or squashed away.
+6. Re-run the pre-PR validation commands (`make format`, `make lint`,
+   `make docs`; `make test-fast` at your discretion) against the rebuilt
+   branch before pushing.
+7. Force-push the rebuilt branch to the existing PR branch (use
+   `--force-with-lease` against the branch's current remote tip for safety).
+8. Update the PR title's date to match the new merge date (see "Merge commit
+   message format" for the title/subject format). `gh pr edit --title` can
+   spuriously fail on repos with legacy Projects (classic) boards; if it
+   errors, fall back to
+   `gh api repos/{owner}/{repo}/pulls/{number} -X PATCH -f title="..."` and
+   confirm the new title with a follow-up `gh pr view --json title`.
+9. Post a PR comment (standard robot-prefix template) noting that history was
+   rewritten and force-pushed, and summarizing what changed on each side
+   (new commits pulled in from `origin/main` and/or `starbase/main`) and
+   confirming the follow-up-fix commits were preserved.
 
 ## Merge commit message format
 
@@ -240,6 +293,27 @@ Use the following ownership map when resolving Starbase sync conflicts:
   from `docs/conf.py`; only un-exclude them when the content is ready to ship.
 - `docs/{how-to,explanation,reference,tutorials}`: the directory names are
   Starbase-owned; if they move, move the whole docs tree accordingly.
+- Whenever a Starbase-driven rename or move deletes a documentation file or
+  directory that existed before the merge (for example
+  `docs/how-to-guides/` → `docs/how-to/`), add a matching entry to
+  `docs/redirects.txt` (using the repository's existing redirect mechanism,
+  e.g. `sphinx-rerediraffe`) so old links keep resolving. Confirm with
+  `make docs` that the build reports `(good) <old path> --> <new path>` for
+  each added redirect. **A directory-level redirect (with
+  `rediraffe_dir_only`) only redirects that directory's own index page, not
+  the individual files that used to live inside it** — add one explicit
+  redirect entry per moved file as well (e.g. both
+  `"how-to-guides" "how-to"` and `"how-to-guides/add_repo" "how-to/add_repo"`)
+  and confirm each one individually reports `(good) ...` in the `make docs`
+  output; do not assume the directory entry alone covers its contents.
+- When a moved/renamed file lands via delete+add rather than a clean git
+  rename (so the diff doesn't show the content as untouched), diff the old
+  and new file contents directly and compare the new file against sibling
+  pages that already follow the child repository's conventions (for example,
+  other `docs/*/index.rst` files). Reconcile any stale conventions the move
+  carried over (e.g. an old `toctree` option like `:maxdepth:` where sibling
+  pages now use `:hidden:`) rather than assuming the moved file is
+  already up to date.
 - For library repositories, delete `docs/release-notes/`.
 - For library repositories, delete `.github/README.md`.
 - For library repositories, delete `AGENTS.app.md`, `AGENTS.lib.md`, and the
@@ -253,6 +327,13 @@ Use the following ownership map when resolving Starbase sync conflicts:
   repository.
 - `pyproject.toml`: keep all `[dependency-groups]` entries from the child
   repository.
+- `pyproject.toml`: the `docs-sphinx-stack` dependency group (and its list of
+  active/commented-out packages) is fully owned by `starbase/main`; take it
+  verbatim, including which entries are commented out. Do not add, remove, or
+  uncomment entries in this group to suit the child repository — any
+  child-specific docs extensions belong in the `docs` group instead, alongside
+  the `{ include-group = "docs-sphinx-stack" }` reference. If a conflict
+  arises here, prefer starbase's content and regenerate `uv.lock`.
 - `pyproject.toml`: merge `tool.uv.constraint-dependencies` by keeping the
   higher version from each side, ordered alphabetically by package name.
 - `pyproject.toml`: keep `[build-system]` from the child repository.
@@ -282,8 +363,11 @@ Use the following ownership map when resolving Starbase sync conflicts:
 - Branch names for this workflow should start with `work/`.
 - `.editorconfig`: keep the Starbase baseline and only retain child-specific
   extensions that do not override the shared defaults.
-- `tests/`: keep the child repository versions for everything under `tests/`
-  except `tests/integration/test_setuptools.py`, which comes from `starbase/main`.
+- `tests/`: keep the child repository versions for everything under `tests/`.
+  Do not add `tests/integration/test_setuptools.py` from `starbase/main`; it is
+  a Starbase-scaffold-only test and is not needed in child repositories, even
+  though shared fixtures it relies on (e.g. `project_main_module`) may
+  legitimately live in the child's `conftest.py` for other tests.
 
 ## Conflict rule 2: Type annotations
 
