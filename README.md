@@ -96,6 +96,10 @@ on:
   schedule:
     - cron: '0 9 * * 1' # Run every Monday at 09:00 UTC
   workflow_dispatch:
+  
+permissions:
+  contents: write
+  pull-requests: write
 
 jobs:
   check-update:
