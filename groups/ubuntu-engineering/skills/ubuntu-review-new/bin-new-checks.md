@@ -1,0 +1,15 @@
+- **File Hierarchy Standard (FHS) Compliance:** Verify the binary contents follow the FHS (e.g., no `libFOO.so` in `/usr/share`).
+  - **Tool:** `dpkg-deb -c <package>.deb` to list all installed files.
+- **File Conflicts:** Ensure there are no file conflicts with other existing binary packages. Check for short filenames in `$PATH` that might clash.
+  - **Tool:** Check for specific file path conflicts against the archive using `apt-file search <filename>`.
+- **Naming Conventions:** Ensure the binary name matches the content. For libraries, the binary package name must match the SONAME (e.g., `libfoo2`).
+  - **Tool:** For libraries, verify the SONAME by unpacking to a temporary directory `tmpdir=$(mktemp -d); dpkg-deb -x <package>.deb $tmpdir` and checking `readelf -d $tmpdir/usr/lib/*/libfoo.so.* | grep SONAME` (or `objdump -p`).
+- **Content Comparison:**
+  - For new architectures, compare contents to an existing architecture (e.g., `amd64`).
+  - For SONAME transitions, compare contents to the last version (e.g., compare `libfoo2` with `libfoo1`).
+  - **Tool:** Use `debdiff <old>.deb <new>.deb` if the previous package is available, or manually compare the `dpkg-deb -c` outputs.
+- **Control Files:** Check for proper `Breaks`/`Replaces` in the control files, which usually accompany new binary packages replacing old ones.
+  - **Tool:** `dpkg-deb -I <package>.deb` to view the control metadata and dependencies.
+- **Architecture-Independent Packages (`Architecture: all`):** Ensure these binary packages only include architecture-independent files.
+  - **Tool:** Unpack the package using `tmpdir=$(mktemp -d); dpkg-deb -x <package>.deb $tmpdir` and check the file types using `find $tmpdir -type f -exec file {} +`. Review the output to ensure no architecture-specific files (e.g., ELF binaries, compiled objects) are present.
+- **Component and Architecture Consistency:** Check that binaries go to the correct components and all intended architectures are built to avoid per-arch differences.

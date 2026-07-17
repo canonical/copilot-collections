@@ -1,0 +1,23 @@
+- **Namespace Management:**
+  - Avoid very short names (3-5 characters) that might squat the namespace.
+  - Check for potential name collisions with future Debian packages.
+- **License and Copyright Compliance (`debian/copyright`):**
+  - **Tool:** Use `lrc` (licenserecon) or `licensecheck -r .` within the unpacked source tree to auto-detect licenses and copyrights. Compare the tool's output against `debian/copyright` to find discrepancies.
+  - **Explicit Upstream License:** The upstream project must be explicit about the license it is under. Ensure upstream ships a `COPYRIGHT`, `COPYING`, or `LICENSE` file, or that licensing information is explicitly stated in the source file headers.
+  - Verify licenses allow free redistribution.
+  - Verify that `debian/copyright` correctly reports the licenses and copyright holders for all files.
+  - Ensure the DEP-5 machine-readable format is used.
+  - Ensure the full text of the license is included unless it is a common license present in `/usr/share/common-licenses`. Do not include common licenses explicitly in `debian/copyright`.
+  - Canonical contributions should ideally be GPLv3 or match the upstream license. Canonical employees should be listed as "Canonical Ltd.", not with `@canonical.com` email addresses.
+  - Ensure source is present for all files (no missing source code or binary blobs).
+- **Component Verification:**
+  - Check that the license matches the expected component (`main`, `universe`, `restricted`, `multiverse`).
+  - `restricted`: hardware enablement, non-free drivers, firmware, non-free codec support.
+  - `multiverse`: other non-free software.
+  - Note: Ubuntu considers GFDL documentation free, unlike Debian.
+- **Basic Correctness and Quality:**
+  - **Tool:** Run `lintian -I -E --pedantic <package>.dsc` on the source package. Review warnings and errors.
+  - Check for standard packaging issues: missing descriptions, incorrect standards versions, convoluted `debian/rules`, unnecessary package splits, building packages not listed in `debian/control`.
+  - **Descriptions:** Check the package descriptions in `debian/control` for strictly incorrect statements (e.g., spelling errors, factual inaccuracies, invalid formatting). *Do not suggest stylistic or phrasing improvements*; only point out objective errors.
+  - **File Hierarchy Standard (FHS):** Check any `debian/*.install` files to ensure that the destination paths respect the FHS (since binary `.deb` artifacts might not be built yet during a Source NEW review).
+  - Ensure tests in `main` do not require packages outside of `main` (no dependencies on `contrib` or `non-free`).

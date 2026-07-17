@@ -18,3 +18,6 @@
 
 # Landscape specific collection
 /groups/landscape/                  @canonical/landscape
+
+# Ubuntu Engineering specific collection
+/groups/ubuntu-engineering/         @canonical/debcrafters-admins
