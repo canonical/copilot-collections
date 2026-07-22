@@ -6,6 +6,10 @@ on:
         description: "Path to configuration file (searches .github/ then root if not specified)"
         default: ""
         type: string
+      branch_name:
+        description: "Branch name used for the update pull request"
+        default: "chore/auto-copilot-collections"
+        type: string
 
 permissions: {}
 
@@ -113,7 +117,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "chore: update Copilot collections to ${{ steps.upstream.outputs.LATEST_VERSION }}"
-          branch-name: "chore/auto-copilot-collections"
+          branch-name: "${{ inputs.branch_name }}"
           title: "chore: update Copilot collections to ${{ steps.upstream.outputs.LATEST_VERSION }}"
           body: "Update to version `${{ steps.upstream.outputs.LATEST_VERSION }}`."
           upsert: true
