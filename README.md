@@ -102,9 +102,10 @@ jobs:
     # Always pin to @main to get the latest logic, but the content version is controlled by your .yaml file
     uses: canonical/copilot-collections/.github/workflows/auto_update_collections.yaml@main
     secrets: inherit
-    # Optionally specify a custom config file location:
+    # Optionally specify a custom config file location and/or branch name:
     # with:
     #   config_file: "custom/path/.copilot-collections.yaml"
+    #   branch_name: "work/bot/update-copilot-collections"
 ```
 
 ## **Inspiration & Credits**
