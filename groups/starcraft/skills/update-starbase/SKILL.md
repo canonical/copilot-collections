@@ -325,6 +325,8 @@ Use the following ownership map when resolving Starbase sync conflicts:
   section from the child repository; resolve the later sections separately.
 - `pyproject.toml`: keep the entire `[project]` block from the child
   repository.
+- `pyproject.toml`: the `[project].license` key is child-repository-owned;
+  keep the child value when conflicts occur.
 - `pyproject.toml`: keep all `[dependency-groups]` entries from the child
   repository.
 - `pyproject.toml`: the `docs-sphinx-stack` dependency group (and its list of
