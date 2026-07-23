@@ -31,6 +31,12 @@ common-python:
     - src: assets/instructions/python/code-commenting.instructions.md
       dest: .github/instructions/python-code-commenting.instructions.md
 
+common-terraform:
+  description: "Terraform plan repository conventions and review guidance"
+  items:
+    - src: assets/instructions/terraform/plans.instructions.md
+      dest: .github/instructions/terraform-plans.instructions.md
+
 common-documentation:
   description: "Documentation standards and review skills"
   items:
