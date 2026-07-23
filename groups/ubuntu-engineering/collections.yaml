@@ -1,0 +1,33 @@
+# Copyright 2026 Canonical Ltd.
+# See LICENSE file for licensing details.
+
+ubuntu-engineering-core:
+  description: "Ubuntu Engineering Core Collection"
+  includes:
+    - core
+
+ubuntu-engineering-packaging:
+  description: "Ubuntu Engineering deb packaging skills"
+  includes:
+    - ubuntu-engineering-core
+  items:
+    - src: skills/ubuntu-create-autopkgtest
+      dest: .github/skills/ubuntu-create-autopkgtest/
+    - src: skills/ubuntu-write-sru
+      dest: .github/skills/ubuntu-write-sru/
+
+ubuntu-engineering-review:
+  description: "Ubuntu Engineering review skills for deb packaging workflows"
+  includes:
+    - ubuntu-engineering-core
+  items:
+    - src: skills/ubuntu-review-sru
+      dest: .github/skills/ubuntu-review-sru/
+    - src: skills/ubuntu-review-new
+      dest: .github/skills/ubuntu-review-new/
+    - src: skills/ubuntu-review-ffe
+      dest: .github/skills/ubuntu-review-ffe/
+    - src: skills/ubuntu-review-uife
+      dest: .github/skills/ubuntu-review-uife/
+    - src: skills/ubuntu-review-final-freeze
+      dest: .github/skills/ubuntu-review-final-freeze/
