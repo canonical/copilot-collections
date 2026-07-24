@@ -2,6 +2,9 @@
 name: prepare-docs-automated-spread-test
 description: "Prepare a charm tutorial for the canonical/operator-workflows automated documentation Spread test. Adds SPREAD / SPREAD SKIP annotations to docs/tutorial.md, generates a top-level spread.yaml, and creates .github/workflows/spread_docs.yaml. WHEN: prepare spread docs, annotate tutorial for spread, create spread yaml, add spread workflow, automate tutorial testing, spread test setup, docs spread."
 argument-hint: "Describe the target repository or any specific constraints"
+metadata:
+  author: canonical/platform-engineering
+  version: "1.0.0"
 ---
 
 # Prepare the tutorial for the automated documentation Spread workflow

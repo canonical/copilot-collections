@@ -76,6 +76,10 @@ copilot-toolkit:
       dest: .github/skills/retrospective-artifacts/
     - src: skills/secret-guard
       dest: .github/skills/secret-guard/
+    - src: skills/generate-docs-spread-test
+      dest: .github/skills/generate-docs-spread-test/
+    - src: skills/prepare-docs-automated-spread-test
+      dest: .github/skills/prepare-docs-automated-spread-test/
 
 # ==========================================
 # 2. Framework Specifics

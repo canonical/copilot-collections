@@ -2,6 +2,9 @@
 name: generate-docs-spread-test
 description: "Regenerate Spread tutorial test scaffolding from docs/tutorial.md. Creates spread.yaml, tests/spread/tutorial/task.yaml, and .github/workflows/spread_test.yaml. WHEN: generate spread test, create task.yaml, spread scaffolding, refresh spread test, tutorial spread task, spread tutorial test."
 argument-hint: "Describe any constraints or the target tutorial file"
+metadata:
+  author: canonical/platform-engineering
+  version: "1.0.0"
 ---
 
 # Generate the tutorial Spread test
