@@ -14,6 +14,8 @@ pfe-docs:
   items:
     - src: /assets/instructions/documentation/documentation-rtd.instructions.md
       dest: .github/instructions/documentation-rtd.instructions.md
+    - src: workflows/docs-alignment-review.md
+      dest: .github/copilot/docs-alignment-review.md
 
 pfe-docs-not-rtd:
   description: "Platform Engineering non-RTD Documentation Collection"
