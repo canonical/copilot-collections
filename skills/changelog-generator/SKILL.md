@@ -297,6 +297,10 @@ messages or Slack posts.
 ```markdown
 ## [3.0.0] - 2026-07-29
 
+### Deprecated
+
+- Deprecate `config.yml` format in favor of `config.toml` (removal in v4.0)
+
 ### Removed
 
 - ⚠️ Remove deprecated `--legacy-mode` flag
@@ -310,10 +314,6 @@ messages or Slack posts.
 ### Changed
 
 - ⚠️ Rename `--output-dir` to `--dest` for consistency
-
-### Deprecated
-
-- Deprecate `config.yml` format in favour of `config.toml` (removal in v4.0)
 
 ### Fixed
 
