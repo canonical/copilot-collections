@@ -66,11 +66,9 @@ The user provides one or more of:
 | Scope filter | Path prefix or package name | No |
 | Output format | `standard`, `github-release`, `plain` | No (defaults to `standard`) |
 
-If the base ref is not provided, detect it automatically:
+If the base ref is not provided, detect it automatically (falls back to the initial commit if no tags exist):
 
-```bash
-git describe --tags --abbrev=0 HEAD~1
-```
+    git describe --tags --abbrev=0 HEAD~1 2>/dev/null || git rev-list --max-parents=0 HEAD | tail -n 1
 
 ---
 
