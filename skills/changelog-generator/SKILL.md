@@ -230,7 +230,7 @@ messages or Slack posts.
 
 ---
 
-## Output Behaviour
+## Output Behavior
 
 - **Write to file**: If a `CHANGELOG.md` exists, prepend the new version section
   after the `[Unreleased]` heading (or after the top-level `# Changelog`
