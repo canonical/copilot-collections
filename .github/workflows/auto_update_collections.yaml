@@ -21,7 +21,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Checkout Consumer Repo
-        uses: actions/checkout@v7.0.0
+        uses: actions/checkout@v7.0.1
         with:
           persist-credentials: false
 
@@ -89,7 +89,7 @@ jobs:
 
       - name: Checkout Toolkit
         if: steps.upstream.outputs.UPDATE_NEEDED == 'true'
-        uses: actions/checkout@v7.0.0
+        uses: actions/checkout@v7.0.1
         with:
           repository: canonical/copilot-collections
           ref: ${{ steps.upstream.outputs.LATEST_VERSION }}
