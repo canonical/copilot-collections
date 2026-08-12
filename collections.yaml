@@ -76,6 +76,8 @@ copilot-toolkit:
       dest: .github/skills/retrospective-artifacts/
     - src: skills/secret-guard
       dest: .github/skills/secret-guard/
+    - src: skills/changelog-generator
+      dest: .github/skills/changelog-generator/
 
 # ==========================================
 # 2. Framework Specifics
