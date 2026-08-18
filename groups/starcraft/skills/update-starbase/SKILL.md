@@ -95,6 +95,13 @@ When opening the PR, apply the label:
 
 - Open the PR as a draft, request a Copilot review while it is still draft, and
   keep iterating until the review is clean enough to mark ready.
+- **Interactive harness — operator review gate**: if running in an interactive
+  harness (i.e. a human operator is present and can respond), stop after
+  opening the draft PR and surface the PR URL. Do not proceed with CI
+  monitoring, further commits, or any automated follow-up until the operator
+  explicitly confirms. Present the PR URL and a brief summary of what was
+  merged and which files (if any) had conflicts or custom changes requiring
+  attention.
 - Check the PR's CI status before handing it off.
 - If CI is still running or likely to fail, start a background agent to watch
   the PR checks and report failures so they can be fixed promptly.
