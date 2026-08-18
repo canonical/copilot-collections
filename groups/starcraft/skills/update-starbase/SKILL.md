@@ -95,13 +95,6 @@ When opening the PR, apply the label:
 
 - Open the PR as a draft, request a Copilot review while it is still draft, and
   keep iterating until the review is clean enough to mark ready.
-- **Interactive harness — operator review gate**: if running in an interactive
-  harness (i.e. a human operator is present and can respond), stop after
-  opening the draft PR and surface the PR URL. Do not proceed with CI
-  monitoring, further commits, or any automated follow-up until the operator
-  explicitly confirms. Present the PR URL and a brief summary of what was
-  merged and which files (if any) had conflicts or custom changes requiring
-  attention.
 - Check the PR's CI status before handing it off.
 - If CI is still running or likely to fail, start a background agent to watch
   the PR checks and report failures so they can be fixed promptly.
@@ -114,8 +107,12 @@ When opening the PR, apply the label:
 - Squash the follow-up-fix commits back into the single merge commit twice,
   at two distinct points:
   1. Once CI is green and the PR is ready to come out of draft: squash all
-     follow-up-fix commits made so far into the original merge commit before
-     marking the PR ready for review.
+     follow-up-fix commits made so far into the original merge commit, then:
+     - **Non-interactive harness**: mark the PR ready for review.
+     - **Interactive harness**: do *not* mark the PR ready. Instead, send the
+       operator a message with the draft PR URL and a brief summary (what was
+       merged, any conflicts resolved, any custom changes made) and stop.
+       Leave promoting the PR to the operator.
   2. Right before the final merge into the base branch: squash any further
      follow-up commits made during the ready-for-review round (e.g., fixes
      from human reviewers) back into that same single merge commit.
