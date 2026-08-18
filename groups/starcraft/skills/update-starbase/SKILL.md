@@ -7,6 +7,25 @@ description: Syncs Starbase-managed project files by adding the canonical/starba
 
 ## Add the remote and merge Starbase
 
+Run the preparation script from the root of the child repository:
+
+```bash
+bash <path-to-skill>/scripts/prepare_merge.sh [BRANCH_SUFFIX]
+```
+
+- `BRANCH_SUFFIX` is optional; defaults to today's date
+  (`work/update-starbase-YYYY-MM-DD`).
+- The script handles steps 1–6: safe-state check, remote setup, fetch,
+  work-branch creation, merge, and conflict detection.
+- It exits **non-zero and prints `MERGE RESULT: merge-conflicted`** if
+  the merge stops with conflicts, or exits **zero and prints
+  `MERGE RESULT: merge-clean`** on success.
+- In both cases the script prints a **`NEXT STEPS FOR THE AGENT`** block
+  listing exactly what to do next — read it and follow it.
+
+<details>
+<summary>Manual equivalent (fallback if the script cannot be used)</summary>
+
 1. Confirm the repository is in a safe state before merge:
 
    ```bash
@@ -50,10 +69,16 @@ description: Syncs Starbase-managed project files by adding the canonical/starba
    git --no-pager status --short
    ```
 
-7. If GitHub reports conflicts with `main`, fetch the latest `origin/main` and
+</details>
+
+
+After the script completes, follow the `NEXT STEPS FOR THE AGENT` block it
+printed. The steps below expand on each item in detail:
+
+1. If GitHub reports conflicts with `main`, fetch the latest `origin/main` and
    redo the merge from that branch before continuing.
 
-8. Clean up placeholder text in all merged files (both conflicted and cleanly merged):
+2. Clean up placeholder text in all merged files (both conflicted and cleanly merged):
    Scan all files that were added or modified by the merge for any remaining "Starcraft" or "Starbase" placeholder text:
 
    ```bash
@@ -62,7 +87,7 @@ description: Syncs Starbase-managed project files by adding the canonical/starba
 
    Update any matches found (except external docs/style guide URLs) to use the child repository's name and purpose.
 
-9. Document change provenance on each file:
+3. Document change provenance on each file:
    For every file added, deleted, or modified by the merge, make review comments on the GitHub PR explaining the provenance of the changes. Additionally, post inline review comments pointing out specific custom changes (e.g., removing a duplicate directive or fixing a type ignore).
    Files that already existed in the child repository and merged cleanly without conflicts or custom changes do not need a comment.
    **Provenance and rationale for manual changes belong exclusively in PR review comments, never as comments inside the source file.** If you catch yourself writing "why a bot changed this" as a `#`/`//` comment in code, stop and move it to a PR review comment instead. This applies just as much to config files like `docs/conf.py`: e.g. explaining *why* only specific `sphinx_toolbox` submodules are loaded (instead of the top-level package) belongs in a PR file-level comment, not a multi-line `#` block above the `extensions` entries.
