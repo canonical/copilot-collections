@@ -5,13 +5,20 @@
 
 set -e
 
-# Usage: ./install_collections.sh <path_to_config_yaml> <path_to_toolkit_root>
+# Usage: ./install_collections.sh <path_to_config_yaml> <path_to_toolkit_root> [--dry-run]
 CONFIG_FILE="$1"
 TOOLKIT_DIR="$2"
+DRY_RUN=false
+
+for arg in "$@"; do
+    if [ "$arg" = "--dry-run" ]; then
+        DRY_RUN=true
+    fi
+done
 
 # 1. Validation
 if [ -z "$CONFIG_FILE" ] || [ -z "$TOOLKIT_DIR" ]; then
-    echo "❌ Usage: $0 <config_file> <toolkit_dir>"
+    echo "❌ Usage: $0 <config_file> <toolkit_dir> [--dry-run]"
     exit 1
 fi
 
@@ -101,6 +108,10 @@ process_collection() {
             local full_src="$TOOLKIT_DIR/$src"
 
             echo "      - Installing $src -> $dest"
+            
+            if [ "$DRY_RUN" = true ]; then
+                continue
+            fi
 
             if [ -d "$full_src" ]; then
                 # Folder Copy
@@ -124,4 +135,8 @@ for col in $COLLECTIONS_LIST; do
 done
 
 rm "$MERGED_MANIFEST"
-echo "✅ Sync complete."
+if [ "$DRY_RUN" = true ]; then
+    echo "🔍 Dry-run complete. No files were copied."
+else
+    echo "✅ Sync complete."
+fi
