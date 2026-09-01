@@ -14,6 +14,8 @@ core:
       dest: .github/instructions/instructions.instructions.md
     - src: assets/instructions/common/core-directive.instructions.md
       dest: .github/instructions/core-directive.instructions.md
+    - src: assets/instructions/common/secret-guard.instructions.md
+      dest: .github/instructions/secret-guard.instructions.md
 
 common-go:
   description: "Go development standards and reviewer agent"
@@ -28,6 +30,12 @@ common-python:
   items:
     - src: assets/instructions/python/code-commenting.instructions.md
       dest: .github/instructions/python-code-commenting.instructions.md
+
+common-terraform:
+  description: "Terraform plan repository conventions and review guidance"
+  items:
+    - src: assets/instructions/terraform/plans.instructions.md
+      dest: .github/instructions/terraform-plans.instructions.md
 
 common-documentation:
   description: "Documentation standards and review skills"
@@ -66,6 +74,10 @@ copilot-toolkit:
       dest: .github/skills/migrate-harness-tests-to-state-transition-test/
     - src: skills/retrospective-artifacts
       dest: .github/skills/retrospective-artifacts/
+    - src: skills/secret-guard
+      dest: .github/skills/secret-guard/
+    - src: skills/changelog-generator
+      dest: .github/skills/changelog-generator/
 
 # ==========================================
 # 2. Framework Specifics
