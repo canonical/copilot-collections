@@ -109,35 +109,39 @@ A typical `_reconcile` structure is:
 
 ##### Certificates and other expiring secrets
 
-Charms that request TLS certificates (e.g. via `tls_certificates_interface`) or
-any other short-lived, rotated credential MUST renew that material proactively,
-well before it actually expires, not only once it has already expired or been
-invalidated.
-
-- The "early warning" event (e.g. `CertificateExpiringEvent`, fired ahead of
-  expiry) and the "already expired/invalidated" event (e.g.
-  `CertificateInvalidatedEvent`) MUST both result in a **freshly generated**
-  CSR/credential being requested. Never resubmit the unchanged
-  CSR/credential that produced the material that is about to expire.
+- Renew TLS certificates / expiring credentials proactively, ahead of expiry —
+  not only once already expired or invalidated.
+- Both the "early warning" event (e.g. `CertificateExpiringEvent`) and the
+  "expired/invalidated" event MUST request a genuinely new CSR/credential.
+  Never resubmit the CSR/credential that produced the expiring material.
   - With `tls_certificates_interface`, resubmitting an identical CSR via
-    `request_certificate_creation()` is a silent no-op on the provider side
-    (it is already present in relation data), so no new certificate is ever
-    issued early. Use `request_certificate_renewal(old_csr, new_csr)` with a
-    newly generated CSR (`renew=True`) for both the expiring and the
-    invalidated handlers.
-  - Real-world incident: the `wazuh-server` charm only ever renewed its
-    rsyslog certificate at actual expiry (not ~30 days ahead as intended)
-    because its expiring-certificate handler reused the stale CSR. See
-    [canonical/wazuh-server-operator#423](https://github.com/canonical/wazuh-server-operator/pull/423).
-- Add a unit test that explicitly asserts the credential used on renewal is
-  *different* from the one that produced the expiring material, so a
-  regression to "renewing with stale material" is caught automatically
-  instead of silently passing (an assertion that merely checks a request was
-  sent is not sufficient).
+    `request_certificate_creation()` is a silent no-op (provider already has
+    it), so no renewal ever happens. Use `request_certificate_renewal(old_csr,
+    new_csr)` with a freshly generated CSR (`renew=True`) for both handlers.
+- Renewing the CSR must NOT also rotate the private key, unless key rotation
+  is explicitly intended:
+  - A fresh CSR alone is enough to unblock the provider (e.g. it embeds a
+    random unique ID in the subject) — no new key is needed.
+  - Rotating the key while the old certificate is still valid desyncs the key
+    from the deployed cert before the replacement is issued, and can put the
+    charm in a spurious blocked/error state for the whole renewal window.
+  - Keep "renew CSR" and "rotate key" as separate, independently-triggered
+    operations in code — don't let a `renew` flag cascade from one into the
+    other.
+- Unit test the renewal path explicitly:
+  - Assert the CSR/credential used for renewal differs from the one backing
+    the expiring material.
+  - Assert unrelated material that should be stable across renewal (e.g. the
+    private key) is unchanged.
+  - A test that merely checks "a request was sent" is not sufficient.
 - Treat the early-warning window as the primary renewal path, not a
-  best-effort hint: assume infrastructure (controllers, CMRs, downstream
-  providers) can be degraded or slow around the actual expiry time, so
-  renewing early is what provides the safety margin against those failures.
+  best-effort hint: infra/providers can be degraded near actual expiry, so
+  renewing early is what buys the safety margin.
+- Real-world incident: the `wazuh-server` charm renewed its rsyslog cert only
+  at actual expiry (stale CSR reused on the early-warning event); the
+  follow-up fix then had to avoid accidentally rotating the private key
+  alongside the CSR renewal. See
+  [canonical/wazuh-server-operator#423](https://github.com/canonical/wazuh-server-operator/pull/423).
 
 #### `rockcraft.yaml`
 
