@@ -84,6 +84,45 @@ npx skills add canonical/copilot-collections --skill generate-agent -g
 
 **Note:** Group-scoped skill discoverability is handled separately.
 
+### **Alternative: `gh skill` (GitHub CLI) — Analysis**
+
+The GitHub CLI (`gh`) ships a native `skill` command (`gh skill install`, `list`, `preview`,
+`publish`, `search`, `update`) that installs Agent Skills directly from a repository,
+without cloning it. This feature is currently in **preview** and requires a recent `gh`
+version (`>= 2.98.0`); it is **not** available in most LTS package repositories yet, so it
+cannot be assumed to exist on every contributor's or CI runner's machine.
+
+A proof of concept was run against this repository's `skills/` directory using
+`gh skill install . <skill-name> --from-local` and `gh skill publish --dry-run`, with the
+following findings:
+
+* **Validation is useful and mostly passes today.** `gh skill publish --dry-run` validates
+  every skill in this repo against the [Agent Skills specification](https://agentskills.io/specification)
+  (naming, required frontmatter, `allowed-tools` format, stray install metadata). All
+  skills here pass, aside from warnings about a missing (optional) `license` field.
+* **Default install destination does not match this repo's convention.** By default,
+  `gh skill install` places skills in a shared `.agents/skills/` directory (used by
+  several agents, including GitHub Copilot), not `.github/skills/`. To match the layout
+  produced by `install_collections.sh`, callers must pass an explicit
+  `--dir .github/skills/<skill-name>` for every skill, which removes most of the
+  convenience of the command for multi-skill collections.
+* **It only manages skills, not instructions/prompts/agents.** This toolkit's core value
+  is distributing *all four* asset types (instructions, prompts, agents, skills) as
+  versioned collections in one pass; `gh skill` has no equivalent for the other three.
+* **Remote installs depend on the GitHub API and a resolvable release/tag.** `gh skill
+  install owner/repo <skill>` needs to resolve a version (latest release or default
+  branch) via the GitHub API, which can fail with rate-limit errors for unauthenticated
+  or CI environments without a token. `--from-local` avoids this but only works when the
+  repository is already cloned, which brings no benefit over the existing sync scripts.
+
+**Conclusion:** `gh skill` is a promising native discovery/validation tool worth
+revisiting once it graduates from preview and gains wider `gh` version adoption, and
+`gh skill publish --dry-run` is a handy manual spec-compliance check for skill authors.
+It is not adopted as the primary distribution mechanism for this toolkit today because
+it only covers skills (not instructions/prompts/agents), does not match this repo's
+`.github/skills/` destination convention by default, and requires a `gh` version newer
+than what most environments currently have installed.
+
 ### **3. Configure Auto-Updates (CI)**
 
 To ensure your repo stays up to date when the Toolkit releases new versions, add this workflow.
