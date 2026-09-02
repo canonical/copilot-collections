@@ -107,6 +107,38 @@ A typical `_reconcile` structure is:
 
 - Relations should use the `save` and `load` methods to dump and restore data from the relation through Pydantic models.
 
+##### Certificates and other expiring secrets
+
+Charms that request TLS certificates (e.g. via `tls_certificates_interface`) or
+any other short-lived, rotated credential MUST renew that material proactively,
+well before it actually expires, not only once it has already expired or been
+invalidated.
+
+- The "early warning" event (e.g. `CertificateExpiringEvent`, fired ahead of
+  expiry) and the "already expired/invalidated" event (e.g.
+  `CertificateInvalidatedEvent`) MUST both result in a **freshly generated**
+  CSR/credential being requested. Never resubmit the unchanged
+  CSR/credential that produced the material that is about to expire.
+  - With `tls_certificates_interface`, resubmitting an identical CSR via
+    `request_certificate_creation()` is a silent no-op on the provider side
+    (it is already present in relation data), so no new certificate is ever
+    issued early. Use `request_certificate_renewal(old_csr, new_csr)` with a
+    newly generated CSR (`renew=True`) for both the expiring and the
+    invalidated handlers.
+  - Real-world incident: the `wazuh-server` charm only ever renewed its
+    rsyslog certificate at actual expiry (not ~30 days ahead as intended)
+    because its expiring-certificate handler reused the stale CSR. See
+    [canonical/wazuh-server-operator#423](https://github.com/canonical/wazuh-server-operator/pull/423).
+- Add a unit test that explicitly asserts the credential used on renewal is
+  *different* from the one that produced the expiring material, so a
+  regression to "renewing with stale material" is caught automatically
+  instead of silently passing (an assertion that merely checks a request was
+  sent is not sufficient).
+- Treat the early-warning window as the primary renewal path, not a
+  best-effort hint: assume infrastructure (controllers, CMRs, downstream
+  providers) can be degraded or slow around the actual expiry time, so
+  renewing early is what provides the safety margin against those failures.
+
 #### `rockcraft.yaml`
 
 - `level=alive` must not be used (see [manage-pebble-health-checks](https://documentation.ubuntu.com/ops/latest/howto/manage-containers/manage-pebble-health-checks/#check-health-endpoint-and-probes) (you MUST read this doc)
