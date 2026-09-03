@@ -56,7 +56,7 @@ fi
 
 echo -e "${BLUE}📄 Using config:${NC} $CONFIG_FILE"
 
-VERSION=$(yq '.copilot.version' "$CONFIG_FILE")
+VERSION=$(yq '.copilot.version' < "$CONFIG_FILE")
 if [ "$VERSION" == "null" ] || [ -z "$VERSION" ]; then
      echo -e "${RED}❌ Error: Could not read '.copilot.version' from $CONFIG_FILE${NC}"
      exit 1
