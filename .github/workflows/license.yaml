@@ -19,6 +19,6 @@ jobs:
         run: |
           curl -fLsSo .licenserc.yaml https://raw.githubusercontent.com/canonical/operator-workflows/main/.github/files/.licenserc.yaml
       - name: Check license headers
-        uses: apache/skywalking-eyes/header@v0.8.0
+        uses: apache/skywalking-eyes/header@v0.9.0
         with:
           config: .licenserc.yaml
