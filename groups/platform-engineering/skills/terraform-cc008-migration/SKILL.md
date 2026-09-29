@@ -42,7 +42,7 @@ file), download them first and use the downloaded copies wherever this document
 refers to them:
 
 ```bash
-CC008_BASE="https://raw.githubusercontent.com/canonical/copilot-collections/feat-terraform-cc008-migration-skill/groups/platform-engineering/skills/terraform-cc008-migration"
+CC008_BASE="https://raw.githubusercontent.com/canonical/copilot-collections/main/groups/platform-engineering/skills/terraform-cc008-migration"
 mkdir -p /tmp/cc008
 curl -fsSL -o /tmp/cc008/cc008.spec.md "$CC008_BASE/assets/cc008.spec.md"
 curl -fsSL -o /tmp/cc008/check_cc008.sh "$CC008_BASE/scripts/check_cc008.sh"
