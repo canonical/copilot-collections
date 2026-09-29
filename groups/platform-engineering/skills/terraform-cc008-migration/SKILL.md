@@ -1,6 +1,6 @@
 ---
 name: terraform-cc008-migration
-description: Migrates Terraform charm, component and product modules to the CC008 Charm Terraform Standards, enforcing the required file layout, variable and output contracts, MAJOR_VERSION markers, module tests and the operator-workflows reusable CI workflows. Use whenever a repository's Terraform modules must be brought to (or audited against) CC008.
+description: Migrates Terraform charm and product modules to the CC008 Charm Terraform Standards, enforcing the required file layout, variable and output contracts, MAJOR_VERSION markers, module tests and the operator-workflows reusable CI workflows. Use whenever a repository's Terraform modules must be brought to (or audited against) CC008.
 metadata:
   author: canonical/platform-engineering
   version: "1.0.0"
@@ -76,16 +76,19 @@ starting:
 find . -type f -name 'main.tf' -not -path '*/.terraform/*' -exec dirname {} \; | sort -u
 ```
 
-**Then classify each module before applying any rule.** CC008 defines four
-categories with *different* input and output contracts, and applying the wrong
-one is the most common migration mistake:
+**Then classify each module before applying any rule.** The categories have
+*different* input and output contracts, and applying the wrong one is the most
+common migration mistake:
 
 | Category | What it deploys | Key outputs |
 | --- | --- | --- |
 | **Charm module** | a single charm | `application`, plus `provides` / `requires` |
-| **Component module** | several charms sharing one release cycle | `components`, plus `offers` |
 | **Product module** | a ready-to-use solution, incl. models and integrations | `models`, `metadata` |
 | **Deployment** | one specific environment | n/a — versions state and `backend.tf` |
+
+CC008 also defines *component modules* (several charms sharing one release
+cycle). We have none yet, so this skill carries no rules for them — read the
+"Component modules" section of the spec directly if you ever meet one.
 
 The universal rules below apply to every category; then follow **only** the
 section matching the category you classified.
@@ -115,7 +118,7 @@ section matching the category you classified.
 - **DO** add a `tests/main.tftest.hcl` per module, using `mock_provider "juju"`
   and asserting the module's key outputs, when the module has no test yet.
 - **DO** pin every Terraform module `source = "git::...//terraform..."` reference
-  — in README examples, component modules and product modules — to a `?ref=` tag
+  — in README examples and in product modules — to a `?ref=` tag
   or commit hash such as `?ref=tf-1.0.0`. Floating references such as branches
   are **not allowed**.
 
@@ -139,49 +142,27 @@ section matching the category you classified.
 - **DO** replace any deprecated combined `endpoint` / `endpoints` output with the
   `provides` / `requires` split.
 
-## DO — Component Modules
-
-A component module bundles charms that share one release cycle. Its contract is
-*not* the charm-module contract — do not copy `app_name`/`channel`/`revision`
-variables or an `application` output into it.
-
-- **DO** take `model_uuid` (not nullable) plus one `<charm_resource>` object
-  variable per bundled charm or referenced charm module, exposing at least
-  `channel`, `base` and `revision` through `optional(...)` fields so deployments
-  stay reproducible. `<charm_resource>` is the name of the `juju_application`
-  resource or of the `module` being referenced.
-- **DO** model external integrations as object variables carrying
-  `kind` (`"endpoint"` or `"offer"`), `name`, `endpoint`, `url` and `controller`,
-  so the module supports both in-model and cross-model integration. Add an
-  `_offer` / `_endpoint` suffix when only one of the two is supported.
-- **DO** output `components` — a `map(object)` associating each resource name
-  with the deployed application object (`juju_application.<name>` for local
-  resources, `module.<name>.application` for referenced charm modules). This is
-  the mandatory output.
-- **DO** output `offers` for anything higher-level modules consume across models;
-  never use an offer for an in-model relation.
-- **DO** output `provides` / `requires` keyed `<charm_name>_<endpoint>` when the
-  bundled charms declare endpoints of that kind, and expose
-  `expose_endpoints` as input when endpoints should be offered for ease of
-  consumption.
-
 ## DO — Product Modules
 
 A product module deploys a ready-to-use solution and owns the `juju_model`,
-secret and integration resources tying components together. It has **no**
-`provides` / `requires` outputs — consumers integrate through `offers`.
+secret and integration resources tying its charms together. It does **not**
+declare `requires`: everything the product needs from the outside is supplied
+through input variables, and everything it offers to the outside is exposed
+through `offers`.
 
+- **DO** express every external requirement — a database, TLS, an existing
+  ingress, a COS stack — as an input variable carrying the endpoint or offer to
+  integrate with, rather than as a `requires` output for a caller to wire up.
 - **DO** take `proxy` and `logging-config` as mandatory inputs whenever the
   module creates or manages its own `juju_model` resources, plus `risk` to
   control the channel risk of the bundled components.
 - **DO** expose the charm revision **and** the OCI resources of every bundled
   charm as input variables, so deployments are reproducible and air-gap capable.
-- **DO** expose variables that let a user substitute a mandatory external
-  integration (database, TLS) for their own endpoint or offer — bundle the
-  default implementation behind `count = 0` when the user supplies one — and
-  expose variables for optional external integrations such as COS.
+- **DO** provide a default implementation for mandatory external integrations
+  (database, TLS) behind `count = 0`, so it is dropped when the user supplies
+  their own endpoint or offer through the corresponding variable.
 - **DO** output `models`, mapping each model key to its `model_uuid` and the
-  `components` deployed in it, and `metadata` carrying at least `version`,
+  components deployed in it, and `metadata` carrying at least `version`,
   `deployed_at` and `updated_at`. Both are mandatory.
 - **DO** output `offers` and, where the solution issues them, `credentials`.
 
@@ -189,8 +170,7 @@ secret and integration resources tying components together. It has **no**
 
 - **DO** add `backend.tf` with the backend configuration, and version every file
   describing the deployment **including** the state.
-- **DO** pin every referenced charm, component and product module to a tag or
-  commit hash.
+- **DO** pin every referenced charm and product module to a tag or commit hash.
 
 ## DO — CI Workflows
 
@@ -235,9 +215,9 @@ Use operator-workflows' reusable workflows instead of hand-written scripts.
 - **DON'T** change any module's deployment behaviour — resource arguments,
   variable defaults — beyond what CC008 requires. Preserve existing defaults
   unless the spec mandates a different one.
-- **DON'T** apply the charm-module contract to a component or product module —
-  no `app_name`/`channel`/`revision` variables, no `application` output, and no
-  `provides` / `requires` on a product module.
+- **DON'T** apply the charm-module contract to a product module — no
+  `app_name`/`channel`/`revision` variables, no `application` output, and no
+  `provides` / `requires`.
 - **DON'T** touch charm source code, `charmcraft.yaml`, or workflows unrelated to
   the Terraform modules.
 - **DON'T** hand-roll a tagging or release workflow; call the canonical reusable
