@@ -54,6 +54,14 @@ Use this reference when resolving conflicts during a Starbase sync merge.
 
 ### Mixed ownership
 
+In mixed-ownership files, resolve per declaration rather than per section. Starbase owns structure and syntax (including upstream deletions and commented-out scaffolding); the child repository only provides values. Verify with:
+
+```bash
+git diff starbase/main -- <mixed-ownership-file>
+```
+
+Check deletions explicitly: when Starbase removes a declaration, `git merge` raises no conflict marker and placeholder greps cannot detect the omission, leaving stale lines in place. Every surviving difference must map to an allowed child-owned value below.
+
 - `.github/.jira_sync_config.yaml`: keep `settings.components` and
   `settings.jira_project_key` from the child repository; take the rest from
   `starbase/main`.
@@ -151,11 +159,10 @@ Use this reference when resolving conflicts during a Starbase sync merge.
   Starbase-added variables and take the Starbase version when it extends an
   existing variable. Use it to set the child repo's docs venv default so docs
   install into a separate environment from the main `uv` project venv.
-- `docs/conf.py`: keep the Starbase docs scaffold, but keep project identity,
-  branding, repo URLs, and other child-specific documentation values from the
-  child repository. If you publish the diataxis landing pages, remove them from
-  `exclude_patterns` so the docs actually build the new content; otherwise keep
-  the empty quadrant exclusions in place.
+- `docs/conf.py`: keep the Starbase docs scaffold; substitute child-owned values:
+  - **Starbase-owned**: `version`/`release` logic (including commented-out blocks and Read the Docs branch logic), `copyright` format, `html_title` (remove if deleted upstream), `html_favicon`, `html_extra_path`, and new upstream `exclude_patterns` entries.
+  - **Child-owned values**: `project`, `author`, `ogp_*`, `html_context` URLs, `llms_txt_description`, license name, and quadrant exclusion toggles in `exclude_patterns`.
+  - **Copyright start year**: derive from first commit (`git log --reverse --format=%ad --date=format:%Y | head -1`); if history is shallow, squashed, or the year looks wrong, ask the reviewer.
 - `.readthedocs.yaml`: keep the Read the Docs build using a separate docs
   virtualenv instead of pointing both the docs venv and the uv project env at
   the same path.

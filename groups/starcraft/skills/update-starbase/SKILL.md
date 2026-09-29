@@ -108,20 +108,15 @@ Conflict resolution applied:
    [`references/file_ownership.md`](references/file_ownership.md)'s
    "Conflict rule 1b" — it doesn't show up as a conflict, so this is the
    only point it gets caught.
+2. Verify mixed-ownership files and clean up placeholders:
+   - **Structural diff**: For any modified mixed-ownership file, diff against Starbase (`git diff starbase/main -- <file>`) and verify only child-owned values differ per [`references/file_ownership.md`](references/file_ownership.md).
+   - **Placeholder grep**: Scan for residual `starcraft|starbase` placeholder text:
 
-2. Clean up placeholder text in all merged files (both conflicted and cleanly merged):
-   Scan all files that were added or modified by the merge for any remaining "Starcraft" or "Starbase" placeholder text:
+     ```bash
+     git diff --name-only --diff-filter=d HEAD^1 HEAD | xargs -r grep -i -E "starcraft|starbase"
+     ```
 
-   ```bash
-   git diff --name-only --diff-filter=d HEAD^1 HEAD | xargs -r grep -i -E "starcraft|starbase"
-   ```
-
-   Update any matches found (except external docs/style guide URLs) to use the child repository's name and purpose.
-   Do **not** touch legitimate Starbase-ownership/attribution comments (for
-   example "Should only be edited in the `starbase` repository", see
-   [`references/file_ownership.md`](references/file_ownership.md)) — those
-   are intentional and must be preserved verbatim, not mistaken for
-   placeholder text.
+     Update any matches found (except external docs/style guide URLs) to use the child repository's name/purpose. Do **not** touch legitimate Starbase-ownership comments. Explicitly disposition every hit (fix or note as legitimate attribution in the merge commit message).
 
 3. Run pre-PR validation (required):
 

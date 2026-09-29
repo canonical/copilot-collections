@@ -19,6 +19,8 @@
 #   <file1>
 #   PLACEHOLDER_WARNINGS:
 #   <file1>:<line>
+#   STRUCTURAL_DIFF_FILES:   (clean merges only)
+#   <file1>
 
 set -euo pipefail
 
@@ -111,6 +113,22 @@ if [[ $MERGE_EXIT -eq 0 ]]; then
   # ── CLEAN MERGE ─────────────────────────────────────────────────────────────
   PLACEHOLDER_LINES=$(echo "$CHANGED_FILES" | xargs -r grep -n -i -E "starcraft|starbase" -- 2>/dev/null | cut -d: -f1,2 || true)
 
+  # Shared and mixed-ownership files from references/file_ownership.md that the
+  # merge touched. Keep this list in sync with the ownership map.
+  MIXED_OWNERSHIP_FILES=(
+    "docs/conf.py"
+    "Makefile"
+    "pyproject.toml"
+    "SECURITY.md"
+    ".github/.jira_sync_config.yaml"
+    ".github/PULL_REQUEST_TEMPLATE.md"
+    ".gitignore"
+    ".pre-commit-config.yaml"
+    ".readthedocs.yaml"
+  )
+  STRUCTURAL_DIFF_FILES=$(echo "$CHANGED_FILES" | tr ' ' '\n' \
+    | grep -x -F -f <(printf '%s\n' "${MIXED_OWNERSHIP_FILES[@]}") || true)
+
   cat <<EOF
 STATUS=clean
 BRANCH=${BRANCH}
@@ -126,6 +144,17 @@ $(echo "$PLACEHOLDER_LINES" | sed 's/^/  /')
 
 NOTE: Do not overwrite legitimate Starbase attribution/ownership comments
 (see references/file_ownership.md) — only replace true placeholder text.
+EOF
+  fi
+
+  if [[ -n "$STRUCTURAL_DIFF_FILES" ]]; then
+    cat <<EOF
+STRUCTURAL_DIFF_FILES:
+$(echo "$STRUCTURAL_DIFF_FILES" | sed 's/^/  /')
+
+NOTE: Diff each file above against starbase/main (git diff starbase/main -- <file>).
+Confirm all remaining differences are child-owned per references/file_ownership.md.
+Check deletions explicitly: git merge does not flag deleted declarations as conflicts.
 EOF
   fi
 
