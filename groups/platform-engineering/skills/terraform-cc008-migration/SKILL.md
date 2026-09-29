@@ -30,7 +30,30 @@ resolve every question against it. This skill does not restate the spec; it only
 reinforces the parts that are most often missed and describes the repository
 plumbing the spec does not cover.
 
-Secondary references, in order of authority when they disagree:
+### Fetching The Companion Files
+
+This skill ships two companion files next to `SKILL.md`: `assets/cc008.spec.md`
+and `scripts/check_cc008.sh`. When the skill is installed as a directory — for
+example synced to `.github/skills/terraform-cc008-migration/` — they are already
+on disk and the relative paths above resolve.
+
+When only `SKILL.md` was fetched (`copilot skill add <url>` materializes a single
+file), download them first and use the downloaded copies wherever this document
+refers to them:
+
+```bash
+CC008_BASE="https://raw.githubusercontent.com/canonical/copilot-collections/feat-terraform-cc008-migration-skill/groups/platform-engineering/skills/terraform-cc008-migration"
+mkdir -p /tmp/cc008
+curl -fsSL -o /tmp/cc008/cc008.spec.md "$CC008_BASE/assets/cc008.spec.md"
+curl -fsSL -o /tmp/cc008/check_cc008.sh "$CC008_BASE/scripts/check_cc008.sh"
+chmod +x /tmp/cc008/check_cc008.sh
+```
+
+Delete `/tmp/cc008` once the migration is verified; it must never be committed.
+
+### Secondary References
+
+In order of authority when they disagree:
 
 1. [platform-engineering-charm-template/terraform](https://github.com/canonical/platform-engineering-charm-template/tree/main/terraform)
    — the canonical, always-up-to-date reference module. Prefer copying its exact
@@ -162,9 +185,11 @@ iterate until it passes clean:
 ```
 
 `<skill-dir>` is wherever this skill is installed — typically
-`.github/skills/terraform-cc008-migration/`. Called with no arguments the script
-discovers every module directory itself; pass explicit directories to narrow the
-run:
+`.github/skills/terraform-cc008-migration/`. If you downloaded the companion
+files instead, run `/tmp/cc008/check_cc008.sh`.
+
+Called with no arguments the script discovers every module directory itself; pass
+explicit directories to narrow the run:
 
 ```bash
 <skill-dir>/scripts/check_cc008.sh terraform charms/foo/terraform
