@@ -36,5 +36,7 @@ pfe-charms:
       dest: .github/agents/charm-engineer.agent.md
     - src: instructions/lib-updates.instructions.md
       dest: .github/instructions/charms-lib-updates.instructions.md
+    - src: skills/terraform-cc008-migration
+      dest: .github/skills/terraform-cc008-migration/
     - src: /assets/instructions/common/core-directive.instructions.md
       dest: .github/instructions/core-directive.instructions.md
