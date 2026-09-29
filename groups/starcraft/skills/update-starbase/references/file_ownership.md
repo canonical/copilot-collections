@@ -87,21 +87,15 @@ Check deletions explicitly: when Starbase removes a declaration, `git merge` rai
   from `docs/conf.py`; only un-exclude them when the content is ready to ship.
 - `docs/{how-to,explanation,reference,tutorials}`: the directory names are
   Starbase-owned; if they move, move the whole docs tree accordingly.
-- `docs/.custom_wordlist.txt` (or equivalent global spelling/vale wordlist):
-  take the union of both sides' entries by default, but **only add terms
-  that are genuinely global** — safe to accept everywhere in the docs, such
-  as product/project names (`Starcraft`, the child repo's own name) or other
-  terms that should never be flagged regardless of context. For a narrow,
-  one-off term that only applies to a specific page or sentence, use the
-  docs tooling's scoped/inline ignore mechanism instead (e.g. a
-  `vale-ignore`-style comment at the point of use) rather than adding it to
-  the global wordlist. If it's unclear whether a file like this should be
-  reclassified as fully Starbase-owned going forward (so that future
-  additions come only from `starbase/main` and get expressed as scoped
-  ignores in child repos), raise that as an explicit question for the
-  reviewer/maintainer rather than deciding unilaterally — this changes the
-  file's entry in this ownership map and should be confirmed before treating
-  it as settled.
+- `docs/.custom_wordlist.txt`: keep child repository entries and include new
+  shared tooling terms from `starbase/main`. Never add `Starbase` or `Starcraft`
+  to a child wordlist (rewrite the prose instead). For isolated proper nouns,
+  use scoped inline ignores (`vale-ignore`); for other misspellings, ask the
+  operator (falling back to the PR description only if non-interactive) rather
+  than editing this file unilaterally during validation. If it is unclear
+  whether this file should be reclassified as fully Starbase-owned going forward,
+  raise that as an explicit question for the reviewer/maintainer rather than
+  deciding unilaterally.
 - Whenever a Starbase-driven rename or move deletes a documentation file or
   directory that existed before the merge (for example
   `docs/how-to-guides/` → `docs/how-to/`), add a matching entry to

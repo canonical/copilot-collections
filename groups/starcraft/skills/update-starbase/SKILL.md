@@ -139,6 +139,11 @@ Conflict resolution applied:
    still resolves to the in-sync excerpt the docs page expects, adjusting
    anchors/line numbers if formatting shifted them.
 
+   If Vale or `make docs` reports spelling failures:
+   - **`Starbase` or `Starcraft`**: Indicates unmigrated template prose in `docs/`. Rewrite the prose for the child repository; never add these to `.custom_wordlist.txt`.
+   - **One-off proper nouns**: If a flagged term is clearly a proper noun used only once or twice in the documentation, apply a scoped inline ignore (`vale-ignore`) at the point of use instead of adding it to the global wordlist.
+   - **Other terms**: Do not unilaterally edit `docs/.custom_wordlist.txt` to force a clean build. If in an interactive session, ask the operator how to disposition the flagged words (add to wordlist, inline ignore, or rewrite); only fall back to listing unresolved words in the PR description if in a non-interactive session.
+
    Do not create the PR until these commands complete successfully.
 
 4. Check every file changed by the merge for preparation PR candidates
