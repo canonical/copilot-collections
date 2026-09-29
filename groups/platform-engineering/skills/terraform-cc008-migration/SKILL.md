@@ -64,19 +64,33 @@ In order of authority when they disagree:
    [gateway-api-integrator-operator#320](https://github.com/canonical/gateway-api-integrator-operator/pull/320/files),
    [mailserver-operators#48](https://github.com/canonical/mailserver-operators/pull/48/files).
 
-## Module Discovery
+## Module Discovery And Classification
 
 Treat every directory containing a `main.tf` (or an existing `versions.tf` /
 `terraform.tf`) as one module, whether the repository has a single `terraform/`
 directory or several — per-charm `<charm>/terraform`, product modules under
 `terraform/<product>` or `terraform-product/`. Enumerate them all before
-starting, and apply the rules below to each one:
+starting:
 
 ```bash
 find . -type f -name 'main.tf' -not -path '*/.terraform/*' -exec dirname {} \; | sort -u
 ```
 
-## DO — Module Structure And Contracts
+**Then classify each module before applying any rule.** CC008 defines four
+categories with *different* input and output contracts, and applying the wrong
+one is the most common migration mistake:
+
+| Category | What it deploys | Key outputs |
+| --- | --- | --- |
+| **Charm module** | a single charm | `application`, plus `provides` / `requires` |
+| **Component module** | several charms sharing one release cycle | `components`, plus `offers` |
+| **Product module** | a ready-to-use solution, incl. models and integrations | `models`, `metadata` |
+| **Deployment** | one specific environment | n/a — versions state and `backend.tf` |
+
+The universal rules below apply to every category; then follow **only** the
+section matching the category you classified.
+
+## DO — Every Module
 
 - **DO** ensure each module has `terraform.tf`, `variables.tf`, `outputs.tf`,
   `main.tf` and `README.md`. Rename a legacy `versions.tf` to `terraform.tf`,
@@ -86,28 +100,11 @@ find . -type f -name 'main.tf' -not -path '*/.terraform/*' -exec dirname {} \; |
   `> 1.0.0, < 2.0.0`).
 - **DO** order `variable` blocks in `variables.tf` and `output` blocks in
   `outputs.tf` alphabetically by name.
-- **DO**, for charm modules, declare the mandatory variables: `app_name`,
-  `channel`, `config`, `constraints`, `model_uuid` (no default) and `revision`.
-  Add `units` unless the charm is a subordinate charm, which must omit it.
-- **DO** add the optional CC008 variables when they are relevant to the charm:
-  `base`, `expose`, `resources`, `machines`, `endpoint_bindings`,
-  `storage_directives`.
 - **DO** set `nullable = false` on every variable that must always resolve to a
   concrete value (`app_name`, `channel`, `model_uuid`, …) so callers cannot pass
   an explicit `null` and bypass the default. Leave variables that intentionally
   default to `null` (`base`, `constraints`, `revision`, …) nullable.
-- **DO**, for charm modules, provide the `application`, `provides` and `requires`
-  outputs, each with a `description`. `application` must be the
-  `juju_application` resource object itself — `value = juju_application.<name>` —
-  not its `.name`.
-- **DO** type `provides` and `requires` as `map(object({...}))`, one key per
-  relation endpoint the charm actually declares, each entry carrying at least
-  `kind = "endpoint"`, `name = juju_application.<name>.name` and
-  `endpoint = "<relation-endpoint-name>"`. Add `controller = null` when the
-  relation supports cross-model integration. Use `value = {}` only when the charm
-  declares no endpoints of that kind.
-- **DO** replace any deprecated combined `endpoint` / `endpoints` output with the
-  `provides` / `requires` split.
+- **DO** give every output a `description`.
 - **DO** add a `terraform/MAJOR_VERSION` file at the root of each independent
   module family, containing only the current major version number and no trailing
   newline (start at `1` for a first migration). In multi-module repositories,
@@ -118,8 +115,82 @@ find . -type f -name 'main.tf' -not -path '*/.terraform/*' -exec dirname {} \; |
 - **DO** add a `tests/main.tftest.hcl` per module, using `mock_provider "juju"`
   and asserting the module's key outputs, when the module has no test yet.
 - **DO** pin every Terraform module `source = "git::...//terraform..."` reference
-  — in README examples and in product modules — to a `?ref=` tag such as
-  `?ref=tf-1.0.0`, never to an unpinned or floating branch.
+  — in README examples, component modules and product modules — to a `?ref=` tag
+  or commit hash such as `?ref=tf-1.0.0`. Floating references such as branches
+  are **not allowed**.
+
+## DO — Charm Modules
+
+- **DO** declare the mandatory variables: `app_name`, `channel`, `config`,
+  `constraints`, `model_uuid` (no default) and `revision`. Add `units` unless the
+  charm is a subordinate charm, which **must** omit it.
+- **DO** add the optional CC008 variables when they are relevant to the charm:
+  `base`, `expose`, `resources`, `machines`, `endpoint_bindings`,
+  `storage_directives`, `offered_endpoints`.
+- **DO** output `application` as the `juju_application` resource object itself —
+  `value = juju_application.<name>` — not its `.name`.
+- **DO** output `provides` and `requires` as `map(object({...}))`, one key per
+  relation endpoint the charm actually declares, each entry carrying at least
+  `kind = "endpoint"`, `name = juju_application.<name>.name` and
+  `endpoint = "<relation-endpoint-name>"`. Add `controller = null` when the
+  relation supports cross-model integration. They are mandatory as soon as the
+  charm declares endpoints of that kind; use `value = {}` only when it declares
+  none.
+- **DO** replace any deprecated combined `endpoint` / `endpoints` output with the
+  `provides` / `requires` split.
+
+## DO — Component Modules
+
+A component module bundles charms that share one release cycle. Its contract is
+*not* the charm-module contract — do not copy `app_name`/`channel`/`revision`
+variables or an `application` output into it.
+
+- **DO** take `model_uuid` (not nullable) plus one `<charm_resource>` object
+  variable per bundled charm or referenced charm module, exposing at least
+  `channel`, `base` and `revision` through `optional(...)` fields so deployments
+  stay reproducible. `<charm_resource>` is the name of the `juju_application`
+  resource or of the `module` being referenced.
+- **DO** model external integrations as object variables carrying
+  `kind` (`"endpoint"` or `"offer"`), `name`, `endpoint`, `url` and `controller`,
+  so the module supports both in-model and cross-model integration. Add an
+  `_offer` / `_endpoint` suffix when only one of the two is supported.
+- **DO** output `components` — a `map(object)` associating each resource name
+  with the deployed application object (`juju_application.<name>` for local
+  resources, `module.<name>.application` for referenced charm modules). This is
+  the mandatory output.
+- **DO** output `offers` for anything higher-level modules consume across models;
+  never use an offer for an in-model relation.
+- **DO** output `provides` / `requires` keyed `<charm_name>_<endpoint>` when the
+  bundled charms declare endpoints of that kind, and expose
+  `expose_endpoints` as input when endpoints should be offered for ease of
+  consumption.
+
+## DO — Product Modules
+
+A product module deploys a ready-to-use solution and owns the `juju_model`,
+secret and integration resources tying components together. It has **no**
+`provides` / `requires` outputs — consumers integrate through `offers`.
+
+- **DO** take `proxy` and `logging-config` as mandatory inputs whenever the
+  module creates or manages its own `juju_model` resources, plus `risk` to
+  control the channel risk of the bundled components.
+- **DO** expose the charm revision **and** the OCI resources of every bundled
+  charm as input variables, so deployments are reproducible and air-gap capable.
+- **DO** expose variables that let a user substitute a mandatory external
+  integration (database, TLS) for their own endpoint or offer — bundle the
+  default implementation behind `count = 0` when the user supplies one — and
+  expose variables for optional external integrations such as COS.
+- **DO** output `models`, mapping each model key to its `model_uuid` and the
+  `components` deployed in it, and `metadata` carrying at least `version`,
+  `deployed_at` and `updated_at`. Both are mandatory.
+- **DO** output `offers` and, where the solution issues them, `credentials`.
+
+## DO — Deployments
+
+- **DO** add `backend.tf` with the backend configuration, and version every file
+  describing the deployment **including** the state.
+- **DO** pin every referenced charm, component and product module to a tag or
+  commit hash.
 
 ## DO — CI Workflows
 
@@ -164,6 +235,9 @@ Use operator-workflows' reusable workflows instead of hand-written scripts.
 - **DON'T** change any module's deployment behaviour — resource arguments,
   variable defaults — beyond what CC008 requires. Preserve existing defaults
   unless the spec mandates a different one.
+- **DON'T** apply the charm-module contract to a component or product module —
+  no `app_name`/`channel`/`revision` variables, no `application` output, and no
+  `provides` / `requires` on a product module.
 - **DON'T** touch charm source code, `charmcraft.yaml`, or workflows unrelated to
   the Terraform modules.
 - **DON'T** hand-roll a tagging or release workflow; call the canonical reusable
@@ -209,6 +283,8 @@ terraform -chdir=<module-dir> init -backend=false && terraform -chdir=<module-di
 ## Quality Bar
 
 - The compliance checker passes for every discovered module directory.
+- Every module was classified before editing, and follows the contract of its own
+  category only.
 - `tflint --recursive` and `terraform fmt -recursive -check` are clean.
 - `terraform test` passes for every module.
 - Every reusable-workflow call is pinned to a commit SHA.
