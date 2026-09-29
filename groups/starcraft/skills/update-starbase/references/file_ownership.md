@@ -157,6 +157,7 @@ Check deletions explicitly: when Starbase removes a declaration, `git merge` rai
   - **Starbase-owned**: `version`/`release` logic (including commented-out blocks and Read the Docs branch logic), `copyright` format, `html_title` (remove if deleted upstream), `html_favicon`, `html_extra_path`, and new upstream `exclude_patterns` entries.
   - **Child-owned values**: `project`, `author`, `ogp_*`, `html_context` URLs, `llms_txt_description`, license name, and quadrant exclusion toggles in `exclude_patterns`.
   - **Copyright start year**: derive from first commit (`git log --reverse --format=%ad --date=format:%Y | head -1`); if history is shallow, squashed, or the year looks wrong, ask the reviewer.
+  - **`llms_txt_description`**: derive strictly from the opening sentence of `docs/index.rst` using `"This is the documentation for " + <first sentence with bold removed and " is" replaced by a comma>` (e.g. `**Imagecraft** is a tool...` becomes `This is the documentation for Imagecraft, a tool...`). Do not invent original prose.
 - `.readthedocs.yaml`: keep the Read the Docs build using a separate docs
   virtualenv instead of pointing both the docs venv and the uv project env at
   the same path.
