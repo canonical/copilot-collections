@@ -187,8 +187,21 @@ Use operator-workflows' reusable workflows instead of hand-written scripts.
 - **DO** update `.github/workflows/test_terraform_modules.yaml` to call
   `canonical/operator-workflows/.github/workflows/terraform_modules_test.yaml`
   with `terraform-directories` listing every discovered module directory, and
-  trigger it on
-  `pull_request.paths: ['**/terraform/**', '.github/workflows/test_terraform_modules.yaml']`.
+  trigger it on pull requests touching `**/terraform/**`.
+- **DO** add each of these three workflow files to *its own* `paths` filter, on
+  every trigger it declares:
+
+  ```yaml
+  on:
+    pull_request:
+      paths:
+        - '**/terraform/**'
+        - '.github/workflows/terraform_modules_compliance.yaml'
+  ```
+
+  Without this, bumping the pinned reusable-workflow SHA does not run the new
+  checks on the pull request that bumps it, so a breaking change in
+  operator-workflows lands unverified.
 - **DO** pin every new — and every pre-existing unpinned — reusable-workflow call
   to a commit SHA. Reuse the SHA already used elsewhere in the repository for
   `canonical/operator-workflows` if one exists; otherwise resolve the latest
@@ -267,6 +280,7 @@ terraform -chdir=<module-dir> init -backend=false && terraform -chdir=<module-di
   category only.
 - `tflint --recursive` and `terraform fmt -recursive -check` are clean.
 - `terraform test` passes for every module.
-- Every reusable-workflow call is pinned to a commit SHA.
+- Every reusable-workflow call is pinned to a commit SHA, and every terraform
+  workflow lists its own file in its `paths` filter.
 - The diff contains no scratch directory, no `.terraform/` artefact and no
   behavioural change beyond what CC008 requires.
