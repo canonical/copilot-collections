@@ -82,7 +82,7 @@ not fold it into the merge PR just because no reviewer has flagged it yet:
 2. **Branch from `origin/main`**:
    - Create a fresh branch from `origin/main` (not the merge branch):
      ```bash
-     git checkout -b fix/<descriptive-name> origin/main
+     git checkout -b work/bot/<descriptive-name> origin/main
      ```
    - Apply only the isolated fix and open a **draft PR** against `main`. Describe the fix on its own merits, not as a Starbase merge follow-up.
 
