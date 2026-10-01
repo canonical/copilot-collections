@@ -126,11 +126,12 @@ We highly encourage you to explore it for further inspiration, including advance
   * `instructions/`: Custom instruction files.
   * `prompts/`: Prompt files.
   * `agents/`: Agent files.
-* `skills/`: Core agent skill directories (each containing `SKILL.md`, plus optional `scripts/` and `references/` subfolders).
+* `skills/`: Core agent skill directories (each containing `SKILL.md`, plus optional `scripts/`, `references/` and `assets/` subfolders).
 * `collections.yaml`: Core definitions.
 * `groups/`: Team specific collections.
   * `<team-name>/`: Folder for team assets.
     * `collections.yaml`: Team specific definitions.
+    * `skills/`: Team specific agent skill directories, following the same layout as core skills.
 * `scripts/`: Logic for syncing files.
 * `.github/workflows/`: Reusable workflows.
 
