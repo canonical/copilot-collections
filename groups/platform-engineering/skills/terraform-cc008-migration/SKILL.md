@@ -126,7 +126,16 @@ section matching the category you classified.
 
 - **DO** declare the mandatory variables: `app_name`, `channel`, `config`,
   `constraints`, `model_uuid` (no default) and `revision`. Add `units` unless the
-  charm is a subordinate charm, which **must** omit it.
+  charm is a subordinate charm, which **must** omit it. Determine this
+  deterministically — never guess from the charm's name or description: read
+  the module's own `charmcraft.yaml` (walk up from the `terraform/` directory
+  to the charm root if it lives elsewhere, e.g. `../charmcraft.yaml` or
+  `../../charmcraft.yaml`) and check its top-level `subordinate:` key.
+  `subordinate: true` means omit `units`; anything else (including the key
+  being absent, which defaults to `false`) means `units` is mandatory. The
+  compliance checker treats `units` as optional either way, so it will not
+  catch a wrong call — getting the classification right is this skill's
+  responsibility, not the checker's.
 - **DO** add the optional CC008 variables when they are relevant to the charm:
   `base`, `expose`, `resources`, `machines`, `endpoint_bindings`,
   `storage_directives`, `offered_endpoints`.
