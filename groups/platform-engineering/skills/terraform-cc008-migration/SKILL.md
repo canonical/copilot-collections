@@ -197,6 +197,25 @@ Use operator-workflows' reusable workflows instead of hand-written scripts.
   `canonical/operator-workflows/.github/workflows/terraform_modules_test.yaml`
   with `terraform-directories` listing every discovered module directory, and
   trigger it on pull requests touching `**/terraform/**`.
+- **DO** add `.github/workflows/generate_terraform_docs.yaml` calling
+  `canonical/operator-workflows/.github/workflows/generate_terraform_docs.yaml`.
+  Trigger it on pushes to `main` that touch `**/terraform/**` or this workflow
+  file, with these caller permissions so it can create the documentation pull
+  request:
+
+  ```yaml
+  permissions:
+    contents: write
+    pull-requests: write
+  ```
+- **DO** pass every discovered module directory as a comma-separated
+  `terraform-directory` input to the docs workflow. Do not rely on its default
+  of `terraform` when modules live elsewhere. Ensure each module's
+  `README.md` contains `<!-- BEGIN_TF_DOCS -->` and `<!-- END_TF_DOCS -->`
+  markers for the generated content.
+- **DO** leave the docs workflow's `auto-merge` input unset to retain its
+  default of `true`. It generates the README changes and opens or updates a
+  `terraform-docs` pull request after the push to `main`.
 - **DO** add each of these three workflow files to *its own* `paths` filter, on
   every trigger it declares:
 
@@ -220,6 +239,8 @@ Use operator-workflows' reusable workflows instead of hand-written scripts.
   ```bash
   git ls-remote https://github.com/canonical/operator-workflows.git main
   ```
+
+  Apply this SHA-pinning requirement to the Terraform docs workflow as well.
 
 ## DO — Repository Housekeeping
 
@@ -291,5 +312,8 @@ terraform -chdir=<module-dir> init -backend=false && terraform -chdir=<module-di
 - `terraform test` passes for every module.
 - Every reusable-workflow call is pinned to a commit SHA, and every terraform
   workflow lists its own file in its `paths` filter.
+- The Terraform docs workflow passes all discovered module directories,
+  targets README files with the Terraform docs markers, and retains the default
+  auto-merge behavior.
 - The diff contains no scratch directory, no `.terraform/` artefact and no
   behavioural change beyond what CC008 requires.
