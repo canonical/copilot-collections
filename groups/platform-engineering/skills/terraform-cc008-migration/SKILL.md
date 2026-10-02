@@ -93,6 +93,11 @@ cycle). We have none yet, so this skill carries no rules for them — read the
 The universal rules below apply to every category; then follow **only** the
 section matching the category you classified.
 
+## DO - Every files
+
+- Newly added file to the repository containing a copyright header, should
+  be updated to refer to the current year.
+
 ## DO — Every Module
 
 - **DO** ensure each module has `terraform.tf`, `variables.tf`, `outputs.tf`,
