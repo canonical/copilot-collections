@@ -9,7 +9,7 @@ conditions:
 action: call-llm
 pull_request:
   title: "chore: migrate terraform modules to CC008"
-  branch: "charmkeeper/recipe/terraform-cc008-migration"
+  branch: "chore/terraform-cc008-migration-charmkeeper"
 requirements:
   - tflint
   - terraform
