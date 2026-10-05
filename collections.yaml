@@ -78,6 +78,8 @@ copilot-toolkit:
       dest: .github/skills/secret-guard/
     - src: skills/changelog-generator
       dest: .github/skills/changelog-generator/
+    - src: skills/consensus-review-protocol
+      dest: .github/skills/consensus-review-protocol/
 
 # ==========================================
 # 2. Framework Specifics
