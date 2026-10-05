@@ -29,7 +29,7 @@ guardrails:
     - "docs/release-notes/artifacts/*.yaml"
 extra:
   skills:
-  - https://raw.githubusercontent.com/canonical/copilot-collections/main/groups/platform-engineering/skills/terraform-cc008-migration/SKILL.md
+  - ./
   llm-prompt: |
     Migrate every Terraform module in this repository to the CC008 Terraform
     Charm Module standard, using the `terraform-cc008-migration` skill.
