@@ -8,6 +8,7 @@ eligibility:
   exclude:
   - files: "**/MAJOR_VERSION"
     exists: true
+    name: "MAJOR_VERSION already exists"
 action: call-llm
 pull_request:
   title: "chore: migrate terraform modules to CC008"
