@@ -9,6 +9,9 @@ eligibility:
   - files: "**/MAJOR_VERSION"
     exists: true
     name: "MAJOR_VERSION already exists"
+  - topic: "maintenance-mode"
+    exists: true
+    name: "Repository in maintenance-mode"
 action: call-llm
 pull_request:
   title: "chore: migrate terraform modules to CC008"
