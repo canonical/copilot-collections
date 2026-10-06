@@ -1,9 +1,13 @@
 schema: v1
 model: claude-sonnet-5
 description: Migrate Terraform modules to the CC008 standard
-conditions:
-- files: "**/*.tf"
-  exists: true
+eligibility:
+  include:
+  - files: "**/*.tf"
+    exists: true
+  exclude:
+  - files: "**/MAJOR_VERSION"
+    exists: true
 action: call-llm
 pull_request:
   title: "chore: migrate terraform modules to CC008"
