@@ -278,6 +278,9 @@ Use operator-workflows' reusable workflows instead of hand-written scripts.
   `.terraform/` artefact produced while validating.
 - **DON'T** declare the migration finished on inspection alone — the compliance
   checker is the arbiter.
+- **DON'T** document *requirements*, *providers*, *modules*, *resources*, *inputs*
+  or *outputs* yourself in the terraform README.md. This will be handle by the
+  automated doc generation workflow.
 
 ## Validate Before Declaring Done
 
