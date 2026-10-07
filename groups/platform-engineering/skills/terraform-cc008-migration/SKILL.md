@@ -43,13 +43,15 @@ refers to them:
 
 ```bash
 CC008_BASE="https://raw.githubusercontent.com/canonical/copilot-collections/main/groups/platform-engineering/skills/terraform-cc008-migration"
-mkdir -p /tmp/cc008
-curl -fsSL -o /tmp/cc008/cc008.spec.md "$CC008_BASE/assets/cc008.spec.md"
-curl -fsSL -o /tmp/cc008/check_cc008.sh "$CC008_BASE/scripts/check_cc008.sh"
-chmod +x /tmp/cc008/check_cc008.sh
+CC008_TMP="$(mktemp -d -t cc008.XXXXXXXX)"
+curl -fsSL -o "$CC008_TMP/cc008.spec.md" "$CC008_BASE/assets/cc008.spec.md"
+curl -fsSL -o "$CC008_TMP/check_cc008.sh" "$CC008_BASE/scripts/check_cc008.sh"
+chmod +x "$CC008_TMP/check_cc008.sh"
 ```
 
-Delete `/tmp/cc008` once the migration is verified; it must never be committed.
+`mktemp -d` creates a directory unique to this run (e.g. `/tmp/cc008.a1B2c3D4`),
+so concurrent migrations never collide. Delete `$CC008_TMP` once the migration is
+verified; it must never be committed.
 
 ### Secondary References
 
@@ -92,6 +94,11 @@ cycle). We have none yet, so this skill carries no rules for them — read the
 
 The universal rules below apply to every category; then follow **only** the
 section matching the category you classified.
+
+## DO - Every files
+
+- Newly added file to the repository containing a copyright header, should
+  be updated to refer to the current year.
 
 ## DO — Every Module
 
@@ -271,6 +278,9 @@ Use operator-workflows' reusable workflows instead of hand-written scripts.
   `.terraform/` artefact produced while validating.
 - **DON'T** declare the migration finished on inspection alone — the compliance
   checker is the arbiter.
+- **DON'T** document *requirements*, *providers*, *modules*, *resources*, *inputs*
+  or *outputs* yourself in the terraform README.md. This will be handle by the
+  automated doc generation workflow.
 
 ## Validate Before Declaring Done
 
@@ -283,7 +293,8 @@ iterate until it passes clean:
 
 `<skill-dir>` is wherever this skill is installed — typically
 `.github/skills/terraform-cc008-migration/`. If you downloaded the companion
-files instead, run `/tmp/cc008/check_cc008.sh`.
+files instead, run `$CC008_TMP/check_cc008.sh` (the session-scoped directory
+created above).
 
 Called with no arguments the script discovers every module directory itself; pass
 explicit directories to narrow the run:
