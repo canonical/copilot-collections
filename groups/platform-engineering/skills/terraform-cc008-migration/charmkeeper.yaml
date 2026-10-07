@@ -7,6 +7,7 @@ eligibility:
     exists: true
   exclude:
   - command: uvx --from "git+https://github.com/canonical/operator-workflows@feat/terraform-full-compliance#subdirectory=terraform-compliance" terraform-check-all
+    name: "Already migrated"
     success: true
   - topic: "maintenance-mode"
     exists: true
