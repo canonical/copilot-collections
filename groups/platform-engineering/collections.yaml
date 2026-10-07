@@ -38,5 +38,11 @@ pfe-charms:
       dest: .github/instructions/charms-lib-updates.instructions.md
     - src: skills/terraform-cc008-migration
       dest: .github/skills/terraform-cc008-migration/
+    - src: skills/terraform-cc008-charm-migration
+      dest: .github/skills/terraform-cc008-charm-migration/
+    - src: skills/terraform-cc008-product-migration
+      dest: .github/skills/terraform-cc008-product-migration/
+    - src: skills/terraform-cc008-deployment-migration
+      dest: .github/skills/terraform-cc008-deployment-migration/
     - src: /assets/instructions/common/core-directive.instructions.md
       dest: .github/instructions/core-directive.instructions.md

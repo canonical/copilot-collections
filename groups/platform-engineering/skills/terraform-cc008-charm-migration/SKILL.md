@@ -1,34 +1,53 @@
 ---
-name: terraform-cc008-migration
-description: Entry point for migrating Terraform charm, product and deployment modules to the CC008 Charm Terraform Standards. Discovers and classifies every module in a repository, then follows (or dispatches to) the matching category skill — terraform-cc008-charm-migration, terraform-cc008-product-migration, terraform-cc008-deployment-migration — enforcing the required file layout, variable and output contracts, MAJOR_VERSION markers, module tests and the operator-workflows reusable CI workflows. Use whenever a repository's Terraform modules must be brought to (or audited against) CC008.
+name: terraform-cc008-charm-migration
+description: Migrates a single-charm Terraform module to the CC008 Charm Terraform Standards — mandatory variables (app_name, channel, config, constraints, model_uuid, revision, units), the application/provides/requires output contract, MAJOR_VERSION markers, module tests and the operator-workflows reusable CI workflows. Part of the terraform-cc008-migration skill family; use directly when a repository's modules are already known to be charm modules, or let terraform-cc008-migration classify and dispatch to it.
 metadata:
   author: canonical/platform-engineering
-  version: "2.0.0"
+  version: "1.0.0"
 ---
 
-# Terraform CC008 Migration (Meta Skill)
+# Terraform CC008 Migration — Charm Modules
 
 ## Overview
 
-Bring every Terraform module in a repository up to the **CC008 — Charm Terraform
-Standards** specification, and wire the repository to the compliance, test and
-release automation provided by
+Bring a Terraform **charm module** (a module that deploys a single charm) up
+to the **CC008 — Charm Terraform Standards** specification, and wire its
+repository to the compliance, test and release automation provided by
 [canonical/operator-workflows](https://github.com/canonical/operator-workflows/tree/main/terraform-compliance).
 
-This is the **entry point and source of truth** of a four-skill family:
-this skill plus `terraform-cc008-charm-migration`,
-`terraform-cc008-product-migration` and `terraform-cc008-deployment-migration`.
-It owns discovery, classification and dispatch; each category skill is a
-fully self-contained copy carrying only the rules for its own category (see
-"Maintaining This Skill Family" below for why they are copies, not
-references).
+This skill is one of a four-skill family. `terraform-cc008-migration` is the
+family's entry point and **source of truth** for everything shared across
+categories (the spec, the compliance checker, and the universal DO/DON'T
+rules below) — this skill carries its own physical copy of that shared
+content, tagged with `SOURCE OF TRUTH: terraform-cc008-migration/...`
+comments, so it is fully self-contained: it can be fetched, read and followed
+entirely on its own, with nothing to resolve outside this directory. Those
+comments are maintenance metadata for whoever edits this skill family next —
+they tell *editors* where to make a change first, they are not instructions
+for *you* to go read `terraform-cc008-migration` before following the rules
+below. Its sibling skills, `terraform-cc008-product-migration` and
+`terraform-cc008-deployment-migration`, cover the other CC008 module
+categories.
 
 ## When To Use
 
-- A repository ships one or more Terraform modules that predate CC008 (CC006-era
-  layout, `versions.tf`, combined `endpoints` output, unpinned module sources).
-- A new module must be authored so that it is CC008-compliant from the start.
-- A CC008 compliance check fails in CI and the module needs to be corrected.
+- You already know — or `terraform-cc008-migration` classified — the module(s)
+  you are migrating as **charm modules**: each deploys a single charm.
+- A charm's Terraform module predates CC008 (CC006-era layout, `versions.tf`,
+  combined `endpoint`/`endpoints` output, unpinned module sources).
+- A new charm module must be authored so that it is CC008-compliant from the
+  start.
+- A CC008 compliance check fails in CI for a charm module and it needs to be
+  corrected.
+
+If you are not sure whether the module(s) in front of you are charm modules,
+product modules or deployments, use `terraform-cc008-migration` first — it
+classifies modules and either migrates them directly or dispatches to the
+matching skill(s) in this family, keeping each category's migration isolated
+when a repository mixes several.
+
+<!-- SOURCE OF TRUTH: terraform-cc008-migration/SKILL.md § Source Of Truth.
+     Edit there first, then copy this section here verbatim. -->
 
 ## Source Of Truth
 
@@ -42,22 +61,24 @@ plumbing the spec does not cover.
 
 This skill ships two companion files next to `SKILL.md`: `assets/cc008.spec.md`
 and `scripts/check_cc008.sh`. When the skill is installed as a directory — for
-example synced to `.github/skills/terraform-cc008-migration/` — they are already
-on disk and the relative paths above resolve.
+example synced to `.github/skills/terraform-cc008-charm-migration/` — they are
+already on disk and the relative paths above resolve.
 
 When only `SKILL.md` was fetched (`copilot skill add <url>` materializes a single
 file), download them first and use the downloaded copies wherever this document
 refers to them:
 
 ```bash
-CC008_BASE="https://raw.githubusercontent.com/canonical/copilot-collections/main/groups/platform-engineering/skills/terraform-cc008-migration"
-mkdir -p /tmp/cc008
-curl -fsSL -o /tmp/cc008/cc008.spec.md "$CC008_BASE/assets/cc008.spec.md"
-curl -fsSL -o /tmp/cc008/check_cc008.sh "$CC008_BASE/scripts/check_cc008.sh"
-chmod +x /tmp/cc008/check_cc008.sh
+CC008_BASE="https://raw.githubusercontent.com/canonical/copilot-collections/main/groups/platform-engineering/skills/terraform-cc008-charm-migration"
+CC008_TMP="$(mktemp -d -t cc008-charm.XXXXXXXX)"
+curl -fsSL -o "$CC008_TMP/cc008.spec.md" "$CC008_BASE/assets/cc008.spec.md"
+curl -fsSL -o "$CC008_TMP/check_cc008.sh" "$CC008_BASE/scripts/check_cc008.sh"
+chmod +x "$CC008_TMP/check_cc008.sh"
 ```
 
-Delete `/tmp/cc008` once the migration is verified; it must never be committed.
+`mktemp -d` creates a directory unique to this run (e.g. `/tmp/cc008-charm.a1B2c3D4`),
+so concurrent migrations never collide. Delete `$CC008_TMP` once the migration is
+verified; it must never be committed.
 
 ### Secondary References
 
@@ -72,72 +93,37 @@ In order of authority when they disagree:
    [gateway-api-integrator-operator#320](https://github.com/canonical/gateway-api-integrator-operator/pull/320/files),
    [mailserver-operators#48](https://github.com/canonical/mailserver-operators/pull/48/files).
 
-## Module Discovery And Classification
+<!-- SOURCE OF TRUTH: terraform-cc008-migration/SKILL.md § Module Discovery And Classification.
+     Edit there first, then copy this section here verbatim (charm-only note added below). -->
 
-Treat every directory containing a `main.tf` (or an existing `versions.tf` /
-`terraform.tf`) as one module, whether the repository has a single `terraform/`
-directory or several — per-charm `<charm>/terraform`, product modules under
-`terraform/<product>` or `terraform-product/`. Enumerate them all before
-starting:
+## Module Discovery (Standalone Use)
+
+If you were dispatched here by `terraform-cc008-migration`, it already gave
+you the exact list of module directories to migrate — skip straight to the
+rules below. If you are using this skill standalone, find and confirm each
+module is a charm module yourself before applying any rule:
 
 ```bash
 find . -type f -name 'main.tf' -not -path '*/.terraform/*' -exec dirname {} \; | sort -u
 ```
 
-**Then classify each module before applying any rule.** The categories have
-*different* input and output contracts, and applying the wrong one is the most
-common migration mistake:
+A **charm module** deploys a single charm; its outputs are `application` plus
+`provides` / `requires`. If a candidate module's outputs look like `models` /
+`metadata` (a product module) or it owns a `backend.tf` with no module-style
+outputs (a deployment), it is **not** a charm module — do not apply this
+skill's rules to it; use `terraform-cc008-product-migration` or
+`terraform-cc008-deployment-migration` instead.
 
-| Category | What it deploys | Key outputs |
-| --- | --- | --- |
-| **Charm module** | a single charm | `application`, plus `provides` / `requires` |
-| **Product module** | a ready-to-use solution, incl. models and integrations | `models`, `metadata` |
-| **Deployment** | one specific environment | n/a — versions state and `backend.tf` |
-
-CC008 also defines *component modules* (several charms sharing one release
-cycle). We have none yet, so this skill carries no rules for them — read the
-"Component modules" section of the spec directly if you ever meet one.
-
-The universal rules below apply to every category; then follow **only** the
-section matching the category you classified. This skill carries the full
-rule set for every category inline (below), so you can migrate directly from
-here. On a repository that mixes categories, prefer the dispatch described
-next — it keeps each category's migration in its own isolated context
-instead of accumulating all three rule sets in one conversation.
-
-## Dispatch To Category Skills
-
-After classification, decide whether to delegate:
-
-- **Single category present** (every module classified the same way): skip
-  dispatch and perform the migration yourself using the matching "DO —
-  \<Category\> Modules" section below, plus the universal sections.
-- **Mixed categories present** (e.g. some charm modules and some product
-  modules in the same repository): for **each distinct category found**,
-  launch one subagent (the `task` tool, `general-purpose` agent type) and:
-  - Point it at exactly one sibling skill for its category:
-    `terraform-cc008-charm-migration`, `terraform-cc008-product-migration`,
-    or `terraform-cc008-deployment-migration` (resolve its `SKILL.md` the
-    same way you resolved this one — same install root, e.g.
-    `.github/skills/<name>/SKILL.md`).
-  - Give it the exact list of module directories you classified into that
-    category, and nothing from the other categories.
-  - Ask it to follow its skill self-containedly (it ships its own copy of
-    the spec, the checker and every universal rule — it does not need
-    anything from this skill at runtime) and to return a concise summary:
-    files changed, compliance pass/fail per module, open questions.
-  - Do not forward the other categories' rules or module lists to it — that
-    cross-contamination is exactly what dispatch is meant to avoid.
-- After every dispatched subagent reports back (or, for the single-category
-  case, after you finish the migration yourself), perform the repository-wide
-  steps yourself: "DO — CI Workflows", "DO — Repository Housekeeping", and
-  "Validate Before Declaring Done" against every discovered module directory,
-  regardless of category — these are not per-category concerns.
+<!-- SOURCE OF TRUTH: terraform-cc008-migration/SKILL.md § DO - Every files.
+     Edit there first, then copy this section here verbatim. -->
 
 ## DO - Every files
 
 - Newly added file to the repository containing a copyright header, should
   be updated to refer to the current year.
+
+<!-- SOURCE OF TRUTH: terraform-cc008-migration/SKILL.md § DO — Every Module.
+     Edit there first, then copy this section here verbatim. -->
 
 ## DO — Every Module
 
@@ -168,6 +154,8 @@ After classification, decide whether to delegate:
   or commit hash such as `?ref=tf-1.0.0`. Floating references such as branches
   are **not allowed**.
 
+<!-- This is the category-specific section: authoritative here, not a copy. -->
+
 ## DO — Charm Modules
 
 - **DO** declare the mandatory variables: `app_name`, `channel`, `config`,
@@ -197,35 +185,8 @@ After classification, decide whether to delegate:
 - **DO** replace any deprecated combined `endpoint` / `endpoints` output with the
   `provides` / `requires` split.
 
-## DO — Product Modules
-
-A product module deploys a ready-to-use solution and owns the `juju_model`,
-secret and integration resources tying its charms together. It does **not**
-declare `requires`: everything the product needs from the outside is supplied
-through input variables, and everything it offers to the outside is exposed
-through `offers`.
-
-- **DO** express every external requirement — a database, TLS, an existing
-  ingress, a COS stack — as an input variable carrying the endpoint or offer to
-  integrate with, rather than as a `requires` output for a caller to wire up.
-- **DO** take `proxy` and `logging-config` as mandatory inputs whenever the
-  module creates or manages its own `juju_model` resources, plus `risk` to
-  control the channel risk of the bundled components.
-- **DO** expose the charm revision **and** the OCI resources of every bundled
-  charm as input variables, so deployments are reproducible and air-gap capable.
-- **DO** provide a default implementation for mandatory external integrations
-  (database, TLS) behind `count = 0`, so it is dropped when the user supplies
-  their own endpoint or offer through the corresponding variable.
-- **DO** output `models`, mapping each model key to its `model_uuid` and the
-  components deployed in it, and `metadata` carrying at least `version`,
-  `deployed_at` and `updated_at`. Both are mandatory.
-- **DO** output `offers` and, where the solution issues them, `credentials`.
-
-## DO — Deployments
-
-- **DO** add `backend.tf` with the backend configuration, and version every file
-  describing the deployment **including** the state.
-- **DO** pin every referenced charm and product module to a tag or commit hash.
+<!-- SOURCE OF TRUTH: terraform-cc008-migration/SKILL.md § DO — CI Workflows.
+     Edit there first, then copy this section here verbatim. -->
 
 ## DO — CI Workflows
 
@@ -288,6 +249,9 @@ Use operator-workflows' reusable workflows instead of hand-written scripts.
 
   Apply this SHA-pinning requirement to the Terraform docs workflow as well.
 
+<!-- SOURCE OF TRUTH: terraform-cc008-migration/SKILL.md § DO — Repository Housekeeping.
+     Edit there first, then copy this section here verbatim. -->
+
 ## DO — Repository Housekeeping
 
 - **DO** add `**/.terraform/` and `**/.terraform.lock.hcl` to the top-level
@@ -299,6 +263,9 @@ Use operator-workflows' reusable workflows instead of hand-written scripts.
   describing the CC008 migration and any breaking default change (for example
   `expose` now defaulting to `{}` instead of `null`).
 
+<!-- SOURCE OF TRUTH: terraform-cc008-migration/SKILL.md § DON'T.
+     Edit there first, then copy this section here verbatim. -->
+
 ## DON'T
 
 - **DON'T** change any module's deployment behaviour — resource arguments,
@@ -309,7 +276,7 @@ Use operator-workflows' reusable workflows instead of hand-written scripts.
   `application` output, and no `provides` / `requires`. (This is distinct from
   — and does not override — the product-module requirement to expose each
   *bundled charm's* revision and OCI resources as their own input variables;
-  see "DO — Product Modules".)
+  see the product skill's "DO — Product Modules".)
 - **DON'T** touch charm source code, `charmcraft.yaml`, or workflows unrelated to
   the Terraform modules.
 - **DON'T** hand-roll a tagging or release workflow; call the canonical reusable
@@ -320,6 +287,12 @@ Use operator-workflows' reusable workflows instead of hand-written scripts.
   `.terraform/` artefact produced while validating.
 - **DON'T** declare the migration finished on inspection alone — the compliance
   checker is the arbiter.
+- **DON'T** document *requirements*, *providers*, *modules*, *resources*, *inputs*
+  or *outputs* yourself in the terraform README.md. This will be handle by the
+  automated doc generation workflow.
+
+<!-- SOURCE OF TRUTH: terraform-cc008-migration/SKILL.md § Validate Before Declaring Done.
+     Edit there first, then copy this section here verbatim. -->
 
 ## Validate Before Declaring Done
 
@@ -331,14 +304,15 @@ iterate until it passes clean:
 ```
 
 `<skill-dir>` is wherever this skill is installed — typically
-`.github/skills/terraform-cc008-migration/`. If you downloaded the companion
-files instead, run `/tmp/cc008/check_cc008.sh`.
+`.github/skills/terraform-cc008-charm-migration/`. If you downloaded the
+companion files instead, run `$CC008_TMP/check_cc008.sh` (the session-scoped
+directory created above).
 
 Called with no arguments the script discovers every module directory itself; pass
 explicit directories to narrow the run:
 
 ```bash
-<skill-dir>/scripts/check_cc008.sh terraform charms/foo/terraform
+<skill-dir>/scripts/check_cc008.sh charms/foo/terraform
 ```
 
 It downloads the checker from operator-workflows into a temporary directory and
@@ -352,11 +326,13 @@ terraform fmt -recursive -check
 terraform -chdir=<module-dir> init -backend=false && terraform -chdir=<module-dir> test
 ```
 
+<!-- SOURCE OF TRUTH: terraform-cc008-migration/SKILL.md § Quality Bar.
+     Edit there first, then copy this section here verbatim. -->
+
 ## Quality Bar
 
 - The compliance checker passes for every discovered module directory.
-- Every module was classified before editing, and follows the contract of its own
-  category only.
+- Every module was confirmed to be a charm module before editing.
 - `tflint --recursive` and `terraform fmt -recursive -check` are clean.
 - `terraform test` passes for every module.
 - Every reusable-workflow call is pinned to a commit SHA, and every terraform
@@ -366,32 +342,3 @@ terraform -chdir=<module-dir> init -backend=false && terraform -chdir=<module-di
   auto-merge behavior.
 - The diff contains no scratch directory, no `.terraform/` artefact and no
   behavioural change beyond what CC008 requires.
-
-## Maintaining This Skill Family
-
-This skill is the **source of truth** for everything shared across
-categories: `assets/cc008.spec.md`, `scripts/check_cc008.sh`, and the
-"DO — Every files", "DO — Every Module", "DO — CI Workflows",
-"DO — Repository Housekeeping", "DON'T", "Validate Before Declaring Done" and
-"Quality Bar" sections. `terraform-cc008-charm-migration`,
-`terraform-cc008-product-migration` and `terraform-cc008-deployment-migration`
-each carry a **physical copy** of these — not a reference — so that every
-skill in the family is fully self-contained (safe to fetch or dispatch to in
-isolation, with nothing to resolve outside its own directory).
-
-This is an explicit, accepted trade-off: duplication over reuse, in exchange
-for isolation. It means there is no automatic enforcement that the four
-copies stay identical — keeping them in sync is a manual step:
-
-1. **Change shared content here first.** This skill's copy of a shared
-   section or file is always the one to edit.
-2. **Copy it verbatim** into each of the three category skills, keeping
-   section order and headings identical to this file so a plain `diff`
-   between this `SKILL.md` and a category skill's `SKILL.md` shows only the
-   genuinely category-specific parts as differences.
-3. Every duplicated block or file carries a `SOURCE OF TRUTH:
-   terraform-cc008-migration/...` comment pointing back here — leave that
-   comment in place when you copy an updated section so the convention keeps
-   working for the next editor.
-4. Never edit a category skill's copy of a shared section directly without
-   also updating the source here — that creates silent drift.
