@@ -11,7 +11,7 @@ eligibility:
     name: "Repository in maintenance-mode"
   - command: uvx --from "git+https://github.com/canonical/operator-workflows@feat/terraform-full-compliance#subdirectory=terraform-compliance" terraform-check-all
     name: "Already migrated"
-    success: true
+    exit_code: 0
 action: call-llm
 pull_request:
   title: "chore: migrate terraform modules to CC008"
