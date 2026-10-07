@@ -6,11 +6,11 @@ eligibility:
   - files: "**/*.tf"
     exists: true
   exclude:
-  - topic: "maintenance-mode"
+  - name: "Repository in maintenance-mode"
+    topic: "maintenance-mode"
     exists: true
-    name: "Repository in maintenance-mode"
-  - command: uvx --from "git+https://github.com/canonical/operator-workflows@feat/terraform-full-compliance#subdirectory=terraform-compliance" terraform-check-all
-    name: "Already migrated"
+  - name: "Repository already compliant"
+    command: uvx --from "git+https://github.com/canonical/operator-workflows@feat/terraform-full-compliance#subdirectory=terraform-compliance" terraform-check-all
     exit_code: 0
 action: call-llm
 pull_request:
