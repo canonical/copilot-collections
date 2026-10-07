@@ -6,9 +6,8 @@ eligibility:
   - files: "**/*.tf"
     exists: true
   exclude:
-  - files: "**/MAJOR_VERSION"
-    exists: true
-    name: "MAJOR_VERSION already exists"
+  - command: uvx --from "git+https://github.com/canonical/operator-workflows@feat/terraform-full-compliance#subdirectory=terraform-compliance" terraform-check-all
+    success: true
   - topic: "maintenance-mode"
     exists: true
     name: "Repository in maintenance-mode"
