@@ -36,13 +36,11 @@ pfe-charms:
       dest: .github/agents/charm-engineer.agent.md
     - src: instructions/lib-updates.instructions.md
       dest: .github/instructions/charms-lib-updates.instructions.md
-    - src: skills/terraform-cc008-migration
-      dest: .github/skills/terraform-cc008-migration/
-    - src: skills/terraform-cc008-charm-migration
-      dest: .github/skills/terraform-cc008-charm-migration/
-    - src: skills/terraform-cc008-product-migration
-      dest: .github/skills/terraform-cc008-product-migration/
-    - src: skills/terraform-cc008-deployment-migration
-      dest: .github/skills/terraform-cc008-deployment-migration/
+    - src: skills/terraform-modules
+      dest: .github/skills/terraform-modules/
+    - src: skills/terraform-charm-module
+      dest: .github/skills/terraform-charm-module/
+    - src: skills/terraform-product-module
+      dest: .github/skills/terraform-product-module/
     - src: /assets/instructions/common/core-directive.instructions.md
       dest: .github/instructions/core-directive.instructions.md
