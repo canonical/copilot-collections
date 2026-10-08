@@ -8,13 +8,12 @@ allowed-tools: terraform, tofu
 # Product Terraform module
 
 A product module deploys a solution and owns the `juju_model`, secret and integration resources tying its charm modules together.
-Shared rules (file layout, ordering, CI, housekeeping, validation) are in the `terraform-modules` skill; apply them as well.
 
 ## Process
 
 1. Read the module's `.tf` files and `README.md`; list the bundled charm modules.
 2. Apply the contract below.
-3. Validate with the command from `terraform-modules`.
+3. Apply the module rules, set up the repository and validate (below).
 
 ## Inputs
 
@@ -35,6 +34,50 @@ Shared rules (file layout, ordering, CI, housekeeping, validation) are in the `t
 ## Secrets
 
 When creating `juju_secret` from input variables, mark each credential variable `sensitive = true` and `ephemeral = true`, use `value_wo` with `value_wo_version` (a separate rotation number variable) and a separate boolean to control creation. Requires Terraform/OpenTofu `>= 1.11` and provider `>= 2.2.1`. See the "Product modules" section of the CC008 spec (DA289) for the full pattern.
+
+## Module rules
+
+- Provide `README.md`, `terraform.tf`, `main.tf`, `variables.tf` and `outputs.tf`. Add `locals.tf` only when needed, and `providers.tf` for provider configuration. Rename a legacy `versions.tf` to `terraform.tf`.
+- `terraform.tf` holds a single `terraform` block with `required_version` and a `juju/juju` constraint admitting `>= 1.0.0` (for example `~> 1.0`).
+- Keep `variable`, `output` and `locals` entries in alphabetical order.
+- Set `nullable = false` on variables that must always resolve to a value (`app_name`, `channel`, `model_uuid`, ...). Leave variables that default to `null` (`base`, `constraints`, `revision`, ...) nullable.
+- Give every output a `description`.
+- Add `terraform/MAJOR_VERSION` per independently tagged module family: the major version only, no trailing newline, starting at `1`. Use a relative symlink only for modules sharing a release train.
+- Add `tests/main.tftest.hcl` with `mock_provider "juju"` asserting key outputs, if missing.
+- Pin every `source = "git::...//terraform..."` (README examples, product modules) to a tag or commit, such as `?ref=tf-1.0.0`. No branches.
+- Keep `<!-- BEGIN_TF_DOCS -->` and `<!-- END_TF_DOCS -->` markers in `README.md` for generated docs.
+- Use plain English in documentation and descriptions, no Latin phrases.
+- Update the year in the copyright header of newly added files.
+- Do not change deployment behaviour (resource arguments, defaults) beyond what CC008 requires.
+
+## Repository setup
+
+Call the reusable workflows of `canonical/operator-workflows`; do not hand-write release logic.
+
+| File in `.github/workflows/` | Calls | Trigger and inputs |
+| :--- | :--- | :--- |
+| `terraform_modules_release.yaml` | `terraform_modules_release.yaml` | push to `main`, PRs touching `terraform/**`; `permissions: contents: write` |
+| `terraform_modules_compliance.yaml` | `terraform_modules_compliance.yaml` | PRs touching `**/terraform/**`; `terraform-directories` |
+| `test_terraform_modules.yaml` | `terraform_modules_test.yaml` | PRs touching `**/terraform/**`; `terraform-directories` |
+| `generate_terraform_docs.yaml` | `generate_terraform_docs.yaml` | push to `main` touching `**/terraform/**`; `terraform-directory`; `permissions: contents: write, pull-requests: write`; keep default `auto-merge` |
+
+- List every module directory (comma-separated) in the directory inputs; do not rely on the `terraform` default.
+- List each workflow's own file in the `paths` of every trigger it declares, so bumping the pinned SHA runs the new checks.
+- Pin every `canonical/operator-workflows` call to a commit SHA: reuse the repository's existing one, else `git ls-remote https://github.com/canonical/operator-workflows.git main` with a `# main` comment. Never leave `@main`.
+- Add `**/.terraform/` and `**/.terraform.lock.hcl` to `.gitignore`, and `**/MAJOR_VERSION` to `header.ignore` in `.licenserc.yaml`.
+- Add a changelog entry (`docs/changelog.md`, or `docs/release-notes/artifacts/` if used) describing the migration and any breaking default change (for example `expose` now defaulting to `{}`).
+- Do not touch charm source, `charmcraft.yaml` or unrelated workflows, and do not commit `.terraform/` artefacts.
+
+## Validate
+
+The compliance check is the arbiter; iterate until it passes.
+
+```bash
+uvx --from "git+https://github.com/canonical/operator-workflows@feat/terraform-full-compliance#subdirectory=terraform-compliance" terraform-check-all .
+tflint --init && tflint --recursive
+terraform fmt -recursive -check
+terraform -chdir=<module-dir> init -backend=false && terraform -chdir=<module-dir> test
+```
 
 ## Constraints
 

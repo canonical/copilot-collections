@@ -1,6 +1,6 @@
 schema: v1
 model: claude-sonnet-5
-description: Migrate Terraform modules to the CC008 standard
+description: Migrate Terraform product modules to the CC008 standard
 eligibility:
   include:
   - files: "**/*.tf"
@@ -14,8 +14,8 @@ eligibility:
     exit_code: 0
 action: call-llm
 pull_request:
-  title: "chore: migrate terraform modules to CC008"
-  branch: "chore/terraform-cc008-migration-charmkeeper"
+  title: "chore: migrate terraform product modules to CC008"
+  branch: "chore/terraform-cc008-product-module-charmkeeper"
 requirements:
   - tflint
   - terraform
@@ -37,12 +37,10 @@ extra:
   skills:
   - ./
   llm-prompt: |
-    Migrate every Terraform module in this repository to the CC008 Terraform
-    Charm Module standard, using the `terraform-modules` skill and the
-    `terraform-charm-module` / `terraform-product-module` skill matching each
-    module's category.
+    Migrate every Terraform product module in this repository to the CC008
+    Charm Terraform Standards, using the `terraform-product-module` skill.
 
-    The skills are authoritative for this task: follow their rules.
+    The skill is authoritative for this task: follow its rules.
 
     Do not consider the migration finished until the skill's compliance check
     passes clean for every discovered module directory.
