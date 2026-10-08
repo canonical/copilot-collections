@@ -1,0 +1,66 @@
+schema: v1
+model: claude-sonnet-5
+description: Migrate Terraform product modules to the CC008 standard
+eligibility:
+  include:
+  - files: "**/*.tf"
+    exists: true
+  exclude:
+  - name: "Repository in maintenance-mode"
+    topic: "maintenance-mode"
+    exists: true
+  - name: "Repository already compliant"
+    command: uvx --from "git+https://github.com/canonical/operator-workflows@feat/terraform-full-compliance#subdirectory=terraform-compliance" terraform-check-all .
+    exit_code: 0
+action: call-llm
+pull_request:
+  title: "chore: migrate terraform product modules to CC008"
+  branch: "chore/terraform-cc008-product-module-charmkeeper"
+requirements:
+  - tflint
+  - terraform
+guardrails:
+- editable_files:
+  - type: matched
+    files:
+    - "terraform/**"
+    - "terraform-product/**"
+    - ".github/workflows/test_terraform_modules.yaml"
+    - ".github/workflows/terraform_modules_compliance.yaml"
+    - ".github/workflows/terraform_modules_release.yaml"
+    - ".github/workflows/generate_terraform_docs.yaml"
+    - ".gitignore"
+    - ".licenserc.yaml"
+    - "docs/changelog.md"
+    - "docs/release-notes/artifacts/*.yaml"
+extra:
+  skills:
+  - ./
+  llm-prompt: |
+    Migrate every Terraform product module in this repository to the CC008
+    Charm Terraform Standards, using the `terraform-product-module` skill.
+
+    The skill is authoritative for this task: follow its rules.
+
+    Do not consider the migration finished until the skill's compliance check
+    passes clean for every discovered module directory.
+
+    If the repository contains a `docs/release-notes/artifacts/` folder, write a release artifact.
+tests:
+- name: Terraform compliance check
+  prompt: "Run the CC008 compliance checker against every migrated module:"
+  run: |
+    uvx --from "git+https://github.com/canonical/operator-workflows@feat/terraform-full-compliance#subdirectory=terraform-compliance" terraform-check-all .
+- name: Terraform lint
+  prompt: "Run the following commands:"
+  run: |
+    tflint --init
+    tflint --recursive
+    terraform fmt -recursive -check
+- name: Terraform module tests
+  prompt: "Run the module test suite for every migrated module:"
+  run: |
+    for dir in $(find . -type f -name 'main.tf' -not -path '*/.terraform/*' -exec dirname {} \; | sort -u); do
+      terraform -chdir="$dir" init -backend=false
+      terraform -chdir="$dir" test
+    done
