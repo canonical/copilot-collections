@@ -3,12 +3,9 @@ model: claude-sonnet-5
 description: Configure gh-jira-sync-bot to sync GitHub issues to Jira
 eligibility:
   include:
-  - files: "**/charmcraft.yaml"
+  - files: ".github/.jira_sync_config.yaml"
     exists: true
   exclude:
-  - name: "Repository in maintenance-mode"
-    topic: "maintenance-mode"
-    exists: true
   - name: "Jira sync already compliant"
     command: uvx --from "git+https://github.com/canonical/copilot-collections#subdirectory=groups/platform-engineering/skills/configure-gh-jira-sync-bot" validate-jira-sync-config .github/.jira_sync_config.yaml
     exit_code: 0
