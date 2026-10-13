@@ -42,6 +42,7 @@ VALID_COMPONENTS: frozenset[str] = frozenset(
     }
 )
 MANDATORY_STATUS_KEYS: tuple[str, ...] = ("opened", "closed")
+REQUIRED_LABELS: tuple[str, ...] = ("bug", "enhancement")
 PLACEHOLDER_MARKER = "<your-component>"
 
 
@@ -84,10 +85,17 @@ def _validate_components(settings: dict[str, object]) -> list[str]:
 def _validate_optional_fields(settings: dict[str, object]) -> list[str]:
     errors = []
     labels = settings.get("labels")
-    if labels is not None and (
-        not isinstance(labels, list) or not all(_is_non_empty_string(label) for label in labels)
-    ):
-        errors.append("settings.labels must be a list of non-empty strings")
+    if not isinstance(labels, list) or not all(_is_non_empty_string(label) for label in labels):
+        errors.append("settings.labels is mandatory and must be a list of non-empty strings")
+    else:
+        missing = [label for label in REQUIRED_LABELS if label not in labels]
+        if missing:
+            errors.append(
+                f"settings.labels must include {', '.join(REQUIRED_LABELS)} "
+                f"(missing: {', '.join(missing)}); this avoids syncing Dependency dashboard issues"
+            )
+    if "epic_key" in settings:
+        errors.append("settings.epic_key must not be defined")
     label_mapping = settings.get("label_mapping")
     if label_mapping is not None and (
         not isinstance(label_mapping, dict)

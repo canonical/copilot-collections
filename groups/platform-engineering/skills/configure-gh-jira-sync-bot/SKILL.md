@@ -42,7 +42,7 @@ canonical/platform-engineering-charm-template#165.
 ## Mandatory fields (checked by the validator)
 
 `settings.jira_project_key`, `settings.status_mapping.opened`, `settings.status_mapping.closed`,
-and a non-empty `settings.components` list of known Jira components.
+a non-empty `settings.components` list of known Jira components, and `settings.labels` containing `bug` and `enhancement`. `settings.epic_key` must not be defined.
 
 ## Refreshing the component list
 
