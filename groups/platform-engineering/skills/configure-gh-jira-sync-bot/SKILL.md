@@ -42,7 +42,7 @@ canonical/platform-engineering-charm-template#165.
 ## Mandatory fields (checked by the validator)
 
 `settings.jira_project_key`, `settings.status_mapping.opened`, `settings.status_mapping.closed`,
-a non-empty `settings.components` list of known Jira components, and `settings.labels` containing `bug` and `enhancement`. `settings.epic_key` must not be defined.
+a non-empty `settings.components` list of known Jira components, and `settings.labels` containing `bug` and `enhancement`. `settings.epic_key` must not be defined. Every template in `.github/ISSUE_TEMPLATE/` (next to the config) must have a `labels` key containing `bug` or `enhancement`.
 
 ## Refreshing the component list
 

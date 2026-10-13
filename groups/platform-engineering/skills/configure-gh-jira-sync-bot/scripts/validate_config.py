@@ -121,6 +121,36 @@ def validate_settings(config: object) -> list[str]:
     return errors
 
 
+def _read_template_labels(template_path: Path) -> object:
+    text = template_path.read_text()
+    if template_path.suffix == ".md":
+        parts = text.split("---", 2)
+        text = parts[1] if text.startswith("---") and len(parts) == 3 else ""
+    parsed = yaml.safe_load(text)
+    return parsed.get("labels") if isinstance(parsed, dict) else None
+
+
+def validate_issue_templates(issue_template_dir: Path) -> list[str]:
+    """Each issue template must carry the `bug` or `enhancement` label."""
+    errors = []
+    template_paths = sorted(
+        path
+        for path in issue_template_dir.glob("*")
+        if path.suffix in {".yml", ".yaml", ".md"} and path.stem != "config"
+    )
+    for template_path in template_paths:
+        try:
+            labels = _read_template_labels(template_path)
+        except (OSError, yaml.YAMLError) as error:
+            errors.append(f"{template_path}: cannot read issue template: {error}")
+            continue
+        if isinstance(labels, str):
+            labels = [label.strip() for label in labels.split(",")]
+        if not isinstance(labels, list) or not set(REQUIRED_LABELS) & set(labels):
+            errors.append(f"{template_path}: `labels` must contain bug or enhancement")
+    return errors
+
+
 def main(
     config_path: Annotated[Path, typer.Argument(help="Path to .github/.jira_sync_config.yaml")],
 ) -> None:
@@ -131,6 +161,9 @@ def main(
         typer.echo(f"ERROR: cannot read {config_path}: {error}", err=True)
         raise typer.Exit(code=1)
     errors = validate_settings(config)
+    issue_template_dir = config_path.resolve().parent / "ISSUE_TEMPLATE"
+    if issue_template_dir.is_dir():
+        errors += validate_issue_templates(issue_template_dir)
     for error in errors:
         typer.echo(f"ERROR: {error}", err=True)
     if errors:
