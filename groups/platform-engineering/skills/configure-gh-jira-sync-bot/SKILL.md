@@ -15,11 +15,17 @@ canonical/platform-engineering-charm-template#165.
 
 1. Check whether `.github/.jira_sync_config.yaml` exists. If so, keep user-specific values (project key, mappings) and only align it with the template.
 2. Copy `assets/jira_sync_config.template.yaml` to `.github/.jira_sync_config.yaml` when missing.
-3. Ask the user which Jira component(s) the repository belongs to and set `settings.components` (a list, case-sensitive names). Valid names are listed in `VALID_COMPONENTS` of `scripts/validate-config.py`. Change `jira_project_key` only if the project is not `ISD`.
+3. Ask the user which Jira component(s) the repository belongs to and set `settings.components` (a list, case-sensitive names). Valid names are listed in `VALID_COMPONENTS` of `scripts/validate_config.py`. Change `jira_project_key` only if the project is not `ISD`.
 4. Validate:
 
    ```bash
-   uv run scripts/validate-config.py .github/.jira_sync_config.yaml
+   uv run scripts/validate_config.py .github/.jira_sync_config.yaml
+   ```
+
+   Or, without a local copy of the skill:
+
+   ```bash
+   uvx --from "git+https://github.com/canonical/copilot-collections#subdirectory=groups/platform-engineering/skills/configure-gh-jira-sync-bot" validate-jira-sync-config .github/.jira_sync_config.yaml
    ```
 
    Fix every reported error and re-run until it prints `OK`.

@@ -130,7 +130,8 @@ def main(
     typer.echo(f"{config_path}: OK")
 
 
+app = typer.Typer(add_completion=False)
+app.command(no_args_is_help=True)(main)
+
 if __name__ == "__main__":
-    app = typer.Typer(add_completion=False)
-    app.command(no_args_is_help=True)(main)
     app()
