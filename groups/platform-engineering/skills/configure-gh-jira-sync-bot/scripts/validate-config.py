@@ -1,0 +1,136 @@
+#!/usr/bin/env -S uv run --script
+# /// script
+# requires-python = ">=3.11"
+# dependencies = ["pyyaml", "typer"]
+# ///
+"""Validate a gh-jira-sync-bot `.github/.jira_sync_config.yaml` file."""
+
+from pathlib import Path
+from typing import Annotated
+
+import typer
+import yaml
+
+# Components of the ISD Jira project (warthogs.atlassian.net), extracted through the
+# Atlassian MCP server from the components of ISD issues updated in the last 90 days
+# (2026-10-13). Jira offers no component listing through the MCP server; refresh the
+# list with a JQL such as `project = ISD AND component is not EMPTY`.
+VALID_COMPONENTS: frozenset[str] = frozenset(
+    {
+        "GitHub runner",
+        "12-factor",
+        "Documentation",
+        "Traefik",
+        "Team initiatives",
+        "Wazuh",
+        "NetBox",
+        "Company initiatives",
+        "HAProxy",
+        "DNS",
+        "Jenkins",
+        "Indico",
+        "Falco",
+        "Zeek",
+        "Smtp integrator",
+        "Saml integrator",
+        "Pollen",
+        "Penpot",
+        "Operator workflows",
+        "Forward proxy",
+        "Discourse",
+        "Content cache",
+    }
+)
+MANDATORY_STATUS_KEYS: tuple[str, ...] = ("opened", "closed")
+PLACEHOLDER_MARKER = "<your-component>"
+
+
+def _is_non_empty_string(value: object) -> bool:
+    return isinstance(value, str) and bool(value.strip())
+
+
+def _validate_status_mapping(settings: dict[str, object]) -> list[str]:
+    status_mapping = settings.get("status_mapping")
+    if not isinstance(status_mapping, dict):
+        return ["settings.status_mapping is mandatory and must be a mapping"]
+    errors = []
+    for key in MANDATORY_STATUS_KEYS:
+        if not _is_non_empty_string(status_mapping.get(key)):
+            errors.append(f"settings.status_mapping.{key} is mandatory (non-empty string)")
+    if "not_planned" in status_mapping and not _is_non_empty_string(status_mapping["not_planned"]):
+        errors.append("settings.status_mapping.not_planned must be a non-empty string")
+    return errors
+
+
+def _validate_components(settings: dict[str, object]) -> list[str]:
+    errors = []
+    if "component" in settings:
+        errors.append("settings.component is not supported by the bot, use the list settings.components")
+    components = settings.get("components")
+    if not isinstance(components, list) or not components:
+        errors.append("settings.components is mandatory and must be a non-empty list")
+        return errors
+    for component in components:
+        if component == PLACEHOLDER_MARKER:
+            errors.append(f"settings.components still contains the placeholder {PLACEHOLDER_MARKER}")
+        elif not isinstance(component, str) or component not in VALID_COMPONENTS:
+            errors.append(
+                f"settings.components: {component!r} is not a valid Jira component "
+                f"(valid: {', '.join(sorted(VALID_COMPONENTS))})"
+            )
+    return errors
+
+
+def _validate_optional_fields(settings: dict[str, object]) -> list[str]:
+    errors = []
+    labels = settings.get("labels")
+    if labels is not None and (
+        not isinstance(labels, list) or not all(_is_non_empty_string(label) for label in labels)
+    ):
+        errors.append("settings.labels must be a list of non-empty strings")
+    label_mapping = settings.get("label_mapping")
+    if label_mapping is not None and (
+        not isinstance(label_mapping, dict)
+        or not all(_is_non_empty_string(value) for value in label_mapping.values())
+    ):
+        errors.append("settings.label_mapping must map GitHub labels to Jira issue types (strings)")
+    if "add_gh_comment" in settings and not isinstance(settings["add_gh_comment"], bool):
+        errors.append("settings.add_gh_comment must be a boolean")
+    return errors
+
+
+def validate_settings(config: object) -> list[str]:
+    """Return the list of validation errors for a parsed configuration."""
+    if not isinstance(config, dict) or not isinstance(config.get("settings"), dict):
+        return ["top-level `settings` mapping is mandatory"]
+    settings: dict[str, object] = config["settings"]
+    errors = []
+    if not _is_non_empty_string(settings.get("jira_project_key")):
+        errors.append("settings.jira_project_key is mandatory (non-empty string)")
+    errors += _validate_status_mapping(settings)
+    errors += _validate_components(settings)
+    errors += _validate_optional_fields(settings)
+    return errors
+
+
+def main(
+    config_path: Annotated[Path, typer.Argument(help="Path to .github/.jira_sync_config.yaml")],
+) -> None:
+    """Validate the mandatory fields of a gh-jira-sync-bot configuration."""
+    try:
+        config = yaml.safe_load(config_path.read_text())
+    except (OSError, yaml.YAMLError) as error:
+        typer.echo(f"ERROR: cannot read {config_path}: {error}", err=True)
+        raise typer.Exit(code=1)
+    errors = validate_settings(config)
+    for error in errors:
+        typer.echo(f"ERROR: {error}", err=True)
+    if errors:
+        raise typer.Exit(code=1)
+    typer.echo(f"{config_path}: OK")
+
+
+if __name__ == "__main__":
+    app = typer.Typer(add_completion=False)
+    app.command(no_args_is_help=True)(main)
+    app()
