@@ -45,7 +45,7 @@ safe-outputs:
       description: >
         Fail the documentation review when user-facing changes require
         documentation but no documentation changes are present.
-      runs-on: [self-hosted, linux, edge]
+      runs-on: [ubuntu-latest]
       permissions:
         contents: read
       inputs:
