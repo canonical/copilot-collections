@@ -72,3 +72,7 @@ tests:
       terraform -chdir="$dir" init -backend=false
       terraform -chdir="$dir" test
     done
+- name: Terraform CC008 compliance
+  prompt: "Ensure the repository is compliant with CC008 by running:"
+  run: |
+    uvx --from "git+https://github.com/canonical/operator-workflows@feat/terraform-full-compliance#subdirectory=terraform-compliance" terraform-check-all .
