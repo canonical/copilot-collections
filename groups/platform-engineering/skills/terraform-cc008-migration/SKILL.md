@@ -172,6 +172,11 @@ through `offers`.
 - **DO** take `proxy` and `logging-config` as mandatory inputs whenever the
   module creates or manages its own `juju_model` resources, plus `risk` to
   control the channel risk of the bundled components.
+- **DO** declare `risk` as a string defaulting to `"stable"`, validated with
+  `contains(["stable", "edge"], var.risk)`, and make sure it is actually used:
+  a `risk` variable that no resource, local or channel default references is a
+  defect. Keep the per-charm `channel` field required by the spec, and state in
+  its description how it relates to `risk`.
 - **DO** expose the charm revision **and** the OCI resources of every bundled
   charm as input variables, so deployments are reproducible and air-gap capable.
 - **DO** provide a default implementation for mandatory external integrations
@@ -268,6 +273,8 @@ Use operator-workflows' reusable workflows instead of hand-written scripts.
 - **DON'T** apply the charm-module contract to a product module — no
   `app_name`/`channel`/`revision` variables, no `application` output, and no
   `provides` / `requires`.
+- **DON'T** leave a declared product variable (notably `risk`) unreferenced or
+  unvalidated, and don't silently change existing channel defaults.
 - **DON'T** touch charm source code, `charmcraft.yaml`, or workflows unrelated to
   the Terraform modules.
 - **DON'T** hand-roll a tagging or release workflow; call the canonical reusable
@@ -320,7 +327,9 @@ terraform -chdir=<module-dir> init -backend=false && terraform -chdir=<module-di
 - Every module was classified before editing, and follows the contract of its own
   category only.
 - `tflint --recursive` and `terraform fmt -recursive -check` are clean.
-- `terraform test` passes for every module.
+- `terraform test` passes for every module, and product modules have a test
+  rejecting an invalid `risk`.
+- Every variable declared by a product module, including `risk`, is referenced.
 - Every reusable-workflow call is pinned to a commit SHA, and every terraform
   workflow lists its own file in its `paths` filter.
 - The Terraform docs workflow passes all discovered module directories,
