@@ -1,0 +1,46 @@
+schema: v1
+model: claude-sonnet-5
+description: Configure gh-jira-sync-bot to sync GitHub issues to Jira
+eligibility:
+  include:
+  - files: "**/charmcraft.yaml"
+    exists: true
+  exclude:
+  - name: "Repository in maintenance-mode"
+    topic: "maintenance-mode"
+    exists: true
+  - name: "Jira sync already compliant"
+    command: uvx --from "git+https://github.com/canonical/copilot-collections#subdirectory=groups/platform-engineering/skills/configure-gh-jira-sync-bot" validate-jira-sync-config .github/.jira_sync_config.yaml
+    exit_code: 0
+action: call-llm
+pull_request:
+  title: "chore: configure gh-jira-sync-bot"
+  branch: "chore/configure-gh-jira-sync-bot-charmkeeper"
+requirements:
+  - uv
+guardrails:
+- editable_files:
+  - type: matched
+    files:
+    - ".github/.jira_sync_config.yaml"
+    - ".github/ISSUE_TEMPLATE/*"
+extra:
+  skills:
+  - ./
+  llm-prompt: |
+    Configure the gh-jira-sync-bot of this repository using the
+    `configure-gh-jira-sync-bot` skill.
+
+    The skill is authoritative for this task: follow its workflow and
+    conventions. Choose the Jira component from the valid component names
+    listed in the skill's validator, based on the charm or product this
+    repository contains. Make sure every issue template in
+    `.github/ISSUE_TEMPLATE/` has a `labels` key containing `bug` or
+    `enhancement`.
+
+    Do not consider the task finished until the validation command passes.
+tests:
+- name: Jira sync configuration validation
+  prompt: "Validate the Jira sync configuration and issue templates:"
+  run: |
+    uvx --from "git+https://github.com/canonical/copilot-collections#subdirectory=groups/platform-engineering/skills/configure-gh-jira-sync-bot" validate-jira-sync-config .github/.jira_sync_config.yaml
