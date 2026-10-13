@@ -3,7 +3,7 @@ name: terraform-cc008-migration
 description: Migrates Terraform charm and product modules to the CC008 Charm Terraform Standards, enforcing the required file layout, variable and output contracts, MAJOR_VERSION markers, module tests and the operator-workflows reusable CI workflows. Use whenever a repository's Terraform modules must be brought to (or audited against) CC008.
 metadata:
   author: canonical/platform-engineering
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Terraform CC008 Migration
@@ -71,7 +71,7 @@ In order of authority when they disagree:
 Treat every directory containing a `main.tf` (or an existing `versions.tf` /
 `terraform.tf`) as one module, whether the repository has a single `terraform/`
 directory or several — per-charm `<charm>/terraform`, product modules under
-`terraform/<product>` or `terraform-product/`. Enumerate them all before
+`terraform/products/<product>`. Enumerate them all before
 starting:
 
 ```bash
@@ -94,6 +94,31 @@ cycle). We have none yet, so this skill carries no rules for them — read the
 
 The universal rules below apply to every category; then follow **only** the
 section matching the category you classified.
+
+## Recommended Module Layout
+
+When the Terraform modules are shared alongside the charm itself, recommend this
+layout. It may not apply when modules live in a dedicated repository; in that
+case keep the existing layout.
+
+**Standalone charm repository** (`charmcraft.yaml` at the repository root):
+
+- `/terraform/charm` — the charm module.
+- `/terraform/components` — component modules, if any.
+- `/terraform/products` — product modules, if any.
+
+**Monorepo** (several `charmcraft.yaml` files):
+
+- `/<charm-name>/terraform/` — a single charm module per charm.
+- `/terraform/products/<product-name>[-extra]` — potentially several product
+  modules.
+- `/terraform/components/<component-name>[-extra]` — component modules, should
+  we ever need them.
+
+When a module does not follow this layout, propose moving it rather than moving
+it silently, and update every path that references it: workflow
+`terraform-directories` and `paths` filters, README `source` examples,
+`MAJOR_VERSION` files and symlinks, and tests.
 
 ## DO - Every files
 
@@ -323,6 +348,7 @@ terraform -chdir=<module-dir> init -backend=false && terraform -chdir=<module-di
 
 ## Quality Bar
 
+- Module locations follow the recommended layout, or the deviation was reported.
 - The compliance checker passes for every discovered module directory.
 - Every module was classified before editing, and follows the contract of its own
   category only.

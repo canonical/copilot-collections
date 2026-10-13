@@ -24,7 +24,6 @@ guardrails:
   - type: matched
     files:
     - "terraform/**"
-    - "terraform-product/**"
     - ".github/workflows/test_terraform_modules.yaml"
     - ".github/workflows/terraform_modules_compliance.yaml"
     - ".github/workflows/terraform_modules_release.yaml"
