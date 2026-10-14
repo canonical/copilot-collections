@@ -11,33 +11,62 @@ from typing import Annotated
 import typer
 import yaml
 
-# Components of the ISD Jira project (warthogs.atlassian.net), extracted through the
-# Atlassian MCP server from the components of ISD issues updated in the last 90 days
-# (2026-10-13). Jira offers no component listing through the MCP server; refresh the
-# list with a JQL such as `project = ISD AND component is not EMPTY`.
+# Components of the ISD Jira project
 VALID_COMPONENTS: frozenset[str] = frozenset(
     {
         "12-factor",
+        "Aproxy",
+        "Backup",
+        "Bingo",
+        "CharmCI",
+        "Charmkeeper",
+        "Charmstudio",
+        "Chrony",
+        "Cloudflared",
         "Company initiatives",
         "Content cache",
+        "Copilot collections",
+        "Digest Squid auth helper",
         "Discourse",
+        "Discourse-Gatekeeper",
         "DNS",
         "Documentation",
+        "Docusign",
         "Falco",
         "Forward proxy",
+        "Gateway API",
         "GitHub runner",
+        "gopkg",
         "HAProxy",
+        "Hockeypuck",
+        "HRMS",
+        "HTTP Request lego provider",
         "Indico",
+        "Ingress configurator",
+        "IS support",
         "Jenkins",
+        "Kubernetes ingress",
+        "Mail server",
+        "Mailman",
+        "Matrix",
+        "MatterMost",
+        "MediaWiki",
         "NetBox",
+        "NTP",
+        "OpenCTI",
         "Operator workflows",
+        "osquery",
         "Penpot",
         "Pollen",
+        "repolint",
         "Saml integrator",
         "Smtp integrator",
         "Team initiatives",
         "Traefik",
+        "Ubuntu MOTD",
         "Wazuh",
+        "WireGuard",
+        "WordPress",
         "Zeek",
     }
 )
