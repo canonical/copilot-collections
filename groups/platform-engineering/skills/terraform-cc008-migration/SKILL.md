@@ -3,7 +3,7 @@ name: terraform-cc008-migration
 description: Migrates Terraform charm and product modules to the CC008 Charm Terraform Standards, enforcing the required file layout, variable and output contracts, MAJOR_VERSION markers, module tests and the operator-workflows reusable CI workflows. Use whenever a repository's Terraform modules must be brought to (or audited against) CC008.
 metadata:
   author: canonical/platform-engineering
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Terraform CC008 Migration
@@ -43,13 +43,15 @@ refers to them:
 
 ```bash
 CC008_BASE="https://raw.githubusercontent.com/canonical/copilot-collections/main/groups/platform-engineering/skills/terraform-cc008-migration"
-mkdir -p /tmp/cc008
-curl -fsSL -o /tmp/cc008/cc008.spec.md "$CC008_BASE/assets/cc008.spec.md"
-curl -fsSL -o /tmp/cc008/check_cc008.sh "$CC008_BASE/scripts/check_cc008.sh"
-chmod +x /tmp/cc008/check_cc008.sh
+CC008_TMP="$(mktemp -d -t cc008.XXXXXXXX)"
+curl -fsSL -o "$CC008_TMP/cc008.spec.md" "$CC008_BASE/assets/cc008.spec.md"
+curl -fsSL -o "$CC008_TMP/check_cc008.sh" "$CC008_BASE/scripts/check_cc008.sh"
+chmod +x "$CC008_TMP/check_cc008.sh"
 ```
 
-Delete `/tmp/cc008` once the migration is verified; it must never be committed.
+`mktemp -d` creates a directory unique to this run (e.g. `/tmp/cc008.a1B2c3D4`),
+so concurrent migrations never collide. Delete `$CC008_TMP` once the migration is
+verified; it must never be committed.
 
 ### Secondary References
 
@@ -69,7 +71,7 @@ In order of authority when they disagree:
 Treat every directory containing a `main.tf` (or an existing `versions.tf` /
 `terraform.tf`) as one module, whether the repository has a single `terraform/`
 directory or several — per-charm `<charm>/terraform`, product modules under
-`terraform/<product>` or `terraform-product/`. Enumerate them all before
+`terraform/products/<product>`. Enumerate them all before
 starting:
 
 ```bash
@@ -92,6 +94,36 @@ cycle). We have none yet, so this skill carries no rules for them — read the
 
 The universal rules below apply to every category; then follow **only** the
 section matching the category you classified.
+
+## Recommended Module Layout
+
+When the Terraform modules are shared alongside the charm itself, recommend this
+layout. It may not apply when modules live in a dedicated repository; in that
+case keep the existing layout.
+
+**Standalone charm repository** (`charmcraft.yaml` at the repository root):
+
+- `/terraform/charm` — the charm module.
+- `/terraform/components` — component modules, if any.
+- `/terraform/products` — product modules, if any.
+
+**Monorepo** (several `charmcraft.yaml` files):
+
+- `/<charm-name>/terraform/` — a single charm module per charm.
+- `/terraform/products/<product-name>[-extra]` — potentially several product
+  modules.
+- `/terraform/components/<component-name>[-extra]` — component modules, should
+  we ever need them.
+
+When a module does not follow this layout, propose moving it rather than moving
+it silently, and update every path that references it: workflow
+`terraform-directories` and `paths` filters, README `source` examples,
+`MAJOR_VERSION` files and symlinks, and tests.
+
+## DO - Every files
+
+- Newly added file to the repository containing a copyright header, should
+  be updated to refer to the current year.
 
 ## DO — Every Module
 
@@ -165,6 +197,11 @@ through `offers`.
 - **DO** take `proxy` and `logging-config` as mandatory inputs whenever the
   module creates or manages its own `juju_model` resources, plus `risk` to
   control the channel risk of the bundled components.
+- **DO** declare `risk` as a string defaulting to `"stable"`, validated with
+  `contains(["stable", "edge"], var.risk)`, and make sure it is actually used:
+  a `risk` variable that no resource, local or channel default references is a
+  defect. Keep the per-charm `channel` field required by the spec, and state in
+  its description how it relates to `risk`.
 - **DO** expose the charm revision **and** the OCI resources of every bundled
   charm as input variables, so deployments are reproducible and air-gap capable.
 - **DO** provide a default implementation for mandatory external integrations
@@ -261,6 +298,8 @@ Use operator-workflows' reusable workflows instead of hand-written scripts.
 - **DON'T** apply the charm-module contract to a product module — no
   `app_name`/`channel`/`revision` variables, no `application` output, and no
   `provides` / `requires`.
+- **DON'T** leave a declared product variable (notably `risk`) unreferenced or
+  unvalidated, and don't silently change existing channel defaults.
 - **DON'T** touch charm source code, `charmcraft.yaml`, or workflows unrelated to
   the Terraform modules.
 - **DON'T** hand-roll a tagging or release workflow; call the canonical reusable
@@ -271,6 +310,9 @@ Use operator-workflows' reusable workflows instead of hand-written scripts.
   `.terraform/` artefact produced while validating.
 - **DON'T** declare the migration finished on inspection alone — the compliance
   checker is the arbiter.
+- **DON'T** document *requirements*, *providers*, *modules*, *resources*, *inputs*
+  or *outputs* yourself in the terraform README.md. This will be handle by the
+  automated doc generation workflow.
 
 ## Validate Before Declaring Done
 
@@ -283,7 +325,8 @@ iterate until it passes clean:
 
 `<skill-dir>` is wherever this skill is installed — typically
 `.github/skills/terraform-cc008-migration/`. If you downloaded the companion
-files instead, run `/tmp/cc008/check_cc008.sh`.
+files instead, run `$CC008_TMP/check_cc008.sh` (the session-scoped directory
+created above).
 
 Called with no arguments the script discovers every module directory itself; pass
 explicit directories to narrow the run:
@@ -305,11 +348,14 @@ terraform -chdir=<module-dir> init -backend=false && terraform -chdir=<module-di
 
 ## Quality Bar
 
+- Module locations follow the recommended layout, or the deviation was reported.
 - The compliance checker passes for every discovered module directory.
 - Every module was classified before editing, and follows the contract of its own
   category only.
 - `tflint --recursive` and `terraform fmt -recursive -check` are clean.
-- `terraform test` passes for every module.
+- `terraform test` passes for every module, and product modules have a test
+  rejecting an invalid `risk`.
+- Every variable declared by a product module, including `risk`, is referenced.
 - Every reusable-workflow call is pinned to a commit SHA, and every terraform
   workflow lists its own file in its `paths` filter.
 - The Terraform docs workflow passes all discovered module directories,
