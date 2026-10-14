@@ -7,7 +7,7 @@ eligibility:
     exists: true
   exclude:
   - name: "Jira sync already compliant"
-    command: uvx --from "git+https://github.com/canonical/copilot-collections#subdirectory=groups/platform-engineering/skills/configure-gh-jira-sync-bot" validate-jira-sync-config .github/.jira_sync_config.yaml
+    command: uvx --from "git+https://github.com/canonical/copilot-collections@feat/configure-gh-jira-sync-bot#subdirectory=groups/platform-engineering/skills/configure-gh-jira-sync-bot" validate-jira-sync-config .github/.jira_sync_config.yaml
     exit_code: 0
 action: call-llm
 pull_request:
@@ -40,4 +40,4 @@ tests:
 - name: Jira sync configuration validation
   prompt: "Validate the Jira sync configuration and issue templates:"
   run: |
-    uvx --from "git+https://github.com/canonical/copilot-collections#subdirectory=groups/platform-engineering/skills/configure-gh-jira-sync-bot" validate-jira-sync-config .github/.jira_sync_config.yaml
+    uvx --from "git+https://github.com/canonical/copilot-collections@feat/configure-gh-jira-sync-bot#subdirectory=groups/platform-engineering/skills/configure-gh-jira-sync-bot" validate-jira-sync-config .github/.jira_sync_config.yaml
