@@ -11,11 +11,12 @@ on:
 
 permissions:
   contents: read
-  pull-requests: write
+  pull-requests: read
+  copilot-requests: write
 
 engine: copilot
 
-runs-on: [self-hosted, linux, edge]
+runs-on: [ubuntu-latest]
 timeout-minutes: 15
 
 tools:
@@ -36,11 +37,47 @@ tools:
     - "wc"
 
 safe-outputs:
-  comment-on-pr:
-    deduplicate-by-body: 1
+  add-comment:
     max: 1
-  fail:
-    max: 1
+    hide-older-comments: true
+  jobs:
+    fail:
+      description: >
+        Fail the documentation review when user-facing changes require
+        documentation but no documentation changes are present.
+      runs-on: [ubuntu-latest]
+      permissions:
+        contents: read
+      inputs:
+        message:
+          description: >
+            Markdown report identifying the code changes and required
+            documentation files and sections.
+          required: true
+          type: string
+      steps:
+        - name: Report missing documentation
+          uses: actions/github-script@v8
+          with:
+            script: |
+              const fs = require("node:fs");
+              const output = JSON.parse(
+                fs.readFileSync(process.env.GH_AW_AGENT_OUTPUT, "utf8")
+              );
+              const findings = output.items.filter(item => item.type === "fail");
+              if (findings.length === 0) return;
+
+              if (findings.length !== 1 ||
+                  typeof findings[0].message !== "string") {
+                core.setFailed("Expected exactly one documentation failure report.");
+                return;
+              }
+
+              await core.summary.addRaw(findings[0].message).write();
+
+              if (process.env.GH_AW_SAFE_OUTPUTS_STAGED === "true") return;
+
+              core.setFailed("Required documentation updates are missing.");
 ---
 
 # Check documentation impact of pull request changes
@@ -192,7 +229,7 @@ Add a `skip-docs-check` label to the PR if this determination is incorrect.
 **Case B — Docs needed, doc changes present but misaligned**:
 
 The PR has documentation changes, but they do not cover all the user-facing
-impacts identified. Call the `comment-on-pr` safe output with:
+impacts identified. Call the `add_comment` safe output with:
 
 ```
 ## Documentation impact review
@@ -216,7 +253,7 @@ disregard if the existing docs are sufficient. Add a
 **Case C — Docs needed, doc changes aligned**:
 
 The PR's documentation changes adequately cover the user-facing impacts.
-Call the `comment-on-pr` safe output with:
+Call the `add_comment` safe output with:
 
 ```
 ## Documentation impact review — aligned
@@ -243,11 +280,11 @@ Already handled in Phase 2 (noop and stop).
 
 ## Output rules
 
-- Call exactly **one** safe output per run: `noop`, `fail`, or `comment-on-pr`.
+- Call exactly **one** safe output per run: `noop`, `fail`, or `add_comment`.
 - Never call more than one.
 - The `fail` message must reference specific code changes and specific
   documentation files/sections that should be updated.
-- The `comment-on-pr` message must be constructive and actionable, not vague.
+- The `add_comment` message must be constructive and actionable, not vague.
 - Do not suggest documentation changes for test files, CI configuration, or
   internal implementation details that have no user-visible effect.
 - When in doubt about whether a change is user-facing, err on the side of
