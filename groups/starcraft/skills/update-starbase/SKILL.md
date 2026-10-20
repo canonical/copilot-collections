@@ -153,7 +153,10 @@ Conflict resolution applied:
    unrelated issues (e.g. latent bugs, mechanical formatting diffs, new
    default-enabled tooling, or large net-new template files). Bundling these
    into the merge PR obscures the merge diff. This is a mandatory audit, not
-   a reactive check — do not wait for a reviewer to flag it.
+   a reactive check — do not wait for a reviewer to flag it. Lean toward
+   distilling changes that could reasonably land on `main` independently
+   (a new formatter's reformatting pass is the canonical example), without
+   over-splitting small incidental fixes.
 
    When you find one, split it into a separate draft preparation PR against
    `origin/main` before finalizing the merge — using its own git worktree,

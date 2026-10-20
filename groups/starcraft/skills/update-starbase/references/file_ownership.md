@@ -12,7 +12,6 @@ Use this reference when resolving conflicts during a Starbase sync merge.
   may append additional sections, but must not override the shared defaults.
 - `common.mk` (explicitly marked as Starbase-owned in-tree).
 - `.github/workflows/check-renovate.yaml`.
-- `.github/workflows/policy.yaml`.
 - `.github/workflows/release-publish.yaml`.
 - `.github/workflows/tics.yaml`: keep the reusable workflow call, but set
   `with.project` to the child repository name; do not leave the project
@@ -149,6 +148,23 @@ Check deletions explicitly: when Starbase removes a declaration, `git merge` rai
     `tool.ruff.target-version`; the child repository may add values to
     `tool.ruff.extend-exclude`, `tool.ruff.lint.select`,
     `tool.ruff.lint.ignore`, and `tool.ruff.lint.per-file-ignores`.
+- `.github/workflows/policy.yaml`: take the file's structure from
+  `starbase/main` — trigger conditions, job names, `permissions` blocks, and
+  the reusable-workflow `uses:` refs. The child repository owns the `with:`
+  input values passed to those reusable workflows (e.g. `osv-exclude-paths`,
+  `uv-export-no-groups`, and any other repo-specific scan configuration):
+  preserve the child's values entry-by-entry when merging Starbase's
+  structural changes, and keep the child's entries if Starbase's scaffold
+  omits them. If Starbase adds a *new* `with:` key that didn't exist on
+  either side before, take Starbase's default for that key and flag it in
+  the merge commit message so the reviewer can tune it.
+- `osv-scanner.toml`: the child repository owns this file's contents.
+  Starbase ships only a skeleton header (`# OSV Scanner configuration`), so
+  a merge must never replace the child's `[[IgnoredVulns]]` entries with
+  that skeleton. If the file already exists in the child repository, keep it
+  as-is (aside from adopting a new header line if Starbase introduces one).
+  If the merge deletes it (or it never existed), recreate it containing only
+  Starbase's current header line, with no entries.
 - `Makefile`: keep child-owned variables such as `PROJECT`, but include new
   Starbase-added variables and take the Starbase version when it extends an
   existing variable. Use it to set the child repo's docs venv default so docs
