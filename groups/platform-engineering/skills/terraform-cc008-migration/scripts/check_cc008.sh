@@ -12,7 +12,7 @@ set -euo pipefail
 CHECKER_BASE_URL="https://raw.githubusercontent.com/canonical/operator-workflows/main/terraform-compliance"
 HCL2_VERSION="8.1.3"
 
-if ! command -v uv &> /dev/null; then
+if ! command -v uv &>/dev/null; then
     echo "❌ Error: uv is not installed. See https://docs.astral.sh/uv/." >&2
     exit 1
 fi
