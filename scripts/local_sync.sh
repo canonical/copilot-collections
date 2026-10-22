@@ -23,7 +23,7 @@ trap cleanup EXIT
 
 echo -e "${BLUE} Canonical Copilot Context Sync${NC}"
 
-if ! command -v yq &> /dev/null; then
+if ! command -v yq &>/dev/null; then
     echo -e "${RED}❌ Error: 'yq' is required but not installed.${NC}"
     echo "   Please install it (e.g., 'sudo snap install yq')."
     exit 1
@@ -56,10 +56,10 @@ fi
 
 echo -e "${BLUE}📄 Using config:${NC} $CONFIG_FILE"
 
-VERSION=$(yq '.copilot.version' < "$CONFIG_FILE")
+VERSION=$(yq '.copilot.version' <"$CONFIG_FILE")
 if [ "$VERSION" == "null" ] || [ -z "$VERSION" ]; then
-     echo -e "${RED}❌ Error: Could not read '.copilot.version' from $CONFIG_FILE${NC}"
-     exit 1
+    echo -e "${RED}❌ Error: Could not read '.copilot.version' from $CONFIG_FILE${NC}"
+    exit 1
 fi
 
 echo -e "${BLUE} Target Version:${NC} $VERSION"

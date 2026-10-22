@@ -31,13 +31,13 @@ mkdir -p "$TEST_DIR/groups/team-a/instructions"
 mkdir -p "$TEST_DIR/groups/team-a/folder-assets"
 
 # Create dummy assets
-echo "Core Content" > "$TEST_DIR/assets/common/core.md"
-echo "Team Content" > "$TEST_DIR/groups/team-a/instructions/team.md"
-echo "Folder File 1" > "$TEST_DIR/groups/team-a/folder-assets/file1.md"
-echo "Folder File 2" > "$TEST_DIR/groups/team-a/folder-assets/file2.md"
+echo "Core Content" >"$TEST_DIR/assets/common/core.md"
+echo "Team Content" >"$TEST_DIR/groups/team-a/instructions/team.md"
+echo "Folder File 1" >"$TEST_DIR/groups/team-a/folder-assets/file1.md"
+echo "Folder File 2" >"$TEST_DIR/groups/team-a/folder-assets/file2.md"
 
 # Create Root collections.yaml
-cat <<EOF > "$TEST_DIR/collections.yaml"
+cat <<EOF >"$TEST_DIR/collections.yaml"
 core:
   description: "Core Collection"
   items:
@@ -46,7 +46,7 @@ core:
 EOF
 
 # Create Group collections.yaml
-cat <<EOF > "$TEST_DIR/groups/team-a/collections.yaml"
+cat <<EOF >"$TEST_DIR/groups/team-a/collections.yaml"
 team-a-col:
   description: "Team A Collection"
   includes:
@@ -64,7 +64,7 @@ team-a-col:
 EOF
 
 # Create Consumer Config
-cat <<EOF > "$TEST_DIR/consumer-config.yaml"
+cat <<EOF >"$TEST_DIR/consumer-config.yaml"
 copilot:
   collections:
     - team-a-col
