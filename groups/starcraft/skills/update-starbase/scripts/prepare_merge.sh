@@ -38,6 +38,7 @@ die() {
     printf '\033[1;31m[FAIL]\033[0m  %s\n' "$*" >&2
     exit 1
 }
+indent() { printf '%s\n' "$1" | sed 's/^/  /'; }
 
 # ── Step 1: Confirm safe state ────────────────────────────────────────────────
 
@@ -137,13 +138,13 @@ STATUS=clean
 BRANCH=${BRANCH}
 BASE=starbase/main ($(git rev-parse --short starbase/main))
 CHANGED_FILES:
-$(echo "$CHANGED_FILES" | sed 's/^/  /')
+$(indent "$CHANGED_FILES")
 EOF
 
     if [[ -n "$PLACEHOLDER_LINES" ]]; then
         cat <<EOF
 PLACEHOLDER_WARNINGS:
-$(echo "$PLACEHOLDER_LINES" | sed 's/^/  /')
+$(indent "$PLACEHOLDER_LINES")
 
 NOTE: Do not overwrite legitimate Starbase attribution/ownership comments
 (see references/file_ownership.md) — only replace true placeholder text.
@@ -153,7 +154,7 @@ EOF
     if [[ -n "$STRUCTURAL_DIFF_FILES" ]]; then
         cat <<EOF
 STRUCTURAL_DIFF_FILES:
-$(echo "$STRUCTURAL_DIFF_FILES" | sed 's/^/  /')
+$(indent "$STRUCTURAL_DIFF_FILES")
 
 NOTE: Diff each file above against starbase/main (git diff starbase/main -- <file>).
 Confirm all remaining differences are child-owned per references/file_ownership.md.
@@ -188,9 +189,9 @@ STATUS=conflicted
 BRANCH=${BRANCH}
 BASE=starbase/main ($(git rev-parse --short starbase/main))
 CHANGED_FILES:
-$(echo "$CHANGED_FILES" | sed 's/^/  /')
+$(indent "$CHANGED_FILES")
 CONFLICTED_FILES:
-$(echo "$CONFLICTED_FILES" | sed 's/^/  /')
+$(indent "$CONFLICTED_FILES")
 
 NOTE: Do not overwrite legitimate Starbase attribution/ownership comments
 (see references/file_ownership.md) — only replace true placeholder text.
