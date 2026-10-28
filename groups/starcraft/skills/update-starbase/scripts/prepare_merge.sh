@@ -122,6 +122,8 @@ if [[ $MERGE_EXIT -eq 0 ]]; then
     "SECURITY.md"
     ".github/.jira_sync_config.yaml"
     ".github/PULL_REQUEST_TEMPLATE.md"
+    ".github/workflows/policy.yaml"
+    "osv-scanner.toml"
     ".gitignore"
     ".pre-commit-config.yaml"
     ".readthedocs.yaml"
