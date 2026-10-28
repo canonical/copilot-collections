@@ -4,6 +4,8 @@ Use this guide when you encounter fixes, adjustments, or additions during the St
 
 Bundling pre-existing or unrelated changes into the Starbase merge PR obscures the merge diff and complicates review. These changes belong in separate **Preparation PRs** based on `origin/main` that are stacked or merged prior to finalizing the merge PR.
 
+When deciding whether something is worth a preparation PR, lean toward distilling: a change that could reasonably land on `main` on its own — a formatter's reformatting pass is the canonical example — usually should, so the merge PR stays focused on the sync itself. This is a bias, not a blanket rule: small incidental fixes and genuinely merge-specific changes still belong in the merge PR, and over-splitting into many tiny PRs creates its own review burden. When a prep PR wires in a new formatter or linter, include that tool's reformatting in the prep PR rather than deferring it to the merge PR.
+
 ---
 
 ## 1. This is a mandatory check, not a judgment call

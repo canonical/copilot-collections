@@ -237,6 +237,7 @@ When adding new instructions, examples, or code:
 - Mock activities in workflow tests when you need to isolate orchestration logic.
 - Cover schedule-related behaviour when the workflow creates, updates, or deletes schedules.
 - Add replay tests or workflow-history replay checks for workflow changes that could affect determinism.
+- When setting up or generating unit, activity, or workflow test suites for existing workflows, use the `temporal-test-builder` agent; it uses the `setup-temporal-workflows-test` skill to establish or verify the required test directory structure, Makefile targets, and CI configuration before generating tests.
 
 Use the repository's standard commands where present:
 
@@ -266,6 +267,16 @@ make check
 - If versioned deployment artifacts are used, update versions intentionally and follow semantic versioning.
 - Keep task queue, namespace, and host configuration externalised.
 - Separate deployment-specific guidance from workflow logic when possible so the core Temporal design remains portable.
+
+### Versioning `rockcraft.yaml` on every PR
+
+- Every pull request that changes workflow, activity, worker, schedule, or configuration code must bump the `version` field in `rockcraft.yaml` as part of the same PR. Do not leave the version unchanged when behaviour changes.
+- Choose the version bump using semantic versioning (`MAJOR.MINOR.PATCH`), interpreted for Temporal workflows as follows:
+  - **MAJOR** — a change that breaks replay or execution compatibility for in-flight workflow executions, or removes/renames a public contract. Examples: changing a workflow's or activity's registered name, changing the shape or meaning of workflow/activity inputs or outputs in an incompatible way, removing a workflow, activity, signal, or query, changing a workflow's deterministic control flow without using `workflow.patched()`/versioning guards, or altering `ParentClosePolicy` / `WorkflowIDReusePolicy` in a way that changes existing operational semantics.
+  - **MINOR** — a backward-compatible addition that does not break replay of existing running workflow executions. Examples: adding a new workflow, activity, signal, or query, adding an optional input field with a safe default, adding a new schedule, or adding new non-breaking behaviour guarded by `workflow.patched()` where needed.
+  - **PATCH** — a change that does not affect the public workflow/activity/schedule contract or replay determinism. Examples: bug fixes that don't change workflow history shape, logging or observability improvements, dependency bumps, refactors, documentation updates, or configuration/tuning changes such as retry policy or timeout adjustments that don't change control flow.
+- When in doubt about whether a change could break replay compatibility for currently-running executions, treat it as MAJOR and consider using `workflow.patched()` to make it safe.
+- Keep the `rockcraft.yaml` version bump in the same PR as the code change it corresponds to, so the deployed artifact version always reflects the actual behaviour it contains.
 
 ---
 
@@ -341,4 +352,5 @@ When reviewing or generating code for Temporal workflow projects, check that:
 - workflow and schedule IDs are stable and meaningful;
 - logs avoid secrets and large sensitive payloads;
 - tests cover branching logic, failure handling, and determinism-sensitive changes;
-- README and deployment docs reflect the real runtime behaviour.
+- README and deployment docs reflect the real runtime behaviour;
+- the `rockcraft.yaml` version has been bumped according to semantic versioning (MAJOR for replay/contract-breaking changes, MINOR for backward-compatible additions, PATCH for non-contract-affecting changes).

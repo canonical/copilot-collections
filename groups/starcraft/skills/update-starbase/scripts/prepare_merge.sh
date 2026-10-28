@@ -122,6 +122,8 @@ if [[ $MERGE_EXIT -eq 0 ]]; then
     "SECURITY.md"
     ".github/.jira_sync_config.yaml"
     ".github/PULL_REQUEST_TEMPLATE.md"
+    ".github/workflows/policy.yaml"
+    "osv-scanner.toml"
     ".gitignore"
     ".pre-commit-config.yaml"
     ".readthedocs.yaml"
@@ -134,13 +136,13 @@ STATUS=clean
 BRANCH=${BRANCH}
 BASE=starbase/main ($(git rev-parse --short starbase/main))
 CHANGED_FILES:
-$(echo "$CHANGED_FILES" | sed 's/^/  /')
+  ${CHANGED_FILES//$'\n'/$'\n  '}
 EOF
 
   if [[ -n "$PLACEHOLDER_LINES" ]]; then
     cat <<EOF
 PLACEHOLDER_WARNINGS:
-$(echo "$PLACEHOLDER_LINES" | sed 's/^/  /')
+  ${PLACEHOLDER_LINES//$'\n'/$'\n  '}
 
 NOTE: Do not overwrite legitimate Starbase attribution/ownership comments
 (see references/file_ownership.md) — only replace true placeholder text.
@@ -150,7 +152,7 @@ EOF
   if [[ -n "$STRUCTURAL_DIFF_FILES" ]]; then
     cat <<EOF
 STRUCTURAL_DIFF_FILES:
-$(echo "$STRUCTURAL_DIFF_FILES" | sed 's/^/  /')
+  ${STRUCTURAL_DIFF_FILES//$'\n'/$'\n  '}
 
 NOTE: Diff each file above against starbase/main (git diff starbase/main -- <file>).
 Confirm all remaining differences are child-owned per references/file_ownership.md.
@@ -185,9 +187,9 @@ STATUS=conflicted
 BRANCH=${BRANCH}
 BASE=starbase/main ($(git rev-parse --short starbase/main))
 CHANGED_FILES:
-$(echo "$CHANGED_FILES" | sed 's/^/  /')
+  ${CHANGED_FILES//$'\n'/$'\n  '}
 CONFLICTED_FILES:
-$(echo "$CONFLICTED_FILES" | sed 's/^/  /')
+  ${CONFLICTED_FILES//$'\n'/$'\n  '}
 
 NOTE: Do not overwrite legitimate Starbase attribution/ownership comments
 (see references/file_ownership.md) — only replace true placeholder text.
