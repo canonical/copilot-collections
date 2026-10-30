@@ -13,6 +13,10 @@ temporal-project-development:
   items:
     - src: instructions/temporal-project-development.instructions.md
       dest: .github/instructions/temporal-project-development.instructions.md
+    - src: agents/temporal-test-builder.agent.md
+      dest: .github/agents/temporal-test-builder.agent.md
+    - src: skills/setup-temporal-workflows-test
+      dest: .github/setup-temporal-workflows-test/
 
 temporal-project-review:
   description: "Business Data Temporal Project Review Collection"
