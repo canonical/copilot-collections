@@ -31,3 +31,5 @@ ubuntu-engineering-review:
       dest: .github/skills/ubuntu-review-uife/
     - src: skills/ubuntu-review-final-freeze
       dest: .github/skills/ubuntu-review-final-freeze/
+    - src: skills/ubuntu-upgrade-readiness-check
+      dest: .github/skills/ubuntu-upgrade-readiness-check/
