@@ -11,7 +11,7 @@
 /groups/starcraft/                  @canonical/starcraft
 
 # Business Data specific collection
-/groups/business-data/              @canonical/commercial-systems-data
+/groups/business-data/              @canonical/business-data-integrations @canonical/business-data-data-lake
 
 # Landscape specific collection
 /groups/landscape/                  @canonical/landscape
