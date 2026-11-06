@@ -40,3 +40,6 @@ jobs:
           chmod +x scripts/install_collections.sh
           chmod +x tests/test_install.sh
           ./tests/test_install.sh
+
+      - name: Test Release Publishing
+        run: bash tests/test_release.sh
