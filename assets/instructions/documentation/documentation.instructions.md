@@ -90,11 +90,10 @@ concisely summarize the real-world problem addressed by the document.
 problem or achieve the goal.
 - Provide instructions or tasks that the user can take to achieve the goal. Avoid gerunds.
 
-
 ## Style guide pointers
 
 - **Spelling**: Use US English for spelling suggestions.
-- **Headings**: Use sentence case for headings. Avoid punctuation in headings. Do not skip levels in heading hierarchy. Do not use consecutive headings without intervening text, and suggest removing headings that don't enhance the understanding. Don't overuse `code` styling in headings.
+- **Headings**: Use sentence case for headings, while preserving the capitalization of proper nouns, product names, and established terms. Avoid punctuation in headings. Do not skip levels in the heading hierarchy or place headings consecutively without intervening text. Use headings to help readers navigate and understand the page structure; avoid generic headings such as "Overview" when the opening text already introduces the topic. Read the headings as an outline: together, they should give readers a clear map of the page. Don't overuse `code` styling in headings.
 - **Code examples**: Do not use prompt marks (for example, `$` or `#`) in code examples. Do not use comments in code examples; instead, put any comments directly into the text. Whenever possible, split up multiple commands into separate code blocks and provide explanations in between the code blocks. Use Git-flavoured Markdown with fenced code blocks (```) and command examples as shell blocks.
 - **Lists**: Only use numbered lists when there is an inherent order to the items.
 - **Latin words and phrases**: We can't assume the reader is familiar with Latin words and phrases. Words such as "etc.", "i.e.", "e.g.", "per", "versus", and "via" should be avoided. 
@@ -112,5 +111,4 @@ If you modify a procedure (commands, required versions, prerequisites) and a `do
 If you add a new file into `docs`, add a short note in `docs/changelog.md` summarizing the user-facing change.
 
 If there are no user-relevant changes, then the changelog does not need to be updated.
-
 
