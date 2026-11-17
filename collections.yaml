@@ -37,6 +37,12 @@ common-terraform:
     - src: assets/instructions/terraform/plans.instructions.md
       dest: .github/instructions/terraform-plans.instructions.md
 
+common-spread:
+  description: "Spread integration task runner skills and guidance"
+  items:
+    - src: skills/running-spread
+      dest: .github/skills/running-spread/
+
 common-documentation:
   description: "Documentation standards and review skills"
   items:
