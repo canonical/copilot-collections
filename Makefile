@@ -1,7 +1,7 @@
 # Copyright 2026 Canonical Ltd.
 # See LICENSE file for licensing details.
 
-# Makefile for markdown linting
+# Makefile for project linting and formatting
 
 # Variables
 VENVDIR := .venv
@@ -9,15 +9,17 @@ CONFIG := .pymarkdown.json
 SOURCEDIR ?= .
 
 # Phony targets
-.PHONY: help lint-md clean venv pymarkdownlnt-install
+.PHONY: help lint-md clean venv pymarkdownlnt-install lint-sh format-sh
 
 # Default target
 help:
 	@echo "Available targets:"
-	@echo "  venv                - Create virtual environment using uv"
+	@echo "  venv                  - Create virtual environment using uv"
 	@echo "  pymarkdownlnt-install - Install pymarkdownlnt"
-	@echo "  lint-md             - Run markdown linter"
-	@echo "  clean               - Remove virtual environment"
+	@echo "  lint-md               - Run markdown linter"
+	@echo "  lint-sh               - Lint shell scripts (shellcheck and shfmt)"
+	@echo "  format-sh             - Format shell scripts using shfmt"
+	@echo "  clean                 - Remove virtual environment"
 
 # Create virtual environment using uv
 venv:
@@ -41,3 +43,19 @@ clean:
 	@echo "Removing virtual environment..."
 	@rm -rf $(VENVDIR)
 	@echo "Virtual environment removed"
+
+# Format shell scripts
+format-sh:
+	@# jinja2 shell script templates are mistakenly counted as "true" shell scripts due to their shebang,
+	@# so explicitly filter them out
+	@echo "Formatting shell scripts with shfmt..."
+	@git ls-files -z | xargs -0 sh -c 'for f; do case "$$f" in *.sh.j2) continue;; esac; file --mime-type -Nn -- "$$f" | grep -q shellscript && printf "%s\0" "$$f"; done' -- | xargs -0r shfmt -w
+
+# Lint shell scripts
+lint-sh:
+	@echo "Running shell linters..."
+	@# jinja2 shell script templates are mistakenly counted as "true" shell scripts due to their shebang,
+	@# so explicitly filter them out
+	@git ls-files -z | xargs -0 sh -c 'for f; do case "$$f" in *.sh.j2) continue;; esac; file --mime-type -Nn -- "$$f" | grep -q shellscript && printf "%s\0" "$$f"; done' -- | xargs -0r shfmt --diff
+	@git ls-files -z | xargs -0 sh -c 'for f; do case "$$f" in *.sh.j2) continue;; esac; file --mime-type -Nn -- "$$f" | grep -q shellscript && printf "%s\0" "$$f"; done' -- | xargs -0r shellcheck
+

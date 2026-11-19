@@ -1,0 +1,10 @@
+# Copyright 2026 Canonical Ltd.
+# See LICENSE file for licensing details.
+# Editor configuration options.
+# See: https://spec.editorconfig.org/
+
+# The default format in shfmt is to use tabs, but existing scripts use 4 spaces.
+[{*.bash,*.sh,*.zsh}]
+indent_style = space
+indent_size = 4
+tab_width = 4
